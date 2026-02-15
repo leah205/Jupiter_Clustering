@@ -1,0 +1,1 @@
+def get_radiance_nd_array(fits_list)
