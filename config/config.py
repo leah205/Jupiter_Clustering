@@ -1,3 +1,6 @@
 config = {
-    'input': "data/20251016UTa"
+    #'input': "data/20251017UTa/L3"
+    #'input': "data/HST"
+    'input': "data"
+
 }
