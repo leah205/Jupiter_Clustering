@@ -10,13 +10,13 @@ def gmm_bic_score(estimator, X):
     return estimator.bic(X)
 
 param_grid = {
-    "n_components": range(1, 6),
-    "covariance_type": ["tied"]
+    "n_components": range(5, 10),
+    "covariance_type": ["tied", "full", "diag", "spherical"]
 }
 
 grid_search = GridSearchCV(GMM(), param_grid = param_grid, scoring = gmm_bic_score)
 
-X = filter_pix_in_range([[60, 160], [1600, 2000]], ["NH3", "PCld"])
+X = get_pix_arr([[60, 160], [1600, 2000]], ["NH3", "PCld"])
 grid_search.fit(X)
 
 
@@ -31,6 +31,7 @@ df = df.rename(
         "mean_test_score": "BIC score",
     }
 )
+
 print(df.sort_values(by="BIC score").head())
 
 
