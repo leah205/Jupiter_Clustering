@@ -11,16 +11,14 @@ def get_radiance_arr(file):
     return hdul[0].data
 
 def get_wcs(file):
-    print(file)
     hdul = fits.open(file)
     hdr = hdul[0].header
-    print(WCS(hdr))
     return WCS(hdr)
 
 def is_files_aligned(file_arr):
     #(w1.wcs.compare(w2.wcs))
     ref_wcs = get_wcs(file_arr[0])
-    print(ref_wcs)
+ 
     for file in file_arr:
         if(ref_wcs.wcs.compare(get_wcs(file).wcs) == False):
             return False
@@ -59,8 +57,31 @@ def get_parameter_2d_array(keyword_arr, latLims = [45, 135], lonRng = [0, 360]):
     return res
 
 def get_pix_arr(arr):
-    parameter_arr = get_parameter_2d_array(arr)
-    return np.column_stack((parameter_arr))
+   # parameter_arr = get_parameter_2d_array(arr)
+
+    return np.column_stack((arr))
+
+def filter_pix_in_range(range_arr, keywords):
+    
+    if(len(range_arr) != len(keywords)):
+        raise TypeError("range arr and keywords should be same size")
+    pixel_arr = np.column_stack(get_parameter_2d_array(keywords))
+    print(pixel_arr)
+    range_arr = np.array(range_arr)
+    print(range_arr)
+    # convert to array o fmins
+    mins = range_arr[:, 0]
+    print(mins)
+    # get array of max
+    maxs = range_arr[:, 1]
+    print(maxs)
+    # compares first element of pixel array with first element of min/max and so n
+    mask = (pixel_arr >= mins) & (pixel_arr <= maxs)
+    # gets rows where every col(parameter) is within range
+    filtered = pixel_arr[np.all(mask, axis = 1)]
+    return filtered
+
+    
 
 def subset_map(map, latLims, lonRng):
     '''

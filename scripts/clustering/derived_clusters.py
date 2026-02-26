@@ -1,7 +1,7 @@
 
 import numpy as np
 from sklearn.mixture import GaussianMixture as GMM
-from scripts.preprocessing.preprocessing import get_pix_arr
+from scripts.preprocessing.preprocessing import get_pix_arr, filter_pix_in_range
 from sklearn.model_selection import GridSearchCV
 import pandas as pd
 #full, tied, diagonal, spherical
@@ -16,7 +16,7 @@ param_grid = {
 
 grid_search = GridSearchCV(GMM(), param_grid = param_grid, scoring = gmm_bic_score)
 
-X = get_pix_arr(["NH3", "PCld"])
+X = filter_pix_in_range([[60, 160], [1600, 2000]], ["NH3", "PCld"])
 grid_search.fit(X)
 
 

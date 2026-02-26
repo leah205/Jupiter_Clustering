@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from scripts.preprocessing.preprocessing import get_parameter_2d_array
+from scripts.preprocessing.preprocessing import get_parameter_2d_array, get_pix_arr, filter_pix_in_range
 import numpy as np
 from scipy.stats import gaussian_kde
 
@@ -18,13 +18,15 @@ def create_plot(input_array, param1, param2):
     xy = np.vstack([x_vals,y_vals])
     z = gaussian_kde(xy)(xy)
     ax = plt.gca()
-    ax.set_xlim([100, 200])
-    ax.set_ylim([1500, 2200])
+    ax.set_xlim([0, 200])
+    ax.set_ylim([2200, 1600])
     plt.scatter(x_vals, y_vals, c = z, s = 1)
     plt.xlabel(param1)
     plt.ylabel(param2)
     plt.show()
 
 
-create_plot(get_parameter_2d_array(["NH3", "PCld"]), "ammonia content", "cloud pressure")
+
+#create_plot(get_parameter_2d_array(["NH3", "PCld"]), "ammonia content", "cloud pressure")
+create_plot(filter_pix_in_range([[60, 160], [1600, 2000]], ["NH3", "PCld"] ), "ammonia content", "cloud pressure")
 
