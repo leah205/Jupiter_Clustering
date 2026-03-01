@@ -12,7 +12,7 @@ def gmm_bic_score(estimator, X):
 def get_optimal_gmm_model(
                     pix_arr,
                     com_range = [1, 10], 
-                      cov_types = ["tied", "full", "diag", "spherical"],
+                      cov_types = ["full"],
                        ):
     '''
     Performs grid search to find optimal covariance types and number of components for gmm model
@@ -63,7 +63,7 @@ def get_optimal_gmm_model(
     )
     print(df.sort_values(by = "BIC score").head())
 
-pix_arr =  get_pix_arr([[60, 160], [1600, 2000]], ["NH3", "PCld"])
-get_optimal_gmm_model(pix_arr, [5, 11])
+pix_arr =  get_pix_arr([[60, 160], [1400, 2200]], ["NH3", "PCld"])
+get_optimal_gmm_model(pix_arr, [24, 30])
 
 
