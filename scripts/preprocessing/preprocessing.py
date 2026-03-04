@@ -60,20 +60,51 @@ def get_parameter_2d_array(keyword_arr, latLims, lonRng):
 
     for file_name in file_name_arr:
         radiance_arr = get_radiance_arr(file_name)
+  
+     
         file_arr.append(subset_map(radiance_arr, latLims, lonRng).flatten())
     res = np.array(file_arr)
+    
     return res
 
+def get_map_shape(keyword, latLims, longLims):
+      dir_path = config["input"]
+      file = get_file_path(keyword, dir_path)
+      radiance_arr = get_radiance_arr(file)
+      return subset_map(radiance_arr, latLims, longLims).shape
+
 def get_filtered_pix_arr(range_arr, pixel_arr):
+  
+    '''
+    
+    Parameters
+    -----------
+    range_arr: Python array with subarrays of two elements: [min, max]
+    pixel_arr:  2D numpy array with each row being a pixel and each parameter being a column
+    Returns
+    ----------
+    filtered pix_arr with only pixel rows with all parameters in specified range
+    '''
+
     range_arr = np.array(range_arr)
+ 
     mins = range_arr[:, 0]
     maxs = range_arr[:, 1]
-    mask = (pixel_arr >= mins) & (pixel_arr <= maxs)
+    #don't want to filter on last column(index)
+    #want to filter up to pixel_arr.shape - 2 
+    pixel_param_cols = pixel_arr[:, 0:pixel_arr.shape[1] - 1]
+    mask = (pixel_param_cols >= mins) & (pixel_param_cols <= maxs) 
     filtered = pixel_arr[np.all(mask, axis = 1)]
+   
     return filtered
 
+def get_mapped_pix_arr(pix_arr):
+    indices = np.arange(pix_arr.shape[0])
+    mapped_pix_arr =np.insert(pix_arr, pix_arr.shape[1], indices, axis = 1)
+    return mapped_pix_arr
 
-def get_pix_arr(range_arr = [], keywords=["PCld", "NH3"], latLims = [45, 135], longLims = [0, 360]):
+
+def get_pix_arr(param_arr, range_arr = []):
     '''
     Main preprocessing routine that returns array to be passed into clustering
 
@@ -94,15 +125,16 @@ def get_pix_arr(range_arr = [], keywords=["PCld", "NH3"], latLims = [45, 135], l
     
     Returns 
     --------
-    numpy array with axis 0 as pixels within lon/lat range and axis 1 as parameter pixel radiances,
+    numpy array with axis 0 as pixels within lon/lat range and axis 1 as parameter pixel radiances and index,
     filtered with rangeArr
     '''
-    if(len(range_arr) and len(range_arr) != len(keywords)):
-        raise TypeError("ranges array should match number of parameters")
-    
-    pixel_arr = np.column_stack(get_parameter_2d_array(keywords, latLims, longLims))
+    #if(len(range_arr) and len(range_arr) != len(keywords)):
+     #   raise TypeError("ranges array should match number of parameters")
+    print(range_arr)
+    pixel_arr = np.column_stack(param_arr)
+    mapped_pixel_arr = get_mapped_pix_arr(pixel_arr)
     if(len(range_arr)):
-        filtered_arr = get_filtered_pix_arr(range_arr, pixel_arr)
+        filtered_arr = get_filtered_pix_arr(range_arr, mapped_pixel_arr)
         return filtered_arr
     return pixel_arr
 
@@ -110,5 +142,11 @@ def get_pix_arr(range_arr = [], keywords=["PCld", "NH3"], latLims = [45, 135], l
 def subset_map(map, latLims, lonRng):
     scale = int(map.shape[0]/ 180)
     latLims = np.array(latLims)* scale
-    lonRng=lonRng*scale
+    lonRng= lonRng *scale
+    #print(latLims)
+    #print(lonRng)
+    #print(map[latLims[0]:latLims[1], lonRng[0]: lonRng[1]])
     return map[latLims[0]:latLims[1], lonRng[0]: lonRng[1]]
+
+#get_pix_arr([[60, 160], [1400, 2200]], ["NH3", "PCld"])
+

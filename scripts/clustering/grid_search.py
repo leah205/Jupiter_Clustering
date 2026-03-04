@@ -63,7 +63,9 @@ def get_optimal_gmm_model(
     )
     print(df.sort_values(by = "BIC score").head())
 
-pix_arr =  get_pix_arr([[60, 160], [1400, 2200]], ["NH3", "PCld"])
-get_optimal_gmm_model(pix_arr, [24, 30])
+#pix_arr =  get_pix_arr([[60, 160], [1400, 2200]], ["NH3", "PCld"])
+hst_pix_arr = get_pix_arr([[60, 160], [1400, 2200], [0.1, 0.4], [0.35, 0.75]], ["NH3", "PCld", "AOI", "CI"])
+
+get_optimal_gmm_model(hst_pix_arr, [5, 15])
 
 

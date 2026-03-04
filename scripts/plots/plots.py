@@ -28,5 +28,5 @@ def create_plot(input_array, param1, param2):
 
 
 #create_plot(get_parameter_2d_array(["NH3", "PCld"]), "ammonia content", "cloud pressure")
-create_plot(get_pix_arr([[60, 160], [1400, 2200]], ["NH3", "PCld"] ), "ammonia content", "cloud pressure")
+#create_plot(get_pix_arr([[60, 160], [1400, 2200]], ["NH3", "PCld"] ), "ammonia content", "cloud pressure")
 
