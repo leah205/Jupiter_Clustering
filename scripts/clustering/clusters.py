@@ -19,12 +19,6 @@ def create_clusters(pix_arr, cov_type, n_components):
 
     return predictions
 
-# get working
-# add systems
-
-
-    
-
 def create_cluster_plot(keywords, param_ranges, n_comp = 8, cov_type = "full", 
                         latRng = [75, 105], lngRng = [90, 135], cm_num = 3
                         ):
@@ -41,8 +35,7 @@ def create_cluster_plot(keywords, param_ranges, n_comp = 8, cov_type = "full",
 
     
 def create_cluster_map_arr(keywords, param_ranges, n_comp = 5, cov_type = "full", 
-                           latRng = [75, 100], lngRng = [90, 100], cm_num = 0,
-                           data_type = "HST"):
+                           latRng = [75, 100], lngRng = [90, 100], cm_num = 3):
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
     pred = create_clusters(input_arr[:, [0,1]], cov_type, n_comp)
     print("silhouette score: " + str(silhouette_score(input_arr, pred)))
@@ -58,7 +51,7 @@ def create_cluster_map_arr(keywords, param_ranges, n_comp = 5, cov_type = "full"
     hdul = fits.HDUList()
     hdul.append(fits.PrimaryHDU())
     hdul[0].data = mapped_clusters
-    hdul.writeto(f'./data/visualizations/cluster_maps/spatial_map_{data_type}_{cov_type}_{n_comp}.fits', overwrite= True)
+    hdul.writeto(f'{config["output"]}/cluster_maps/spatial_map_{cov_type}_{n_comp}.fits', overwrite= True)
   
     
   
@@ -71,7 +64,7 @@ def create_cluster_map_arr(keywords, param_ranges, n_comp = 5, cov_type = "full"
 
 
 
-create_cluster_map_arr( ["NH3", "PCld", "AOI", "CI"], [[60, 250], [1400, 2500], [0.1, 0.4], [0.35, 0.75]])
+#create_cluster_map_arr( ["NH3", "PCld", "AOI", "CI"], [[60, 250], [1400, 2500], [0.1, 0.4], [0.35, 0.75]])
 
-#create_cluster_plot(["NH3", "PCld"], [[60, 160], [1400, 2200]])
+create_cluster_map_arr(["NH3", "PCld"], [[60, 250], [1400, 2500]])
 #print(silhouette_score(hst_pix_arr, pred))
