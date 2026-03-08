@@ -13,6 +13,21 @@ def get_wcs(file):
     hdr = hdul[0].header
     return WCS(hdr)
 
+def get_header_key(file, key):
+    hdul = fits.open(file)
+    hdr = hdul[0].header
+    return hdr[key]
+
+
+def get_cm(first_file, cm_num):
+    ctype_key = {
+         1:'CM1',
+         2:'CM2',
+         3:'CM3',
+    }
+    return get_header_key(first_file, cm_num)
+
+
 def is_files_aligned(file_arr):
     ref_wcs = get_wcs(file_arr[0])
     for file in file_arr:
@@ -22,12 +37,15 @@ def is_files_aligned(file_arr):
 
 
 
+
+
+
 def get_file_path(keyword, dir):
     for f in listdir(dir):
         if keyword in f:
             return dir + "/" + f
            
-def get_parameter_2d_array(keyword_arr, latLims, lonRng):
+def get_parameter_2d_array(keyword_arr):
     '''
     Builds parameter array within lon/lat range of pixel radiances for specified keywords
 
@@ -47,25 +65,26 @@ def get_parameter_2d_array(keyword_arr, latLims, lonRng):
     Parameters
     ------------
     '''
-   
+
     dir_path = config["input"]
-    file_arr = []
+    radiances_arr = []
     file_name_arr = []
     for keyword in keyword_arr:
         file = get_file_path(keyword, dir_path)
         file_name_arr.append(file)
 
+    
+    
     if(is_files_aligned(np.array(file_name_arr)) == False):
         raise TypeError("files are not mapped to the same coordinates")
 
     for file_name in file_name_arr:
         radiance_arr = get_radiance_arr(file_name)
-  
-     
-        file_arr.append(subset_map(radiance_arr, latLims, lonRng).flatten())
-    res = np.array(file_arr)
+        #file_arr.append(subset_map(radiance_arr, latLims, lonLims, lonRng, CM).flatten())
+        radiances_arr.append(radiance_arr)
+
     
-    return res
+    return radiances_arr
 
 def get_map_shape(keyword, latLims, longLims):
       dir_path = config["input"]
@@ -85,14 +104,14 @@ def get_filtered_pix_arr(range_arr, pixel_arr):
     ----------
     filtered pix_arr with only pixel rows with all parameters in specified range
     '''
-
+    print(pixel_arr)
     range_arr = np.array(range_arr)
- 
     mins = range_arr[:, 0]
     maxs = range_arr[:, 1]
     #don't want to filter on last column(index)
     #want to filter up to pixel_arr.shape - 2 
-    pixel_param_cols = pixel_arr[:, 0:pixel_arr.shape[1] - 1]
+    #pixel_arr.shape[1] - 1
+    pixel_param_cols = pixel_arr[:, 0:range_arr.shape[0]]
     mask = (pixel_param_cols >= mins) & (pixel_param_cols <= maxs) 
     filtered = pixel_arr[np.all(mask, axis = 1)]
    
@@ -139,14 +158,73 @@ def get_pix_arr(param_arr, range_arr = []):
     return pixel_arr
 
     
-def subset_map(map, latLims, lonRng):
+def subset_map(map, LatLims, LonLims, LonRng, CM):
+    import numpy as np
+    import copy
+    print("map shape: " + str(map.shape))
+    scale=int(map.shape[0]/180)
+    print("######## scale=",scale)
+    lon_max=360*scale
+    LatLims=np.array(LatLims)*scale
+    LonRng=LonRng*scale
+    CM=CM*scale
+    LonLims=np.array(LonLims)*scale
+    
+    print(lon_max,LatLims,LonRng,CM,LonLims)
+    if(CM == 0):
+        return np.copy(map[LatLims[0]:LatLims[1],LonLims[0]:LonLims[1]])
+   
+    
+    if CM<LonRng:
+        print("******************  CM2deg<LonRng")
+        patch=np.concatenate((np.copy(map[LatLims[0]:LatLims[1],LonLims[0]-1:lon_max]),
+                              np.copy(map[LatLims[0]:LatLims[1],0:LonLims[1]-lon_max])),axis=1)
+    if CM>lon_max-LonRng:
+        print("******************  CM2deg>LonRng")
+
+        patch=np.concatenate((np.copy(map[LatLims[0]:LatLims[1],lon_max+LonLims[0]:lon_max]),
+                              np.copy(map[LatLims[0]:LatLims[1],0:LonLims[1]])),axis=1)
+        print("lon_max+LonLims[0]:lon_max,0:LonLims[1]=",lon_max+LonLims[0],lon_max,0,LonLims[1])
+    print("patch shape:" + str(patch.shape))
+    return patch    
+    '''
+    print(map.shape)
+    print(latLims)
+    print(lonRng)
     scale = int(map.shape[0]/ 180)
+    print(scale)
     latLims = np.array(latLims)* scale
-    lonRng= lonRng *scale
+    lonRng= np.array(lonRng) * scale
+    print(latLims)
+    print(lonRng)
     #print(latLims)
     #print(lonRng)
     #print(map[latLims[0]:latLims[1], lonRng[0]: lonRng[1]])
-    return map[latLims[0]:latLims[1], lonRng[0]: lonRng[1]]
+    '''
 
-#get_pix_arr([[60, 160], [1400, 2200]], ["NH3", "PCld"])
+
+def get_input_array(keywords, param_ranges,
+                        latRng, lngRng, cm_num):
+    radiances_arr = get_parameter_2d_array(keywords)
+
+    subpatches = []
+    first_file = get_file_path(keywords[0], config["input"])
+
+    CM = 0 if cm_num == 0 else get_cm(first_file, cm_num)
+    subset_shape = (0,0)
+
+    for radiance_arr in radiances_arr:
+        subset = subset_map(radiance_arr, latRng, lngRng, 180, CM)
+        subset_shape = subset.shape
+        subpatches.append(subset.flatten())
+
+    subpatches = np.array(subpatches)
+
+    pix_arr = np.column_stack(subpatches)
+    pix_arr = get_mapped_pix_arr(pix_arr)
+    pix_arr = get_filtered_pix_arr(param_ranges, pix_arr)
+    return [pix_arr, subset_shape]
+    
+
+
 
