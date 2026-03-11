@@ -17,7 +17,7 @@ def create_cluster_plot(keywords, param_ranges, n_comp = 5, cov_type = "full",
     fig, ax = plt.subplots()
     ax.yaxis.set_inverted(True)
     plt.scatter(input_arr[:, 0], input_arr[:, 1],c = pred,s = 1)
-    plt.title(f'clustering with {n_comp} components and {cov_type} covariances')
+    plt.title(f'clustering: {n_comp} component, {cov_type} covariances, Lat: {latRng[0]} - {latRng[1]}, Lon: {lngRng[0]} - {lngRng[1]}')
     plt.xlabel(keywords[0])
     plt.ylabel(keywords[1])
     plt.savefig(f'{config["output"]}/cluster_plots/clusters_{cov_type}_{n_comp}_.png')
