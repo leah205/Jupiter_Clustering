@@ -6,6 +6,7 @@ import pandas as pd
 import numpy as np
 #from scripts.preprocessing.preprocessing import get_filtered_pix_arr, subset_map, get_parameter_2d_array, get_map_shape
 import scripts.preprocessing.preprocessing as pre
+import scripts.preprocessing.mapping as mp
 matplotlib.use('Agg')
 from sklearn.metrics import silhouette_score
 from config.config import config
@@ -19,23 +20,26 @@ def create_clusters(pix_arr, cov_type, n_components):
 
     return predictions
 
-def create_cluster_plot(keywords, param_ranges, n_comp = 8, cov_type = "full", 
-                        latRng = [75, 105], lngRng = [90, 135], cm_num = 3
+def create_cluster_plot(keywords, param_ranges, n_comp = 5, cov_type = "full", 
+                        latRng = [65, 105], lngRng = [0, 360], cm_num = 3
                         ):
  
-    input_arr = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
+    input_arr = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)[0]
+    print(input_arr)
     pred = create_clusters(input_arr[:, [0,1]], cov_type, n_comp)
     print("silhouette score: " + str(silhouette_score(input_arr, pred)))
+    fig, ax = plt.subplots()
+    ax.yaxis.set_inverted(True)
     plt.scatter(input_arr[:, 0], input_arr[:, 1],c = pred,s = 1)
     plt.title(f'clustering with {n_comp} components and {cov_type} covariances')
     plt.xlabel(keywords[0])
     plt.ylabel(keywords[1])
-    plt.savefig(f'./data/visualizations/cluster_plots/clusters_{cov_type}_{n_comp}_.png')
+    plt.savefig(f'{config["output"]}/cluster_plots/clusters_{cov_type}_{n_comp}_.png')
     return 0
 
     
 def create_cluster_map_arr(keywords, param_ranges, n_comp = 5, cov_type = "full", 
-                           latRng = [75, 100], lngRng = [90, 100], cm_num = 3):
+                           latRng = [65, 115], lngRng = [0, 360], cm_num = 3):
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
     pred = create_clusters(input_arr[:, [0,1]], cov_type, n_comp)
     print("silhouette score: " + str(silhouette_score(input_arr, pred)))
@@ -51,6 +55,7 @@ def create_cluster_map_arr(keywords, param_ranges, n_comp = 5, cov_type = "full"
     hdul = fits.HDUList()
     hdul.append(fits.PrimaryHDU())
     hdul[0].data = mapped_clusters
+    mp.createLonMap(lngRng, hdul[0].shape[1])
     hdul.writeto(f'{config["output"]}/cluster_maps/spatial_map_{cov_type}_{n_comp}.fits', overwrite= True)
   
     
@@ -66,5 +71,6 @@ def create_cluster_map_arr(keywords, param_ranges, n_comp = 5, cov_type = "full"
 
 #create_cluster_map_arr( ["NH3", "PCld", "AOI", "CI"], [[60, 250], [1400, 2500], [0.1, 0.4], [0.35, 0.75]])
 
-create_cluster_map_arr(["NH3", "PCld"], [[60, 250], [1400, 2500]])
+create_cluster_map_arr(["NH3", "PCld"], [[30, 250], [1000, 2500]])
+#create_cluster_plot(["NH3", "PCld"], [[30, 250], [1000, 2500]])
 #print(silhouette_score(hst_pix_arr, pred))
