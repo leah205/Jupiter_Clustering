@@ -65,3 +65,5 @@ def create_cluster_arr(input_arr, subset_shape, pred):
     return mapped_clusters
 
 create_cluster_map(["NH3", "PCld"], [[30, 250], [1000, 2500]])
+
+#create_cluster_map_arr( ["NH3", "PCld", "AOI", "CI"], [[60, 250], [1400, 2500], [0.1, 0.4], [0.35, 0.75]])
