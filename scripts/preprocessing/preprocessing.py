@@ -128,9 +128,11 @@ def get_mapped_pix_arr(pix_arr):
     return mapped_pix_arr
  
     
-def subset_map(map, LatLims, LonLims, LonRng, CM):
+def subset_map(map, LatLims, LonLims,  CM):
     import numpy as np
     import copy
+
+    LonRng = (LonLims[1] - LonLims[0]) / 2
     print("map shape: " + str(map.shape))
     scale=int(map.shape[0]/180)
     print("######## scale=",scale)
@@ -146,12 +148,15 @@ def subset_map(map, LatLims, LonLims, LonRng, CM):
    
     
     if CM<LonRng:
+        #crosses longitude boundary to the left of CM
         print("******************  CM2deg<LonRng")
+        #slices of higher longitudes, lower longitudes concatenated
         patch=np.concatenate((np.copy(map[LatLims[0]:LatLims[1],LonLims[0]-1:lon_max]),
                               np.copy(map[LatLims[0]:LatLims[1],0:LonLims[1]-lon_max])),axis=1)
     if CM>lon_max-LonRng:
+        #crossses longitude boundary to the right of CM
         print("******************  CM2deg>LonRng")
-
+        #slices of higher longitudes, lower longitudes concatenated
         patch=np.concatenate((np.copy(map[LatLims[0]:LatLims[1],lon_max+LonLims[0]:lon_max]),
                               np.copy(map[LatLims[0]:LatLims[1],0:LonLims[1]])),axis=1)
         print("lon_max+LonLims[0]:lon_max,0:LonLims[1]=",lon_max+LonLims[0],lon_max,0,LonLims[1])
@@ -207,13 +212,13 @@ def get_input_array(keywords, param_ranges,
     subset_shape = (0,0)
 
     for radiance_arr in radiances_arr:
-        subset = subset_map(radiance_arr, latRng, lngRng, 180, CM)
+        subset = subset_map(radiance_arr, latRng, lngRng, CM)
         subset_shape = subset.shape
         subpatches.append(subset.flatten())
 
     subpatches = np.array(subpatches)
-
     pix_arr = np.column_stack(subpatches)
+    #pix_arr = np.flipud(pix_arr)
     pix_arr = get_mapped_pix_arr(pix_arr)
     pix_arr = get_filtered_pix_arr(param_ranges, pix_arr)
     return [pix_arr, subset_shape]
