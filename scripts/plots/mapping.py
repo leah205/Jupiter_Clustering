@@ -22,12 +22,12 @@ def create_axis(LatLims, LonLims, Ltitle, LonSys):
     axs3.set_adjustable('box') 
     return axs3
 
-def plot_patch(patch, LatLims, LonLims, axis, colorscale, vn = 0, vx = 10, n = 10):
+def plot_patch(patch, LatLims, LonLims, axis, colorscale, vn = -1, vx = 10, n = 11):
     '''
     Purpose:
         to plot a patch with appropriate longitude/latitude scales
     '''
-    np.nan_to_num(patch, copy=False, nan=0.0, posinf=0.0, neginf=0.0)
+    np.nan_to_num(patch, copy=False, nan=-1.0, posinf=0.0, neginf=0.0)
     tx=np.linspace(vn,vx,n,endpoint=True)
     print(patch)
     show=axis.imshow(patch, colorscale, origin='upper',vmin=vn,vmax=vx,  
@@ -64,6 +64,7 @@ def create_cluster_arr(input_arr, subset_shape, pred):
     mapped_clusters = oned_mapped_clusters.reshape(subset_shape)
     return mapped_clusters
 
-create_cluster_map(["NH3", "PCld"], [[30, 250], [1000, 2500]])
+#create_cluster_map(["NH3", "PCld"], [[30, 250], [1000, 2500]])
+create_cluster_map(["NH3", "PCld"], [[60, 160], [1600, 2200]])
 
 #create_cluster_map_arr( ["NH3", "PCld", "AOI", "CI"], [[60, 250], [1400, 2500], [0.1, 0.4], [0.35, 0.75]])
