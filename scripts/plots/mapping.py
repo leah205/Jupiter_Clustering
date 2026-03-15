@@ -2,6 +2,7 @@ from astropy.io import fits
 import numpy as np
 import pylab as pl
 import scripts.preprocessing.preprocessing as pre
+import scripts.plots.plots as plots
 import scripts.clustering.clusters as CL 
 from sklearn.metrics import silhouette_score
 from config.config import config
@@ -38,12 +39,9 @@ def plot_patch(patch, LatLims, LonLims, axis, colorscale, vn = -1, vx = 10, n = 
     im_ratio = patch.shape[0]/patch.shape[1]
 
     
-def create_cluster_map(date, keywords, param_ranges, n_comp = 5, cov_type = "full", 
-                           latRng = [65, 115], lngRng = [0, 50], cm_num = 3):
-    [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
-    pred = CL.create_clusters(input_arr[:, [0,1]], cov_type, n_comp)
-    #print("silhouette score: " + str(silhouette_score(input_arr, pred)))
-    sil_score = str(round(silhouette_score(input_arr, pred), 3))
+def create_cluster_map(date, n_comp, pred, input_arr, subset_shape, sil_score,
+                           latRng, lngRng, cm_num = 3):
+   
     cluster_map = create_cluster_arr(input_arr, subset_shape, pred)
     LTitle = f'{n_comp} components date:{date} score: {sil_score}'
     axis = create_axis([latRng[0] - 90, 90 - latRng[1]], lngRng, LTitle, cm_num)
@@ -66,8 +64,4 @@ def create_cluster_arr(input_arr, subset_shape, pred):
     mapped_clusters = oned_mapped_clusters.reshape(subset_shape)
     return mapped_clusters
 
-#create_cluster_map(["NH3", "PCld"], [[30, 250], [1000, 2500]])
-create_cluster_map("20251214", ["NH3", "PCld"], [[0, 300], [1000, 3000]], 5)
-create_cluster_map("20251214", ["NH3", "PCld"], [[0, 300], [1000, 3000]], 4)
 
-#create_cluster_map_arr( ["NH3", "PCld", "AOI", "CI"], [[60, 250], [1400, 2500], [0.1, 0.4], [0.35, 0.75]])

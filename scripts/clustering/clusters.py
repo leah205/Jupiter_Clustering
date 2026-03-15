@@ -17,7 +17,6 @@ def create_clusters(pix_arr, cov_type, n_components):
     print("fitting model...")
     gmm_model.fit(pix_arr)
     predictions = gmm_model.predict(pix_arr)
-
     return predictions
 
 
