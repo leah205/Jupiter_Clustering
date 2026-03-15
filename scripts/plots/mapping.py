@@ -23,15 +23,20 @@ def create_axis(LatLims, LonLims, Ltitle, LonSys):
     axs3.set_adjustable('box') 
     return axs3
 
-def plot_patch(patch, LatLims, LonLims, axis, colorscale, vn = -1, vx = 10, n = 11):
+def plot_patch(patch, LatLims, LonLims, axis, cmap, n_comp):
     '''
     Purpose:
         to plot a patch with appropriate longitude/latitude scales
     '''
+    vn = -1
+    vx = n_comp - 1
+    n = vx - vn
     np.nan_to_num(patch, copy=False, nan=-1.0, posinf=0.0, neginf=0.0)
     tx=np.linspace(vn,vx,n,endpoint=True)
-    print(patch)
-    show=axis.imshow(patch, colorscale, origin='upper',vmin=vn,vmax=vx,  
+    for p in patch:
+        print(p)
+
+    show=axis.imshow(patch,  origin='upper', cmap = cmap, vmin=vn,vmax=vx,  
                extent=[360-LonLims[0],360-LonLims[1],90-LatLims[1],
                        90-LatLims[0]],
                        aspect="equal")
@@ -40,12 +45,12 @@ def plot_patch(patch, LatLims, LonLims, axis, colorscale, vn = -1, vx = 10, n = 
 
     
 def create_cluster_map(date, n_comp, pred, input_arr, subset_shape, sil_score,
-                           latRng, lngRng, cm_num = 3):
-   
+                           latRng, lngRng, cmap, cm_num = 3):
+    print(cmap)
     cluster_map = create_cluster_arr(input_arr, subset_shape, pred)
     LTitle = f'{n_comp} components date:{date} score: {sil_score}'
     axis = create_axis([latRng[0] - 90, 90 - latRng[1]], lngRng, LTitle, cm_num)
-    plot_patch(cluster_map, latRng, lngRng, axis, "jet")
+    plot_patch(cluster_map, latRng, lngRng, axis, cmap, n_comp)
     fig = axis.get_figure()
     lat_lon_str = f'{latRng[0]}-{latRng[1]}_{lngRng[0]}-{lngRng[1]}'
     fig.savefig(f'{config["output"]}/cluster_maps/spatial_map_{date}_{lat_lon_str}_{n_comp}.png')

@@ -6,15 +6,15 @@ import scripts.clustering.clusters as CL
 import numpy as np
 
 
-def create_cluster_plot(date, keywords, input_arr, pred, sil_score, n_comp = 5, cov_type = "full", 
-                        latRng = [65, 105], lngRng = [0, 50], cm_num = 3
+def create_cluster_plot(date, keywords, input_arr, pred, sil_score, n_comp, cov_type, 
+                        latRng, lngRng, cmap, cm_num = 3
                         ):
  
  
     #print("silhouette score: " + str(silhouette_score(input_arr, pred)))
     fig, ax = plt.subplots()
     ax.yaxis.set_inverted(True)
-    plt.scatter(input_arr[:, 0], input_arr[:, 1],c = pred,s = 1)
+    plt.scatter(input_arr[:, 0], input_arr[:, 1],c = pred,s = 1, cmap = cmap)
     plt.suptitle(f' Lat: {latRng[0]} - {latRng[1]}, Lon: {lngRng[0]} - {lngRng[1]} {date}')
     plt.title(f'{n_comp} components, silhouette: {sil_score} ')
     plt.xlabel(keywords[0])
