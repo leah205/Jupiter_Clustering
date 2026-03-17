@@ -6,20 +6,18 @@ import scripts.clustering.clusters as CL
 import numpy as np
 
 
-def create_cluster_plot(date, keywords, input_arr, pred, sil_score, n_comp, cov_type, 
+def create_cluster_plot(ax, date, keywords, input_arr, pred, sil_score, n_comp, cov_type, 
                         latRng, lngRng, cmap, cm_num = 3
                         ):
  
  
     #print("silhouette score: " + str(silhouette_score(input_arr, pred)))
-    fig, ax = plt.subplots()
+    #fig, ax = plt.subplots()
     ax.yaxis.set_inverted(True)
-    plt.scatter(input_arr[:, 0], input_arr[:, 1],c = pred,s = 1, cmap = cmap)
-    plt.suptitle(f' Lat: {latRng[0]} - {latRng[1]}, Lon: {lngRng[0]} - {lngRng[1]} {date}')
-    plt.title(f'{n_comp} components, silhouette: {sil_score} ')
-    plt.xlabel(keywords[0])
-    plt.ylabel(keywords[1])
-    lat_lon_str = f'{latRng[0]}-{latRng[1]}_{lngRng[0]}-{lngRng[1]}'
-    plt.savefig(f'{config["output"]}/cluster_plots/clusters_{date}_{lat_lon_str}_{cov_type}_{n_comp}_.png')
+    ax.scatter(input_arr[:, 0], input_arr[:, 1],c = pred,s = 1, cmap = cmap)
+    
+    ax.set_xlabel(keywords[0])
+    ax.set_ylabel(keywords[1])
+    
     return 0
 

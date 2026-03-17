@@ -10,13 +10,17 @@ import scripts.preprocessing.preprocessing as pre
 matplotlib.use('Agg')
 from sklearn.metrics import silhouette_score
 from config.config import config
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
 
 
 def create_clusters(pix_arr, cov_type, n_components):
     gmm_model = GMM(n_components=n_components, covariance_type=cov_type)
+    pipe = Pipeline([('scaler', StandardScaler()), ('gmm', gmm_model)])
     print("fitting model...")
-    gmm_model.fit(pix_arr)
-    predictions = gmm_model.predict(pix_arr)
+    pipe.fit(pix_arr)
+    predictions = pipe.predict(pix_arr)
+    print(predictions)
     return predictions
 
 

@@ -7,8 +7,8 @@ import scripts.clustering.clusters as CL
 from sklearn.metrics import silhouette_score
 from config.config import config
 
-def create_axis(LatLims, LonLims, Ltitle, LonSys):
-    fig3,axs3=pl.subplots(dpi=150, facecolor="white")
+def create_axis(axs3, LatLims, LonLims, LonSys):
+    #fig3,axs3=pl.subplots(dpi=150, facecolor="white")
     axs3.grid(linewidth=0.2)
     axs3.ylim=[LatLims[0] ,LatLims[1]]
     axs3.xlim=[360-LonLims[0],360-LonLims[1]]
@@ -19,7 +19,7 @@ def create_axis(LatLims, LonLims, Ltitle, LonSys):
     axs3.tick_params(axis='both', which='major', labelsize=9)
     axs3.set_ylabel("Planetographic Latitude (deg)",fontsize=10)
     axs3.set_xlabel("Sys. "+ str(LonSys) +" Longitude (deg)",fontsize=10)
-    axs3.set_title(Ltitle,fontsize=10)
+ 
     axs3.set_adjustable('box') 
     return axs3
 
@@ -44,16 +44,14 @@ def plot_patch(patch, LatLims, LonLims, axis, cmap, n_comp):
     im_ratio = patch.shape[0]/patch.shape[1]
 
     
-def create_cluster_map(date, n_comp, pred, input_arr, subset_shape, sil_score,
+def create_cluster_map(axis, date, n_comp, pred, input_arr, subset_shape, sil_score,
                            latRng, lngRng, cmap, cm_num = 3):
-    print(cmap)
+   
     cluster_map = create_cluster_arr(input_arr, subset_shape, pred)
-    LTitle = f'{n_comp} components date:{date} score: {sil_score}'
-    axis = create_axis([latRng[0] - 90, 90 - latRng[1]], lngRng, LTitle, cm_num)
+    create_axis(axis, [latRng[0] - 90, 90 - latRng[1]], lngRng,  cm_num)
     plot_patch(cluster_map, latRng, lngRng, axis, cmap, n_comp)
-    fig = axis.get_figure()
-    lat_lon_str = f'{latRng[0]}-{latRng[1]}_{lngRng[0]}-{lngRng[1]}'
-    fig.savefig(f'{config["output"]}/cluster_maps/spatial_map_{date}_{lat_lon_str}_{n_comp}.png')
+  
+    
 
 
 
