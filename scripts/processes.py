@@ -11,7 +11,7 @@ from matplotlib.colors import ListedColormap
 
 
 def output_cluster_map_and_plot(date, keywords, param_ranges, n_comp = 5, cov_type = "full", 
-                           latRng = [75, 105], lngRng = [0, 360], cm_num = 3):
+                           latRng = [65, 115], lngRng = [0, 50], cm_num = 3):
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
     pred = CL.create_clusters(input_arr[:, [0,1]], cov_type, n_comp)
     sil_score = str(round(silhouette_score(input_arr, pred), 3))
