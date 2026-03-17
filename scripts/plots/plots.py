@@ -1,32 +1,23 @@
 import matplotlib.pyplot as plt
-from scripts.preprocessing.preprocessing import get_parameter_2d_array, get_pix_arr
+import scripts.preprocessing.preprocessing as pre
+from config.config import config
+from sklearn.metrics import silhouette_score
+import scripts.clustering.clusters as CL
 import numpy as np
-from scipy.stats import gaussian_kde
-
-#are the axes ranges even right?
-#get denser regions
-def create_plot(input_array, param1, param2):
-    print(input_array.ndim)
-    print(input_array.shape)
-    if not isinstance(input_array, np.ndarray) or input_array.ndim != 2:
-        raise TypeError("input should be 3d array")
-    x = input_array[0]
-    y = input_array[1]
-   # flattened_arr = input_array.reshape(2, -1)
-    mask =  ~np.isnan(x) & ~np.isnan(y)
-    x_vals, y_vals = x[mask], y[mask]
-    xy = np.vstack([x_vals,y_vals])
-    z = gaussian_kde(xy)(xy)
-    ax = plt.gca()
-    ax.set_xlim([0, 200])
-    ax.set_ylim([2200, 1600])
-    plt.scatter(x_vals, y_vals, c = z, s = 1)
-    plt.xlabel(param1)
-    plt.ylabel(param2)
-    plt.show()
 
 
-
-#create_plot(get_parameter_2d_array(["NH3", "PCld"]), "ammonia content", "cloud pressure")
-#create_plot(get_pix_arr([[60, 160], [1400, 2200]], ["NH3", "PCld"] ), "ammonia content", "cloud pressure")
+def create_cluster_plot(ax, date, keywords, input_arr, pred, sil_score, n_comp, cov_type, 
+                        latRng, lngRng, cmap, cm_num = 3
+                        ):
+ 
+ 
+    #print("silhouette score: " + str(silhouette_score(input_arr, pred)))
+    #fig, ax = plt.subplots()
+    ax.yaxis.set_inverted(True)
+    ax.scatter(input_arr[:, 0], input_arr[:, 1],c = pred,s = 1, cmap = cmap)
+    
+    ax.set_xlabel(keywords[0])
+    ax.set_ylabel(keywords[1])
+    
+    return 0
 
