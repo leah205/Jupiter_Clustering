@@ -28,13 +28,13 @@ def plot_patch(patch, LatLims, LonLims, axis, cmap, n_comp):
     Purpose:
         to plot a patch with appropriate longitude/latitude scales
     '''
-    vn = -1
-    vx = n_comp - 1
+    vn = 0
+    vx = n_comp 
     n = vx - vn
+    cmap.set_under('black')
     np.nan_to_num(patch, copy=False, nan=-1.0, posinf=0.0, neginf=0.0)
     tx=np.linspace(vn,vx,n,endpoint=True)
-    for p in patch:
-        print(p)
+    
 
     show=axis.imshow(patch,  origin='upper', cmap = cmap, vmin=vn,vmax=vx,  
                extent=[360-LonLims[0],360-LonLims[1],90-LatLims[1],
