@@ -84,6 +84,16 @@ def get_map_shape(keyword, latLims, longLims):
       radiance_arr = get_radiance_arr(file)
       return subset_map(radiance_arr, latLims, longLims).shape
 
+
+def get_patch(keyword, latLims, lngLims, cm_num = 3):
+    
+
+    file = get_file_path(keyword, config["input"])
+    CM = 0 if cm_num == 0 else get_cm(file, cm_num)
+    radiance_arr = get_radiance_arr(file)
+    return subset_map(radiance_arr, latLims, lngLims, CM)
+
+
 def get_filtered_pix_arr(range_arr, pixel_arr):
   
     '''

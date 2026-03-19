@@ -51,7 +51,7 @@ def create_cluster_map(axis, date, n_comp, pred, input_arr, subset_shape, sil_sc
     create_axis(axis, [latRng[0] - 90, 90 - latRng[1]], lngRng,  cm_num)
     plot_patch(cluster_map, latRng, lngRng, axis, cmap, n_comp)
   
-    
+
 
 
 
