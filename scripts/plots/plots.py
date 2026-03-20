@@ -6,7 +6,7 @@ import scripts.clustering.clusters as CL
 import numpy as np
 
 
-def create_cluster_plot(ax, date, keywords, input_arr, pred, sil_score, n_comp, cov_type, 
+def create_cluster_plot(ax, keywords, input_arr, pred, n_comp, cov_type, 
                         latRng, lngRng, cmap, cm_num = 3
                         ):
  
