@@ -1,8 +1,8 @@
 config = {
   
-    #'input': "data/HST"
-    'input': "data/L4/20251214UT",
-    "output": "data/visualizations/ground_data"
+    'input': "data/HST/20251016UT",
+    #'input': "data/L4/20251214UT",
+    "output": "data/visualizations/HST/20251016UT"
     
 
 }

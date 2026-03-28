@@ -1,6 +1,7 @@
 from config.config import config
 from os import listdir
 from astropy.io import fits
+#from reproject import reproject_interp
 import numpy as np
 from astropy.wcs import WCS
 
@@ -11,6 +12,7 @@ def get_radiance_arr(file):
 def get_wcs(file):
     hdul = fits.open(file)
     hdr = hdul[0].header
+    #print(WCS(hdr))
     return WCS(hdr)
 
 def get_header_key(file, key):
@@ -30,10 +32,33 @@ def get_cm(first_file, cm_num):
 
 def is_files_aligned(file_arr):
     ref_wcs = get_wcs(file_arr[0])
+    
     for file in file_arr:
+        
         if(ref_wcs.wcs.compare(get_wcs(file).wcs) == False):
             return False
     return True
+'''
+def get_radiances(file_arr):
+    #ref_file = fits.open(file_arr[0])
+    ref_wcs = get_wcs(file_arr[0])
+    ref_hdr = fits.open(file_arr[0])[0].header
+    new_arr = []
+    for file in file_arr:
+        
+        if(ref_wcs.wcs.compare(get_wcs(file).wcs) == False):
+            hdul = fits.open(file)
+            radiance_arr = reproject_interp(hdul, ref_hdr)[0]
+        else:
+            radiance_arr = get_radiance_arr(file)
+'''
+
+def get_radiances(file_arr):
+    radiances = []
+    for file in file_arr:
+       radiances.append(get_radiance_arr(file))
+    return radiances
+
 
 
 def get_file_path(keyword, dir):
@@ -63,20 +88,24 @@ def get_parameter_2d_array(keyword_arr):
     '''
 
     dir_path = config["input"]
-    radiances_arr = []
     file_name_arr = []
     for keyword in keyword_arr:
         file = get_file_path(keyword, dir_path)
         file_name_arr.append(file)
 
+    ''' radiances_arr = []
     if(is_files_aligned(np.array(file_name_arr)) == False):
+        get_align_files(np.array(file_name_arr)
         raise TypeError("files are not mapped to the same coordinates")
 
     for file_name in file_name_arr:
         radiance_arr = get_radiance_arr(file_name)
         radiances_arr.append(radiance_arr)
 
-    return radiances_arr
+    return radiances_arr'''
+    radiances = get_radiances(file_name_arr)
+    print(radiances)
+    return radiances
 
 def get_map_shape(keyword, latLims, longLims):
       dir_path = config["input"]
@@ -214,6 +243,8 @@ def get_input_array(keywords, param_ranges,
     filtered with rangeArr
     '''
     radiances_arr = get_parameter_2d_array(keywords)
+    print("radiance arr:")
+    print(radiances_arr)
 
     subpatches = []
     first_file = get_file_path(keywords[0], config["input"])
@@ -231,6 +262,8 @@ def get_input_array(keywords, param_ranges,
     #pix_arr = np.flipud(pix_arr)
     pix_arr = get_mapped_pix_arr(pix_arr)
     pix_arr = get_filtered_pix_arr(param_ranges, pix_arr)
+    print("pix arr")
+    print(pix_arr)
     return [pix_arr, subset_shape]
     
 
