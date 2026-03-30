@@ -19,7 +19,7 @@ def output_cluster_map_and_plot(date, keywords, param_ranges,
     pred = CL.create_clusters(input_arr[:, [0,1]], cov_type, n_comp, config["soft_clustering"])
     sil_score = "hello"
     #str(round(silhouette_score(input_arr, pred), 3))
-    colors = np.random.rand(n_comp, 3)
+    colors = np.random.rand(n_comp, 4)
     cmap = ListedColormap(colors)
 
     fig, axis = pl.subplots(2, 1)
@@ -69,7 +69,7 @@ def create_map_comparison(date, keywords, param_ranges,
                             n_comp = 4, cov_type = "full",  cm_num = 3):
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
     print("clustering...")
-    pred = CL.create_clusters(input_arr[:, [0,1]], cov_type, n_comp)
+    pred = CL.create_clusters(input_arr[:, [0,1]], cov_type, n_comp, config["soft_clustering"])
     print("finished")
     #sil_score = str(round(silhouette_score(input_arr, pred), 3))
     sil_score = "hello"

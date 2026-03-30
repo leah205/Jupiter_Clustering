@@ -29,7 +29,9 @@ def plot_patch(patch, LatLims, LonLims, cmap, axis, v_min, v_max, title, cm_num,
         to plot a patch with appropriate longitude/latitude scales
     '''
     vn = v_min
-    vx = v_max
+    vx = v_max 
+    print(vn)
+    print(vx)
     #fdvactor here
     n = vx - vn
     create_axis(axis, [LatLims[0] - 90, 90 - LatLims[1]], LonLims,  cm_num)
