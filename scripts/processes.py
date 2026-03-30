@@ -12,8 +12,9 @@ import pylab as pl
 
 
 
-def output_cluster_map_and_plot(date, keywords, param_ranges, n_comp = 5, cov_type = "full", 
-                           latRng = [85, 95], lngRng = [230, 330], cm_num = 3):
+def output_cluster_map_and_plot(date, keywords, param_ranges, 
+                           latRng = [85, 95], lngRng = [230, 330], 
+                           n_comp = 4, cov_type = "full", cm_num = 3):
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
     pred = CL.create_clusters(input_arr[:, [0,1]], cov_type, n_comp)
     sil_score = "hello"
@@ -28,8 +29,9 @@ def output_cluster_map_and_plot(date, keywords, param_ranges, n_comp = 5, cov_ty
     lat_lon_str = f'{latRng[0]}-{latRng[1]}_{lngRng[0]}-{lngRng[1]}'
     fig.savefig(f'{config["output"]}/{date}_{lat_lon_str}_{n_comp}_map_and_plot.png')
 
-def output_cluster_map(date, keywords, param_ranges, n_comp = 5, cov_type = "full", 
-                           latRng = [65, 115], lngRng = [0, 50], cm_num = 3):
+def output_cluster_map(date, keywords, param_ranges, 
+                           latRng = [65, 115], lngRng = [0, 50], 
+                            n_comp = 4, cov_type = "full", cm_num = 3):
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
     pred = CL.create_clusters(input_arr[:, [0,1]], cov_type, n_comp)
     sil_score = str(round(silhouette_score(input_arr, pred), 3))
@@ -42,8 +44,9 @@ def output_cluster_map(date, keywords, param_ranges, n_comp = 5, cov_type = "ful
     fig.savefig(f'{config["output"]}/cluster_maps/spatial_map_{date}_{lat_lon_str}_{n_comp}.png')
 
 
-def output_cluster_plot(date, keywords, param_ranges, n_comp = 5, cov_type = "full", 
-                           latRng = [90, 95], lngRng = [330, 330], cm_num = 3):
+def output_cluster_plot(date, keywords, param_ranges, 
+                           latRng = [90, 95], lngRng = [330, 330], 
+                           n_comp = 4, cov_type = "full",  cm_num = 3):
     
    
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
@@ -61,8 +64,9 @@ def output_cluster_plot(date, keywords, param_ranges, n_comp = 5, cov_type = "fu
 
 
 
-def create_map_comparison(date, keywords, param_ranges, n_comp = 5, cov_type = "full", 
-                           latRng = [85, 95], lngRng = [230, 330], cm_num = 3):
+def create_map_comparison(date, keywords, param_ranges, 
+                           latRng = [85, 95], lngRng = [230, 330],
+                            n_comp = 4, cov_type = "full",  cm_num = 3):
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
     print("clustering...")
     pred = CL.create_clusters(input_arr[:, [0,1]], cov_type, n_comp)
@@ -93,8 +97,8 @@ def create_map_comparison(date, keywords, param_ranges, n_comp = 5, cov_type = "
 
 #output_cluster_map("20251214", ["NH3", "PCld"], [[0, 300], [1000, 3000]], 5)
 #get correct filters
-create_map_comparison("20251016", ["NH3", "PCld", "AOI", "CI"], [[100, 300], [1500,  2500], [0, 1], [0, 1]], 4)#
-output_cluster_map_and_plot("20251016", ["NH3", "PCld", "AOI", "CI"], [[100, 300], [1500,  2500], [0, 1], [0, 1]], 4)
+create_map_comparison("20251016", ["NH3", "PCld", "AOI", "CI"], [[100, 300], [1500,  2500], [0, 1], [0, 1]])#
+output_cluster_map_and_plot("20251016", ["NH3", "PCld", "AOI", "CI"], [[100, 300], [1500,  2500], [0, 1], [0, 1]])
 
 
 #output_cluster_map_and_plot("20251214", ["NH3", "PCld"], [[0, 300], [1000, 3000]], 5)
