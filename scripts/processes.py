@@ -19,8 +19,11 @@ def output_cluster_map_and_plot(date, keywords, param_ranges,
     pred = CL.create_clusters(input_arr[:, [0,1]], cov_type, n_comp, config["soft_clustering"])
     sil_score = "hello"
     #str(round(silhouette_score(input_arr, pred), 3))
-    colors = np.random.rand(n_comp, 4)
+    #colors = np.random.rand(n_comp, 3)
+    colors =["red", "green", "blue", "yellow"]
     cmap = ListedColormap(colors)
+    print("colors")
+    print(colors)
 
     fig, axis = pl.subplots(2, 1)
     MP.create_cluster_map(axis[0], n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, cm_num)
@@ -35,7 +38,8 @@ def output_cluster_map(date, keywords, param_ranges,
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
     pred = CL.create_clusters(input_arr[:, [0,1]], cov_type, n_comp)
     sil_score = str(round(silhouette_score(input_arr, pred), 3))
-    colors = np.random.rand(n_comp, 3)
+    #colors = np.random.rand(n_comp, 3)
+    colors =["red", "green", "blue", "yellow"]
     cmap = ListedColormap(colors)
     fig, axis = pl.subplots(1, 1)
     MP.create_cluster_map(axis, n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, cm_num)
@@ -53,7 +57,8 @@ def output_cluster_plot(date, keywords, param_ranges,
     pred = CL.create_clusters(input_arr[:, [0,1]], cov_type, n_comp)
     print(pred)
     sil_score = str(round(silhouette_score(input_arr, pred), 3))
-    colors = np.random.rand(n_comp, 3)
+    #colors = np.random.rand(n_comp, 3)
+    colors = ["red", "green", "blue", "yellow"]
     cmap = ListedColormap(colors)
     fig, axis = pl.subplots(1, 1)
     PL.create_cluster_plot(axis, keywords, input_arr, pred,  n_comp, cov_type, latRng, lngRng, cmap, cm_num)
@@ -75,7 +80,7 @@ def create_map_comparison(date, keywords, param_ranges,
     sil_score = "hello"
 
     print("computed sil score")
-    colors = np.random.rand(n_comp, 3)
+    colors = ["red", "green", "blue", "yellow"]
     cmap = ListedColormap(colors)
     print("start fig")
     fig, axis = pl.subplots(3, 1, constrained_layout = True)
@@ -97,7 +102,7 @@ def create_map_comparison(date, keywords, param_ranges,
 
 #output_cluster_map("20251214", ["NH3", "PCld"], [[0, 300], [1000, 3000]], 5)
 #get correct filters
-create_map_comparison("20251016", ["NH3", "PCld", "AOI", "CI"], [[100, 300], [1500,  2500], [0, 1], [0, 1]])#
+#create_map_comparison("20251016", ["NH3", "PCld", "AOI", "CI"], [[100, 300], [1500,  2500], [0, 1], [0, 1]])#
 output_cluster_map_and_plot("20251016", ["NH3", "PCld", "AOI", "CI"], [[100, 300], [1500,  2500], [0, 1], [0, 1]])
 
 

@@ -6,6 +6,7 @@ import scripts.plots.plots as plots
 import scripts.clustering.clusters as CL 
 from sklearn.metrics import silhouette_score
 from config.config import config
+from matplotlib import colors
 
 def create_axis(axs3, LatLims, LonLims, LonSys):
     #fig3,axs3=pl.subplots(dpi=150, facecolor="white")
@@ -23,23 +24,20 @@ def create_axis(axs3, LatLims, LonLims, LonSys):
     axs3.set_adjustable('box') 
     return axs3
 
-def plot_patch(patch, LatLims, LonLims, cmap, axis, v_min, v_max, title, cm_num, fig = None, cbarplot = False, cbar_title = "test"):
+def plot_cluster_patch(patch, LatLims, LonLims, cmap, axis, v_min, v_max, title, cm_num, fig = None, cbarplot = False, cbar_title = "test"):
     '''
     Purpose:
-        to plot a patch with appropriate longitude/latitude scales
-    '''
-    vn = v_min
-    vx = v_max 
-    print(vn)
-    print(vx)
-    #fdvactor here
-    n = vx - vn
+        to plot a patch of clusters with appropriate longitude/latitude scales
+    '''  
+    n = v_max - v_min
+    bounds = [i for i in range(v_max - v_min + 1)]
+    norm = colors.BoundaryNorm(bounds, cmap.N)
     create_axis(axis, [LatLims[0] - 90, 90 - LatLims[1]], LonLims,  cm_num)
     np.nan_to_num(patch, copy=False, nan=-1.0, posinf=0.0, neginf=0.0)
-    tx=np.linspace(vn,vx,5 ,endpoint=True)
+    tx=np.linspace(v_max,v_min,n ,endpoint=True)
     
 
-    show=axis.imshow(patch,  origin='upper', cmap = cmap, vmin=vn,vmax=vx,  
+    show=axis.imshow(patch,  origin='upper', interpolation = 'nearest', cmap = cmap, norm = norm,  
                extent=[360-LonLims[0],360-LonLims[1],90-LatLims[1],
                        90-LatLims[0]],
                        aspect="equal")
@@ -65,14 +63,57 @@ def plot_patch(patch, LatLims, LonLims, cmap, axis, v_min, v_max, title, cm_num,
         #if cbar_reverse:
         #    cbar.ax.invert_yaxis()
 
+
+def plot_patch(patch, LatLims, LonLims, cmap, axis, v_min, v_max, title, cm_num, fig = None, cbarplot = False, cbar_title = "test"):
+    '''
+    Purpose:
+        to plot a patch with appropriate longitude/latitude scales
+    '''  
+    vn = v_min
+    vx = v_max
+    #fdvactor here
+    n = vx - vn
+    create_axis(axis, [LatLims[0] - 90, 90 - LatLims[1]], LonLims,  cm_num)
+    np.nan_to_num(patch, copy=False, nan=-1.0, posinf=0.0, neginf=0.0)
+    tx=np.linspace(vn,vx,5 ,endpoint=True)
     
+
+    show=axis.imshow(patch,  origin='upper', cmap = cmap, vmin=vn,vmax=vx,  
+               extent=[360-LonLims[0],360-LonLims[1],90-LatLims[1],
+                       90-LatLims[0]],
+                       aspect="equal")
+    #axis.set_title(title, pad = 15)
+
+    im_ratio = patch.shape[0]/patch.shape[1]
+    #axis.set_title(title, pad = 15)
+
+    im_ratio = patch.shape[0]/patch.shape[1]
+    
+    if cbarplot:
+        cbar = fig.colorbar(show, ticks=tx, 
+                   orientation='vertical',
+                   ax=axis,fraction=0.046*im_ratio, pad=0.05)
+        #cbar.ax.set_yticklabels(np.around(tx,3))
+
+
+        #cbar.set_ticks(tx)
+        #cbar.set_ticklabels(np.around(tx, 3))
+        #cbar.ax.tick_params(labelsize=6,color="k")#if iSession >1:
+        #cbar.ax.set_ylabel(cbar_title, size=6)#,labelpad=-20, y=0.5)
+
+
+        #cbar.ax.yaxis.set_label_coords(-1.5, 0.5)
+        #cbar.ax.yaxis.set_label_coords(-2.1, 0.5)
+        #if cbar_reverse:
+        #    cbar.ax.invert_yaxis()
+
 def create_cluster_map(axis,  n_comp, pred, input_arr, subset_shape, 
                            latRng, lngRng, cmap, cm_num = 3):
    
     cluster_map = create_cluster_arr(input_arr, subset_shape, pred)
     
     cmap.set_under("black")
-    plot_patch(cluster_map, latRng, lngRng,  cmap, axis,  0, n_comp, "cluster map", cm_num)
+    plot_cluster_patch(cluster_map, latRng, lngRng,  cmap, axis,  0, n_comp, "cluster map", cm_num)
 
 
 
