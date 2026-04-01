@@ -49,22 +49,21 @@ def plot_cluster_patch(patch, LatLims, LonLims, cmap, axis, v_min, v_max, title,
         cbar = fig.colorbar(show, ticks=tx, 
                    orientation='vertical',
                    ax=axis,fraction=0.046*im_ratio, pad=0.05)
-        #cbar.ax.set_yticklabels(np.around(tx,3))
+        cbar.ax.set_yticklabels(np.around(tx,3))
 
 
-        #cbar.set_ticks(tx)
-        #cbar.set_ticklabels(np.around(tx, 3))
-        #cbar.ax.tick_params(labelsize=6,color="k")#if iSession >1:
-        #cbar.ax.set_ylabel(cbar_title, size=6)#,labelpad=-20, y=0.5)
+        cbar.set_ticks(tx)
+        cbar.set_ticklabels(np.around(tx, 3))
+        cbar.ax.tick_params(labelsize=6,color="k")#if iSession >1:
+        cbar.ax.set_ylabel(cbar_title, size=6)#,labelpad=-20, y=0.5)
 
 
-        #cbar.ax.yaxis.set_label_coords(-1.5, 0.5)
-        #cbar.ax.yaxis.set_label_coords(-2.1, 0.5)
-        #if cbar_reverse:
-        #    cbar.ax.invert_yaxis()
+        cbar.ax.yaxis.set_label_coords(-1.5, 0.5)
+        cbar.ax.yaxis.set_label_coords(-2.1, 0.5)
+        #cbar.remove()
 
 
-def plot_patch(patch, LatLims, LonLims, cmap, axis, v_min, v_max, title, cm_num, fig = None, cbarplot = False, cbar_title = "test"):
+def plot_patch(patch, LatLims, LonLims, cmap, axis, v_min, v_max, title, cm_num, fig = None, cbarplot = True, cbar_title = "test", cbar_reverse = False):
     '''
     Purpose:
         to plot a patch with appropriate longitude/latitude scales
@@ -90,30 +89,31 @@ def plot_patch(patch, LatLims, LonLims, cmap, axis, v_min, v_max, title, cm_num,
     im_ratio = patch.shape[0]/patch.shape[1]
     
     if cbarplot:
+        print("hello world")
         cbar = fig.colorbar(show, ticks=tx, 
                    orientation='vertical',
                    ax=axis,fraction=0.046*im_ratio, pad=0.05)
-        #cbar.ax.set_yticklabels(np.around(tx,3))
+        cbar.ax.set_yticklabels(np.around(tx,3))
 
 
-        #cbar.set_ticks(tx)
-        #cbar.set_ticklabels(np.around(tx, 3))
-        #cbar.ax.tick_params(labelsize=6,color="k")#if iSession >1:
-        #cbar.ax.set_ylabel(cbar_title, size=6)#,labelpad=-20, y=0.5)
+        cbar.set_ticks(tx)
+        cbar.set_ticklabels(np.around(tx, 3))
+        cbar.ax.tick_params(labelsize=6,color="k")#if iSession >1:
+        cbar.ax.set_ylabel(cbar_title, size=6)#,labelpad=-20, y=0.5)
 
 
-        #cbar.ax.yaxis.set_label_coords(-1.5, 0.5)
-        #cbar.ax.yaxis.set_label_coords(-2.1, 0.5)
-        #if cbar_reverse:
-        #    cbar.ax.invert_yaxis()
+        cbar.ax.yaxis.set_label_coords(-1.5, 0.5)
+        cbar.ax.yaxis.set_label_coords(-2.1, 0.5)
+        if cbar_reverse:
+            cbar.ax.invert_yaxis()
 
 def create_cluster_map(axis,  n_comp, pred, input_arr, subset_shape, 
-                           latRng, lngRng, cmap, cm_num = 3):
+                           latRng, lngRng, cmap, cm_num = 3, fig = None, cbar = False):
    
     cluster_map = create_cluster_arr(input_arr, subset_shape, pred)
     
     cmap.set_under("black")
-    plot_cluster_patch(cluster_map, latRng, lngRng,  cmap, axis,  0, n_comp, "cluster map", cm_num)
+    plot_cluster_patch(cluster_map, latRng, lngRng,  cmap, axis,  0, n_comp, "cluster map", cm_num, fig, cbar)
 
 
 
