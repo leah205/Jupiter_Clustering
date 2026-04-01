@@ -104,7 +104,6 @@ def get_parameter_2d_array(keyword_arr):
 
     return radiances_arr'''
     radiances = get_radiances(file_name_arr)
-    print(radiances)
     return radiances
 
 def get_map_shape(keyword, latLims, longLims):
@@ -262,8 +261,7 @@ def get_input_array(keywords, param_ranges,
     #pix_arr = np.flipud(pix_arr)
     pix_arr = get_mapped_pix_arr(pix_arr)
     pix_arr = get_filtered_pix_arr(param_ranges, pix_arr)
-    print("pix arr")
-    print(pix_arr)
+  
     return [pix_arr, subset_shape]
     
 

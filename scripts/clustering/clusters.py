@@ -15,7 +15,8 @@ from sklearn.preprocessing import StandardScaler
 
 
 def create_clusters(pix_arr, cov_type, n_components, is_soft_clustering):
-    threshold = 0.7
+    threshold = 0.75
+    print("Clustering with probability threshold " + str(threshold))
     gmm_model = GMM(n_components=n_components, covariance_type=cov_type)
     pipe = Pipeline([('scaler', StandardScaler()), ('gmm', gmm_model)])
     print("fitting model...")
