@@ -112,7 +112,7 @@ def get_map_shape(keyword, latLims, longLims):
       return subset_map(radiance_arr, latLims, longLims).shape
 
 
-def get_patch(keyword, latLims, lngLims, cm_num = 3):
+def get_patch(keyword, latLims, lngLims, cm_num):
     
 
     file = get_file_path(keyword, config["input"])

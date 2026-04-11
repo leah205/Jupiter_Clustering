@@ -66,7 +66,7 @@ def output_cluster_map(date, keywords, param_ranges,
 
 
 def output_cluster_plot(date, keywords, param_ranges, 
-                           latRng = [90, 95], lngRng = [330, 330], 
+                           latRng = [90, 95], lngRng = [330, 330], sys = 3,
                            n_comp = 4, cov_type = "full",  cm_num = 3):
     
    
@@ -86,10 +86,10 @@ def output_cluster_plot(date, keywords, param_ranges,
 
 
 def create_map_comparison(date, keywords, param_ranges, 
-                           latRng = [85, 95], lngRng = [230, 330],
-                            n_comp = 4, cov_type = "full",  cm_num = 3):
+                           latRng = [85, 95], lngRng = [230, 330], 
+                            n_comp = 4, cov_type = "full",  cm_num = 1):
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
-  
+    print(lngRng)
     pred = CL.create_clusters(input_arr[:, 0:len(keywords)], cov_type, n_comp, config["soft_clustering"])
     #print("scoring...")
     #sil_score = str(round(silhouette_score(input_arr, pred), 3))
@@ -98,8 +98,8 @@ def create_map_comparison(date, keywords, param_ranges,
     print("start fig")
     fig, axis = pl.subplots(3, 1, constrained_layout = True)
     fig.tight_layout()
-    cloud_map = pre.get_patch("PCld", latRng, lngRng)
-    amm_map = pre.get_patch("NH3", latRng, lngRng)
+    cloud_map = pre.get_patch("PCld", latRng, lngRng, cm_num)
+    amm_map = pre.get_patch("NH3", latRng, lngRng, cm_num)
     print("plotting")
     MP.create_cluster_map(axis[0], n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, cm_num, fig, True)
     MP.plot_patch(cloud_map, latRng, lngRng, "Blues", axis[1], 1000, 3000,  "Cloud Pressure", cm_num, fig, True)
@@ -112,7 +112,10 @@ def create_map_comparison(date, keywords, param_ranges,
 
 #output_cluster_map("20251214", ["NH3", "PCld"], [[0, 300], [1000, 3000]], 5)
 #get correct filters
-create_map_comparison("20251016", ["NH3", "PCld", "AOI", "CI"], [[100, 300], [1500,  2500], [0, 1], [0, 1]])#
+create_map_comparison("20251016", ["NH3", "PCld", "AOI", "CI"], 
+                      [[100, 300], [1500,  2500], [0, 1], [0, 1]],
+                      [75, 105], [0, 200]
+                      )#
 #output_cluster_map_and_plots("20251016", ["NH3", "PCld", "AOI", "CI"], [[100, 300], [1500,  2500], [0, 1], [0, 1]], [85, 95], [230,330], 4)
 
 
