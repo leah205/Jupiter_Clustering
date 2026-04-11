@@ -70,7 +70,6 @@ def plot_patch(patch, LatLims, LonLims, cmap, axis, v_min, v_max, title, cm_num,
     '''  
     vn = v_min
     vx = v_max
-    #fdvactor here
     n = vx - vn
     create_axis(axis, [LatLims[0] - 90, 90 - LatLims[1]], LonLims,  cm_num)
     np.nan_to_num(patch, copy=False, nan=-1.0, posinf=0.0, neginf=0.0)

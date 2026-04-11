@@ -12,7 +12,6 @@ def get_radiance_arr(file):
 def get_wcs(file):
     hdul = fits.open(file)
     hdr = hdul[0].header
-    #print(WCS(hdr))
     return WCS(hdr)
 
 def get_header_key(file, key):
@@ -113,7 +112,7 @@ def get_map_shape(keyword, latLims, longLims):
       return subset_map(radiance_arr, latLims, longLims).shape
 
 
-def get_patch(keyword, latLims, lngLims, cm_num = 3):
+def get_patch(keyword, latLims, lngLims, cm_num):
     
 
     file = get_file_path(keyword, config["input"])
@@ -200,20 +199,7 @@ def subset_map(map, LatLims, LonLims,  CM):
         print("lon_max+LonLims[0]:lon_max,0:LonLims[1]=",lon_max+LonLims[0],lon_max,0,LonLims[1])
     print("patch shape:" + str(patch.shape))
     return patch    
-    '''
-    print(map.shape)
-    print(latLims)
-    print(lonRng)
-    scale = int(map.shape[0]/ 180)
-    print(scale)
-    latLims = np.array(latLims)* scale
-    lonRng= np.array(lonRng) * scale
-    print(latLims)
-    print(lonRng)
-    #print(latLims)
-    #print(lonRng)
-    #print(map[latLims[0]:latLims[1], lonRng[0]: lonRng[1]])
-    '''
+
 
 
 def get_input_array(keywords, param_ranges,
@@ -242,8 +228,6 @@ def get_input_array(keywords, param_ranges,
     filtered with rangeArr
     '''
     radiances_arr = get_parameter_2d_array(keywords)
-    print("radiance arr:")
-    print(radiances_arr)
 
     subpatches = []
     first_file = get_file_path(keywords[0], config["input"])
@@ -258,7 +242,6 @@ def get_input_array(keywords, param_ranges,
 
     subpatches = np.array(subpatches)
     pix_arr = np.column_stack(subpatches)
-    #pix_arr = np.flipud(pix_arr)
     pix_arr = get_mapped_pix_arr(pix_arr)
     pix_arr = get_filtered_pix_arr(param_ranges, pix_arr)
   
