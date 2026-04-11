@@ -43,9 +43,10 @@ def output_cluster_map_and_plots(date, keywords, param_ranges,
     PL.create_cluster_plot(axis[2],  keywords, 2, 3, input_arr, pred,  n_comp, cov_type, latRng, lngRng, cmap, cm_num)
 
     fig.suptitle(f' Lat: {latRng[0]} - {latRng[1]}, Lon: {lngRng[0]} - {lngRng[1]} {date}, {n_comp} components')
+    keyword_str = '_'.join(keywords)
+    print(keyword_str)
     lat_lon_str = f'{latRng[0]}-{latRng[1]}_{lngRng[0]}-{lngRng[1]}'
-    fig.savefig(f'{config["output"]}/{date}_{lat_lon_str}_{n_comp}_map_and_plot.png')
-
+    fig.savefig(f'{config["output"]}/{date}_{keyword_str}_{lat_lon_str}_{n_comp}_sys_{str(cm_num)}_map_plot.png')
 
 
 def output_cluster_map(date, keywords, param_ranges, 
@@ -106,17 +107,15 @@ def create_map_comparison(date, keywords, param_ranges,
     MP.plot_patch(amm_map, latRng, lngRng, "terrain_r", axis[2], 0, 300, "Ammonia", cm_num, fig, True)
     fig.suptitle(f' Lat: {latRng[0]} - {latRng[1]}, Lon: {lngRng[0]} - {lngRng[1]} {date}, {n_comp} components')
     lat_lon_str = f'{latRng[0]}-{latRng[1]}_{lngRng[0]}-{lngRng[1]}'
-    fig.savefig(f'{config["output"]}/{date}_{lat_lon_str}_{n_comp}_map_comparison.png')
+    keyword_str = '_'.join(keywords)
+    fig.savefig(f'{config["output"]}/{date}_{keyword_str}_{lat_lon_str}_{n_comp}_sys_{cm_num}_map_comparison.png')
     
 
 
 #output_cluster_map("20251214", ["NH3", "PCld"], [[0, 300], [1000, 3000]], 5)
 #get correct filters
-create_map_comparison("20251016", ["NH3", "PCld", "AOI", "CI"], 
-                      [[100, 300], [1500,  2500], [0, 1], [0, 1]],
-                      [75, 105], [0, 200]
-                      )#
-#output_cluster_map_and_plots("20251016", ["NH3", "PCld", "AOI", "CI"], [[100, 300], [1500,  2500], [0, 1], [0, 1]], [85, 95], [230,330], 4)
+#create_map_comparison("20251016", ["NH3", "PCld", "AOI", "CI"], [[100, 300], [1500,  2500], [0, 1], [0, 1]], [75, 105], [0, 200])#
+output_cluster_map_and_plots("20251016", ["NH3", "PCld", "AOI", "CI"], [[100, 300], [1500,  2500], [0, 1], [0, 1]], [75, 105], [0, 360], 4)
 
 
 #output_cluster_map_and_plot("20251214", ["NH3", "PCld"], [[0, 300], [1000, 3000]], 5)
