@@ -103,6 +103,7 @@ def get_parameter_2d_array(keyword_arr):
 
     return radiances_arr'''
     radiances = get_radiances(file_name_arr)
+    
     return radiances
 
 def get_map_shape(keyword, latLims, longLims):
@@ -234,9 +235,10 @@ def get_input_array(keywords, param_ranges,
 
     CM = 0 if cm_num == 0 else get_cm(first_file, cm_num)
     subset_shape = (0,0)
-
+    
     for radiance_arr in radiances_arr:
         subset = subset_map(radiance_arr, latRng, lngRng, CM)
+        subset[subset == 0] = np.nan
         subset_shape = subset.shape
         subpatches.append(subset.flatten())
 
