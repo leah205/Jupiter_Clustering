@@ -91,6 +91,7 @@ def create_map_comparison(date, keywords, param_ranges,
                            latRng = [85, 95], lngRng = [230, 330], 
                             n_comp = 4, cov_type = "full",  cm_num = 1):
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
+    print(input_arr.shape)
     print(lngRng)
     pred = CL.create_clusters(input_arr[:, 0:len(keywords)], cov_type, n_comp, config["soft_clustering"])
     #print("scoring...")
@@ -119,12 +120,11 @@ def create_map_comparison(date, keywords, param_ranges,
 #output_cluster_map_and_plot("20251016", ["NH3", "PCld", "AOI", "CI"], [[100, 300], [1500,  2500], [0, 1], [0, 1]], [75, 105], [0, 360], 4)
 
 #create_map_comparison("20251016", ["NH3", "PCld"], [[100, 300], [1500,  2500]], [75, 105], [0, 200])
-#output_cluster_map_and_plot("20251016", ["NH3", "PCld"], [[100, 300], [1500,  2500]], [75, 105], [0, 360], 4)
+create_map_comparison("20251016", ["PCld", "NH3"], [[1000,  3000], [0, 300]], [75, 105], [0, 200])
 
-create_map_comparison("20251016", ["AOI", "CI"], [[0, 1], [0, 1]], [75, 105], [0, 200])
-#output_cluster_map_and_plot("20251016", ["AOI", "CI"], [[0, 1], [0, 1]], [75, 105], [0, 360], 4)
+#create_map_comparison("20251016", ["AOI", "CI"], [[0, 1], [0, 1]], [75, 105], [0, 200])
+#output_cluster_map_and_plot("20251016", ["AOI", "CI"], [[0, 1], [0, 1]], [75, 105], [0, 200], 4)
 
 
-#output_cluster_map_and_plot("20251214", ["NH3", "PCld"], [[0, 300], [1000, 3000]], 5)
 #output_cluster_plot("20251214", ["NH3", "PCld"], [[0, 300], [1000, 3000]], 5)
     
