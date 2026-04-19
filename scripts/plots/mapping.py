@@ -31,6 +31,8 @@ def plot_cluster_patch(patch, LatLims, LonLims, cmap, axis, v_min, v_max, title,
     '''  
     n = v_max - v_min
     bounds = [i for i in range(v_max - v_min + 1)]
+    print(patch)
+    print(bounds)
     norm = colors.BoundaryNorm(bounds, cmap.N)
     create_axis(axis, [LatLims[0] - 90, 90 - LatLims[1]], LonLims,  cm_num)
     np.nan_to_num(patch, copy=False, nan=-1.0, posinf=0.0, neginf=0.0)
