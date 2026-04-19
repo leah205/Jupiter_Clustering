@@ -14,25 +14,24 @@ import pylab as pl
 
 def output_cluster_map_and_plot(date, keywords, param_ranges, 
                            latRng = [85, 95], lngRng = [230, 330], 
-                           n_comp = 4, cov_type = "full", cm_num = 1):
+                           n_comp = 4, cov_type = "full", cm_num = 1, threshold = 0.75):
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
-    pred = CL.create_clusters(input_arr[:, 0:len(keywords)], cov_type, n_comp, config["soft_clustering"])
+    pred = CL.create_clusters(input_arr[:, 0:len(keywords)], cov_type, n_comp, config["soft_clustering"], threshold)
     colors =["red", "green", "blue", "yellow", "orange", "pink"]
     cmap = ListedColormap(colors[:n_comp])
     fig, axis = pl.subplots(2, 1)
     print("plotting...")
     MP.create_cluster_map(axis[0], n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, cm_num)
     PL.create_cluster_plot(axis[1],  keywords, 0, 1, input_arr, pred,  n_comp, cov_type, latRng, lngRng, cmap, cm_num)
-    fig.suptitle(f' Lat: {latRng[0]} - {latRng[1]}, Lon: {lngRng[0]} - {lngRng[1]} {date}, {n_comp} components')
-    lat_lon_str = f'{latRng[0]}-{latRng[1]}_{lngRng[0]}-{lngRng[1]}'
-    keyword_str = '_'.join(keywords)
-    fig.savefig(f'{config["output"]}/{date}_{keyword_str}_{lat_lon_str}_{n_comp}_sys_{cm_num}_map_plot.png')
+    fig.suptitle(create_plot_title(date, latRng, lngRng, n_comp, threshold))
+    output_file_name = create_file_name(date, keywords, latRng, lngRng, n_comp, "map_plot", cm_num, threshold)
+    fig.savefig(output_file_name)
 
 def output_cluster_map_and_plots(date, keywords, param_ranges, 
                            latRng = [85, 95], lngRng = [230, 330], 
-                           n_comp = 4, cov_type = "full", cm_num = 1):
+                           n_comp = 4, cov_type = "full", cm_num = 1, threshold = 0.75):
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
-    pred = CL.create_clusters(input_arr[:, 0:len(keywords)], cov_type, n_comp, config["soft_clustering"])
+    pred = CL.create_clusters(input_arr[:, 0:len(keywords)], cov_type, n_comp, config["soft_clustering"], threshold)
     colors =["red", "green", "blue", "yellow", "orange", "pink"]
     cmap = ListedColormap(colors[:n_comp])
 
@@ -43,18 +42,16 @@ def output_cluster_map_and_plots(date, keywords, param_ranges,
     PL.create_cluster_plot(axis[1],  keywords, 0, 1, input_arr, pred,  n_comp, cov_type, latRng, lngRng, cmap, cm_num)
     PL.create_cluster_plot(axis[2],  keywords, 2, 3, input_arr, pred,  n_comp, cov_type, latRng, lngRng, cmap, cm_num)
 
-    fig.suptitle(f' Lat: {latRng[0]} - {latRng[1]}, Lon: {lngRng[0]} - {lngRng[1]} {date}, {n_comp} components')
-    keyword_str = '_'.join(keywords)
-    print(keyword_str)
-    lat_lon_str = f'{latRng[0]}-{latRng[1]}_{lngRng[0]}-{lngRng[1]}'
-    fig.savefig(f'{config["output"]}/{date}_{keyword_str}_{lat_lon_str}_{n_comp}_sys_{str(cm_num)}_map_plot.png')
+    fig.suptitle(create_plot_title(date, latRng, lngRng, n_comp, threshold))
+    output_file_name = create_file_name(date, keywords, latRng, lngRng, n_comp, "map_plots", cm_num, threshold)
+    fig.savefig(output_file_name) 
 
 
 def output_cluster_map(date, keywords, param_ranges, 
                            latRng = [65, 115], lngRng = [0, 50], 
-                            n_comp = 4, cov_type = "full", cm_num = 3):
+                            n_comp = 4, cov_type = "full", cm_num = 3, threshold = 0.75):
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
-    pred = CL.create_clusters(input_arr[:, 0:len(keywords)], cov_type, n_comp, config["soft_clustering"])
+    pred = CL.create_clusters(input_arr[:, 0:len(keywords)], cov_type, n_comp, config["soft_clustering"], threshold)
     sil_score = str(round(silhouette_score(input_arr, pred), 3))
     #colors = np.random.rand(n_comp, 3)
     colors =["red", "green", "blue", "yellow", "orange", "pink"]
@@ -62,14 +59,14 @@ def output_cluster_map(date, keywords, param_ranges,
     print("plotting...")
     fig, axis = pl.subplots(1, 1)
     MP.create_cluster_map(axis, n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, cm_num)
-    fig.suptitle(f' Lat: {latRng[0]} - {latRng[1]}, Lon: {lngRng[0]} - {lngRng[1]} {date}, {n_comp} components')
-    lat_lon_str = f'{latRng[0]}-{latRng[1]}_{lngRng[0]}-{lngRng[1]}'
-    fig.savefig(f'{config["output"]}/cluster_maps/spatial_map_{date}_{lat_lon_str}_{n_comp}.png')
+    fig.suptitle(create_plot_title(date, latRng, lngRng, n_comp, threshold))
+    output_file_name = create_file_name(date, keywords, latRng, lngRng, n_comp, "cluster_map", cm_num, threshold)
+    fig.savefig(output_file_name)
 
 
 def output_cluster_plot(date, keywords, param_ranges, 
                            latRng = [90, 95], lngRng = [330, 330], sys = 3,
-                           n_comp = 4, cov_type = "full",  cm_num = 3):
+                           n_comp = 4, cov_type = "full",  cm_num = 3, threshold = 0.75):
     
    
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
@@ -80,38 +77,43 @@ def output_cluster_plot(date, keywords, param_ranges,
     print("plotting...")
     fig, axis = pl.subplots(1, 1)
     PL.create_cluster_plot(axis, keywords, 0, 1, input_arr, pred,  n_comp, cov_type, latRng, lngRng, cmap, cm_num)
-    fig.suptitle(f' Lat: {latRng[0]} - {latRng[1]}, Lon: {lngRng[0]} - {lngRng[1]} {date}, {n_comp} components')
+    fig.suptitle(create_plot_title(date, latRng, lngRng, n_comp, threshold))
+    output_file_name = create_file_name(date, keywords, latRng, lngRng, n_comp, "cluster plot", cm_num, threshold)
+    fig.savefig(output_file_name)
+
+
+def create_file_name(date, keywords, latRng, lngRng, n_comp, suffix, cm_num, threshold):
     lat_lon_str = f'{latRng[0]}-{latRng[1]}_{lngRng[0]}-{lngRng[1]}'
-    fig.savefig(f'{config["output"]}/cluster_plots/clusters_{date}_{lat_lon_str}_{cov_type}_{n_comp}_.png')
+    keyword_str = '_'.join(keywords)
+    prob_str = str(threshold) if config["soft_clustering"] else ""
+    return f'{config["output"]}/{date}_{keyword_str}_{lat_lon_str}_{n_comp}_sys_{cm_num}_p{threshold}_{suffix}.png'
 
-
-
-
+def create_plot_title(date, latRng, lngRng, n_comp, threshold):
+    prob_str = f'Threshold {threshold}' if config["soft_clustering"] else ""
+    return f' Lat: {latRng[0]} - {latRng[1]}, Lon: {lngRng[0]} - {lngRng[1]} {date}, {n_comp} components \n {prob_str}'
+    
 def create_map_comparison(date, keywords, param_ranges, 
                            latRng = [85, 95], lngRng = [230, 330], 
-                            n_comp = 4, cov_type = "full",  cm_num = 1):
+                            n_comp = 4, cov_type = "full",  cm_num = 1, threshold = 0.75):
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
-    print(input_arr.shape)
-    print(lngRng)
-    pred = CL.create_clusters(input_arr[:, 0:len(keywords)], cov_type, n_comp, config["soft_clustering"])
+    pred = CL.create_clusters(input_arr[:, 0:len(keywords)], cov_type, n_comp, config["soft_clustering"], threshold)
     #print("scoring...")
     #sil_score = str(round(silhouette_score(input_arr, pred), 3))
     colors =["red", "green", "blue", "yellow", "orange", "pink"]
     cmap = ListedColormap(colors[: n_comp])
     print("start fig")
     fig, axis = pl.subplots(3, 1, constrained_layout = True)
-    fig.tight_layout()
+    
+    fig.tight_layout(rect = [0, 0, 1, 0.95])
     cloud_map = pre.get_patch(keywords[0], latRng, lngRng, cm_num)
     amm_map = pre.get_patch(keywords[1], latRng, lngRng, cm_num)
     print("plotting")
     MP.create_cluster_map(axis[0], n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, cm_num, fig, True)
     MP.plot_patch(cloud_map, latRng, lngRng, "Blues", axis[1], param_ranges[0][0], param_ranges[0][1],  "Cloud Pressure", cm_num, fig, True)
     MP.plot_patch(amm_map, latRng, lngRng, "terrain_r", axis[2], param_ranges[1][0], param_ranges[1][1], "Ammonia", cm_num, fig, True)
-    fig.suptitle(f' Lat: {latRng[0]} - {latRng[1]}, Lon: {lngRng[0]} - {lngRng[1]} {date}, {n_comp} components')
-    lat_lon_str = f'{latRng[0]}-{latRng[1]}_{lngRng[0]}-{lngRng[1]}'
-    keyword_str = '_'.join(keywords)
-    fig.savefig(f'{config["output"]}/{date}_{keyword_str}_{lat_lon_str}_{n_comp}_sys_{cm_num}_map_comparison.png')
-    
+    fig.suptitle(create_plot_title(date, latRng, lngRng, n_comp, threshold))
+    output_file_name = create_file_name(date, keywords, latRng, lngRng, n_comp, "map_comparison", cm_num, threshold)
+    fig.savefig(output_file_name)
 
 
 #output_cluster_map("20251214", ["NH3", "PCld"], [[0, 300], [1000, 3000]], 5)
