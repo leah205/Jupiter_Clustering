@@ -4,6 +4,7 @@ from astropy.io import fits
 #from reproject import reproject_interp
 import numpy as np
 from astropy.wcs import WCS
+import time
 
 def get_radiance_arr(file):
     hdul = fits.open(file)
@@ -200,6 +201,22 @@ def subset_map(map, LatLims, LonLims,  CM):
         print("lon_max+LonLims[0]:lon_max,0:LonLims[1]=",lon_max+LonLims[0],lon_max,0,LonLims[1])
     print("patch shape:" + str(patch.shape))
     return patch    
+
+def get_date(keywords):
+    seconds_past = 0
+    first_file = file = get_file_path(keywords[0], config["input"])
+    hdr = fits.open(file)[0].header
+    first_date_str = hdr["DATE-OBS"][11:19]
+    return hdr["DATE-OBS"][0:19]
+    ft = time.strptime(first_date_str, "%H:%M:%S")
+    for key in keywords:
+        file = get_file_path(key, config["input"])
+        hdr = fits.open(file)[0].header
+        stime = hdr["DATE-OBS"][11:19]
+        t = time.strptime(stime, "%H:%M:%S")
+        seconds_past = seconds_past + int(ft.time() - t/time())
+    print(ft + seconds_past / len(keywords))
+    return ft + seconds_past / len(keywords)
 
 
 
