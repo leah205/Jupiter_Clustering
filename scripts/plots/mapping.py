@@ -79,7 +79,7 @@ def plot_patch(patch, LatLims, LonLims, cmap, axis, v_min, v_max, title, cm_num,
     
 
     show=axis.imshow(patch,  origin='upper', cmap = cmap, vmin=vn,vmax=vx,  
-               extent=[360-LonLims[0],360-LonLims[1],90-LatLims[1],
+               extent=[LonLims[0],LonLims[1],90-LatLims[1],
                        90-LatLims[0]],
                        aspect="equal")
     #axis.set_title(title, pad = 15)

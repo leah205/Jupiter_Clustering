@@ -124,7 +124,8 @@ def create_map_comparison(date, keywords, param_ranges,
 #get correct filters
 #create_map_comparison("20251016", ["NH3", "PCld", "AOI", "CI"], [[100, 300], [1500,  2500], [0, 1], [0, 1]], [75, 105], [0, 200])#
 #output_cluster_map_and_plots("20251016", ["NH3", "PCld", "AOI", "CI"], [[0, 300], [1000,  3000], [0, 1], [0, 1]], [75, 105], [0, 200], 4)
-output_cluster_map_and_plots("20251016", ["PCld", "NH3", "AOI", "CI"], [[1000, 3000], [0,  300], [0, 1], [0, 1]], [85, 95], [0, 50], 4)
+#output_cluster_map_and_plots("20251016", ["PCld", "NH3", "AOI", "CI"], [[1000, 3000], [0,  300], [0, 1], [0, 1]], [85, 95], [0, 50], 4)
+output_cluster_map_and_plots("20251016", ["PCld", "NH3", "AOI", "CI"], [[1000, 3000], [0,  300], [0, 1], [0, 1]], [75, 105], [50, 100], 4)
 
 #create_map_comparison("20251016", ["NH3", "PCld"], [[100, 300], [1500,  2500]], [75, 105], [0, 200])
 #create_map_comparison("20251016", ["PCld", "NH3"], [[1000,  3000], [0, 300]], [75, 105], [0, 200])
