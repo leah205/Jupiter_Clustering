@@ -12,7 +12,8 @@ def create_axis(axs3, LatLims, LonLims, LonSys):
     #fig3,axs3=pl.subplots(dpi=150, facecolor="white")
     axs3.grid(linewidth=0.2)
     axs3.ylim=[LatLims[0] ,LatLims[1]]
-    axs3.xlim=[360-LonLims[0],360-LonLims[1]]
+    #axs3.xlim=[360-LonLims[0],360-LonLims[1]]
+    axs3.xlim=[LonLims[0],LonLims[1]]
     axs3.set_xticks(np.linspace(450,0,31), minor=False)
     xticklabels=np.array(np.mod(np.linspace(450,0,31),360))
     axs3.set_xticklabels(xticklabels.astype(int))
@@ -40,7 +41,7 @@ def plot_cluster_patch(patch, LatLims, LonLims, cmap, axis, v_min, v_max, title,
     
 
     show=axis.imshow(patch,  origin='upper', interpolation = 'nearest', cmap = cmap, norm = norm,  
-               extent=[360-LonLims[0],360-LonLims[1],90-LatLims[1],
+               extent=[LonLims[0],LonLims[1],90-LatLims[1],
                        90-LatLims[0]],
                        aspect="equal")
     #axis.set_title(title, pad = 15)
@@ -77,7 +78,7 @@ def plot_patch(patch, LatLims, LonLims, cmap, axis, v_min, v_max, title, cm_num,
     np.nan_to_num(patch, copy=False, nan=-1.0, posinf=0.0, neginf=0.0)
     tx=np.linspace(vn,vx,5 ,endpoint=True)
     
-
+   
     show=axis.imshow(patch,  origin='upper', cmap = cmap, vmin=vn,vmax=vx,  
                extent=[LonLims[0],LonLims[1],90-LatLims[1],
                        90-LatLims[0]],
