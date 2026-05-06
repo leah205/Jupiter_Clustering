@@ -8,6 +8,7 @@ from config.config import config
 import scripts.plots.mapping as MP
 import matplotlib
 from matplotlib.colors import ListedColormap
+import scripts.cluster_stats as STAT
 import pylab as pl
 
 
@@ -37,6 +38,20 @@ def output_cluster_map_and_plots(date, keywords, param_ranges,
     #sil_score = str(round(silhouette_score(input_arr, pred), 3))
     fig, axis = pl.subplots(3, 1)
     print("plotting...")
+    indices = input_arr[:, input_arr.shape[1] - 1]
+
+    #get statistics
+    
+    cloud_map = pre.get_patch("Cld", latRng, lngRng, cm_num)
+    amm_map = pre.get_patch("NH3", latRng, lngRng, cm_num)
+    AOI_map = pre.get_patch("AOI", latRng, lngRng, cm_num)
+    CI_map = pre.get_patch("CI", latRng, lngRng, cm_num)
+
+  
+    print(STAT.get_cluster_stat(pred, cloud_map, indices, n_comp))
+
+
+    #create figures
     MP.create_cluster_map(axis[0], n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, cm_num)
     PL.create_cluster_plot(axis[1],  keywords, 0, 1, input_arr, pred,  n_comp, cov_type, latRng, lngRng, cmap, cm_num)
     PL.create_cluster_plot(axis[2],  keywords, 2, 3, input_arr, pred,  n_comp, cov_type, latRng, lngRng, cmap, cm_num)
