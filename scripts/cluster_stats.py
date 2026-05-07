@@ -1,6 +1,8 @@
 
 import numpy as np
-def get_stat(cluster_arr, dim_arr, indices, n_clusters):
+import scripts.preprocessing.preprocessing as pre
+
+def get_stat(cluster_arr, dim_arr, indices, n_clusters, dim_name):
     '''
         Purpose: Takes a cluster and outputs the mean and standard deviation of that cluster in a certain dimension
 
@@ -25,14 +27,29 @@ def get_stat(cluster_arr, dim_arr, indices, n_clusters):
         # contains indices of selected cluster
         cluster_indices = indices[cluster_mask]
 
-        print(cluster_indices)
+    
         clustered_dim = dim_arr[cluster_indices]
-        
-        res.append([np.mean(clustered_dim), np.std(clustered_dim)])
+        mean = np.mean(clustered_dim)
+        std = np.std(clustered_dim)
+        print(f"{dim_name}: Cluster {i} mean: {mean:.2f}, std: {std:.2f} ")
+        res.append([mean, std ])
     return res
 
+def get_all_stats(pred, keywords, indices, n_comp, latRng, lngRng, cm_num):
+    cluster_arr = np.array(pred)
+    indices = indices.astype(np.int64)
+    if(not (cluster_arr.shape == indices.shape) and cluster_arr.ndim == 1):
+        raise TypeError("Index array length must match cluster array length")
     
-def get_cluster_stat(cluster_arr, dim_arr, indices, n_clusters):
+    
+    for key in keywords:
+        map =  pre.get_patch(key, latRng, lngRng, cm_num)
+        dim_arr = map.flatten()
+        get_stat(cluster_arr, dim_arr, indices, n_comp, key)
+
+    
+
+def get_cluster_stat(cluster_arr, dim_arr, indices, n_clusters, dim_name):
     # flatten arrays here
     '''
     Purpose: Preprocesses data and passes it into a function to generate list of means and standard deviations for the clusters
@@ -56,7 +73,7 @@ def get_cluster_stat(cluster_arr, dim_arr, indices, n_clusters):
     if(not (cluster_arr.shape == indices.shape) and cluster_arr.ndim == 1):
         raise TypeError("Index array length must match cluster array length")
     dim_arr = dim_arr.flatten()
-    return get_stat(cluster_arr, dim_arr, indices, n_clusters)
+    return get_stat(cluster_arr, dim_arr, indices, n_clusters, dim_name)
 
 
 

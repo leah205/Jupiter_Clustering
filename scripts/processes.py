@@ -25,6 +25,11 @@ def output_cluster_map_and_plot(date, keywords, param_ranges,
     MP.create_cluster_map(axis[0], n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, cm_num)
     PL.create_cluster_plot(axis[1],  keywords, 0, 1, input_arr, pred,  n_comp, cov_type, latRng, lngRng, cmap, cm_num)
     fig.suptitle(create_plot_title(keywords, latRng, lngRng, n_comp, threshold))
+    indices = input_arr[:, input_arr.shape[1] - 1]
+
+    STAT.get_all_stats(pred, keywords, indices, n_comp, latRng, lngRng, cm_num)
+    
+
     output_file_name = create_file_name(keywords, latRng, lngRng, n_comp, "map_plot", cm_num, threshold)
     fig.savefig(output_file_name)
 
@@ -40,15 +45,20 @@ def output_cluster_map_and_plots(date, keywords, param_ranges,
     print("plotting...")
     indices = input_arr[:, input_arr.shape[1] - 1]
 
+
+    STAT.get_all_stats(pred, keywords, indices, n_comp, latRng, lngRng, cm_num)
     #get statistics
     
-    cloud_map = pre.get_patch("Cld", latRng, lngRng, cm_num)
-    amm_map = pre.get_patch("NH3", latRng, lngRng, cm_num)
-    AOI_map = pre.get_patch("AOI", latRng, lngRng, cm_num)
-    CI_map = pre.get_patch("CI", latRng, lngRng, cm_num)
+    #cloud_map = pre.get_patch("Cld", latRng, lngRng, cm_num)
+    #amm_map = pre.get_patch("NH3", latRng, lngRng, cm_num)
+    #AOI_map = pre.get_patch("AOI", latRng, lngRng, cm_num)
+    #CI_map = pre.get_patch("CI", latRng, lngRng, cm_num)
 
   
-    print(STAT.get_cluster_stat(pred, cloud_map, indices, n_comp))
+    #STAT.get_cluster_stat(pred, cloud_map, indices, n_comp, "Cloud Pressure")
+    #STAT.get_cluster_stat(pred, amm_map, indices, n_comp, "Ammonia Content")
+    #STAT.get_cluster_stat(pred, AOI_map, indices, n_comp, "AOI Index")
+    #STAT.get_cluster_stat(pred, CI_map, indices, n_comp, "CI index")
 
 
     #create figures
@@ -138,10 +148,17 @@ def create_map_comparison(date, keywords, param_ranges,
 #output_cluster_map("20251214", ["NH3", "PCld"], [[0, 300], [1000, 3000]], 5)
 #get correct filters
 #create_map_comparison("20251016", ["NH3", "PCld", "AOI", "CI"], [[100, 300], [1500,  2500], [0, 1], [0, 1]], [75, 105], [0, 200])#
+
+# longitude 0 - 200, latitude 75 - 105
+
 #output_cluster_map_and_plots("20251016", ["NH3", "PCld", "AOI", "CI"], [[0, 300], [1000,  3000], [0, 1], [0, 1]], [75, 105], [0, 200], 4)
+output_cluster_map_and_plot("20251016", ["NH3", "PCld"], [[0, 300], [1000,  3000]], [75, 105], [0, 200], 4)
+#create_map_comparison("20251016", ["AOI", "CI"], [[0, 1], [0, 1]], [75, 105], [0, 200])
+#output_cluster_map_and_plot("20251016", ["AOI", "CI"], [[0, 1], [0, 1]], [75, 105], [0, 200], 4)
+
 #output_cluster_map_and_plots("20251016", ["PCld", "NH3", "AOI", "CI"], [[1000, 3000], [0,  300], [0, 1], [0, 1]], [85, 95], [0, 50], 4)
-output_cluster_map_and_plots("20251016", ["PCld", "NH3", "AOI", "CI"], [[1000, 3000], [0,  300], [0, 1], [0, 1]], [75, 105], [0, 300], 4)
-create_map_comparison("20251016", ["PCld", "NH3", "AOI", "CI"], [[1000, 3000], [0,  300], [0, 1], [0, 1]], [75, 105], [0, 300], 4)
+#output_cluster_map_and_plots("20251016", ["PCld", "NH3", "AOI", "CI"], [[1000, 3000], [0,  300], [0, 1], [0, 1]], [75, 105], [0, 300], 4)
+#create_map_comparison("20251016", ["PCld", "NH3", "AOI", "CI"], [[1000, 3000], [0,  300], [0, 1], [0, 1]], [75, 105], [0, 300], 4)
 
 #create_map_comparison("20251016", ["NH3", "PCld"], [[100, 300], [1500,  2500]], [75, 105], [0, 200])
 #create_map_comparison("20251016", ["PCld", "NH3"], [[1000,  3000], [0, 300]], [75, 105], [0, 200])
