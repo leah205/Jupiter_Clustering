@@ -24,7 +24,7 @@ def output_cluster_map_and_plot(date, keywords, param_ranges,
     print("plotting...")
     MP.create_cluster_map(axis[0], n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, cm_num)
     PL.create_cluster_plot(axis[1],  keywords, 0, 1, input_arr, pred,  n_comp, cov_type, latRng, lngRng, cmap, cm_num)
-    fig.suptitle(create_plot_title(keywords, latRng, lngRng, n_comp, threshold))
+    fig.suptitle(create_plot_title(keywords, latRng, lngRng, n_comp, threshold), fontsize = 10)
     indices = input_arr[:, input_arr.shape[1] - 1]
 
     STAT.get_all_stats(pred, keywords, indices, n_comp, latRng, lngRng, cm_num)
@@ -66,7 +66,7 @@ def output_cluster_map_and_plots(date, keywords, param_ranges,
     PL.create_cluster_plot(axis[1],  keywords, 0, 1, input_arr, pred,  n_comp, cov_type, latRng, lngRng, cmap, cm_num)
     PL.create_cluster_plot(axis[2],  keywords, 2, 3, input_arr, pred,  n_comp, cov_type, latRng, lngRng, cmap, cm_num)
 
-    fig.suptitle(create_plot_title(keywords, latRng, lngRng, n_comp, threshold))
+    fig.suptitle(create_plot_title(keywords, latRng, lngRng, n_comp, threshold), fontsize = 10)
     output_file_name = create_file_name(keywords, latRng, lngRng, n_comp, "map_plots", cm_num, threshold)
     fig.savefig(output_file_name) 
 
@@ -83,7 +83,7 @@ def output_cluster_map(date, keywords, param_ranges,
     print("plotting...")
     fig, axis = pl.subplots(1, 1)
     MP.create_cluster_map(axis, n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, cm_num)
-    fig.suptitle(create_plot_title(keywords, latRng, lngRng, n_comp, threshold))
+    fig.suptitle(create_plot_title(keywords, latRng, lngRng, n_comp, threshold), fontsize = 10)
     output_file_name = create_file_name(keywords, latRng, lngRng, n_comp, "cluster_map", cm_num, threshold)
     fig.savefig(output_file_name)
 
@@ -101,7 +101,7 @@ def output_cluster_plot(date, keywords, param_ranges,
     print("plotting...")
     fig, axis = pl.subplots(1, 1)
     PL.create_cluster_plot(axis, keywords, 0, 1, input_arr, pred,  n_comp, cov_type, latRng, lngRng, cmap, cm_num)
-    fig.suptitle(create_plot_title(keywords, latRng, lngRng, n_comp, threshold))
+    fig.suptitle(create_plot_title(keywords, latRng, lngRng, n_comp, threshold), fontsize = 10)
     output_file_name = create_file_name(keywords, latRng, lngRng, n_comp, "cluster plot", cm_num, threshold)
     fig.savefig(output_file_name)
 
@@ -140,7 +140,7 @@ def create_map_comparison(date, keywords, param_ranges,
     MP.create_cluster_map(axis[0], n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, cm_num, fig, True)
     MP.plot_patch(cloud_map, latRng, lngRng, "Blues", axis[1], param_ranges[0][0], param_ranges[0][1],  "Cloud Pressure", cm_num, fig, True)
     MP.plot_patch(amm_map, latRng, lngRng, "terrain_r", axis[2], param_ranges[1][0], param_ranges[1][1], "Ammonia", cm_num, fig, True)
-    fig.suptitle(create_plot_title(keywords, latRng, lngRng, n_comp, threshold))
+    fig.suptitle(create_plot_title(keywords, latRng, lngRng, n_comp, threshold), fontsize = 10)
     output_file_name = create_file_name(keywords, latRng, lngRng, n_comp, "map_comparison", cm_num, threshold)
     fig.savefig(output_file_name)
 
