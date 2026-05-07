@@ -11,6 +11,65 @@ from matplotlib.colors import ListedColormap
 import scripts.cluster_stats as STAT
 import pylab as pl
 
+colors =["red", "green", "blue", "yellow", "orange", "pink"]
+
+keyword_dict = {
+    "PCld": "Cloud Pressure",
+    "AOI": "AOI Index",
+    "NH3": "Ammonia Content",
+    "CI": "CI Index"
+}
+
+color_dict = {
+    "PCld": "Blues",
+    "NH3": "terrain_r",
+    "AOI": "viridis",
+    "CI": "cividis"
+
+}
+
+def create_map_comp_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold, cmap):
+    # create map comparison figure
+    print(np.unique(pred, return_counts=True))
+    fig2, axis2 = pl.subplots(3, 1, constrained_layout = True)
+    #fig2.tight_layout(rect = [0, 0, 1, 0.95])
+    map1 = pre.get_patch(keywords[0], latRng, lngRng, cm_num)
+    map2 = pre.get_patch(keywords[1], latRng, lngRng, cm_num)
+    MP.create_cluster_map(axis2[0], n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, cm_num)
+    MP.plot_patch(map1, latRng, lngRng, color_dict[keywords[0]], axis2[1], param_ranges[0][0], param_ranges[0][1],  keyword_dict[keywords[0]], cm_num, fig2, True)
+    MP.plot_patch(map2, latRng, lngRng, color_dict[keywords[1]], axis2[2], param_ranges[1][0], param_ranges[1][1], keyword_dict[keywords[1]], cm_num, fig2, True)
+    fig2.suptitle(create_plot_title(keywords, latRng, lngRng, n_comp, threshold), fontsize = 10)
+    output_file_name = create_file_name(keywords, latRng, lngRng, n_comp, "map_comparison", cm_num, threshold)
+    fig2.savefig(output_file_name)
+
+
+def create_plot_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold, cmap, cov_type):
+    fig1, axis1 = pl.subplots(2, 1)
+    print(np.unique(pred, return_counts=True))
+   
+    MP.create_cluster_map(axis1[0], n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, cm_num)
+    PL.create_cluster_plot(axis1[1],  keywords, 0, 1, input_arr, pred,  n_comp, cov_type, latRng, lngRng, cmap, cm_num)
+    fig1.suptitle(create_plot_title(keywords, latRng, lngRng, n_comp, threshold), fontsize = 10)
+    STAT.get_all_stats(pred, keywords, input_arr[:, input_arr.shape[1] - 1], n_comp, latRng, lngRng, cm_num)
+    output_file_name = create_file_name(keywords, latRng, lngRng, n_comp, "map_plot", cm_num, threshold)
+    fig1.savefig(output_file_name)
+
+
+def output_comparison_and_plot(date, keywords, param_ranges, 
+                           latRng = [85, 95], lngRng = [230, 330], 
+                           n_comp = 4, cov_type = "full", cm_num = 1, threshold = 0.75):
+    [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
+    pred = CL.create_clusters(input_arr[:, 0:len(keywords)], cov_type, n_comp, config["soft_clustering"], threshold)
+    
+    
+
+    # create scatter plots figure
+    
+    print("plotting...")
+    cmap = ListedColormap(colors[:n_comp])
+    create_plot_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold, cmap, cov_type)
+    create_map_comp_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold, cmap)
+   
 
 
 def output_cluster_map_and_plot(date, keywords, param_ranges, 
@@ -18,24 +77,19 @@ def output_cluster_map_and_plot(date, keywords, param_ranges,
                            n_comp = 4, cov_type = "full", cm_num = 1, threshold = 0.75):
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
     pred = CL.create_clusters(input_arr[:, 0:len(keywords)], cov_type, n_comp, config["soft_clustering"], threshold)
-    colors =["red", "green", "blue", "yellow", "orange", "pink"]
     cmap = ListedColormap(colors[:n_comp])
     fig, axis = pl.subplots(2, 1)
     print("plotting...")
     MP.create_cluster_map(axis[0], n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, cm_num)
     PL.create_cluster_plot(axis[1],  keywords, 0, 1, input_arr, pred,  n_comp, cov_type, latRng, lngRng, cmap, cm_num)
     fig.suptitle(create_plot_title(keywords, latRng, lngRng, n_comp, threshold), fontsize = 10)
-    indices = input_arr[:, input_arr.shape[1] - 1]
-
-    STAT.get_all_stats(pred, keywords, indices, n_comp, latRng, lngRng, cm_num)
-    
-
+    STAT.get_all_stats(pred, keywords, input_arr[:, input_arr.shape[1] - 1], n_comp, latRng, lngRng, cm_num)
     output_file_name = create_file_name(keywords, latRng, lngRng, n_comp, "map_plot", cm_num, threshold)
     fig.savefig(output_file_name)
 
 def output_cluster_map_and_plots(date, keywords, param_ranges, 
                            latRng = [85, 95], lngRng = [230, 240], 
-                           n_comp = 4, cov_type = "full", cm_num = 1, threshold = 0.95):
+                           n_comp = 4, cov_type = "full", cm_num = 1, threshold = 0.75):
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
     pred = CL.create_clusters(input_arr[:, 0:len(keywords)], cov_type, n_comp, config["soft_clustering"], threshold)
     colors =["red", "green", "blue", "yellow", "orange", "pink"]
@@ -47,20 +101,7 @@ def output_cluster_map_and_plots(date, keywords, param_ranges,
 
 
     STAT.get_all_stats(pred, keywords, indices, n_comp, latRng, lngRng, cm_num)
-    #get statistics
     
-    #cloud_map = pre.get_patch("Cld", latRng, lngRng, cm_num)
-    #amm_map = pre.get_patch("NH3", latRng, lngRng, cm_num)
-    #AOI_map = pre.get_patch("AOI", latRng, lngRng, cm_num)
-    #CI_map = pre.get_patch("CI", latRng, lngRng, cm_num)
-
-  
-    #STAT.get_cluster_stat(pred, cloud_map, indices, n_comp, "Cloud Pressure")
-    #STAT.get_cluster_stat(pred, amm_map, indices, n_comp, "Ammonia Content")
-    #STAT.get_cluster_stat(pred, AOI_map, indices, n_comp, "AOI Index")
-    #STAT.get_cluster_stat(pred, CI_map, indices, n_comp, "CI index")
-
-
     #create figures
     MP.create_cluster_map(axis[0], n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, cm_num)
     PL.create_cluster_plot(axis[1],  keywords, 0, 1, input_arr, pred,  n_comp, cov_type, latRng, lngRng, cmap, cm_num)
@@ -151,8 +192,12 @@ def create_map_comparison(date, keywords, param_ranges,
 
 # longitude 0 - 200, latitude 75 - 105
 
-#output_cluster_map_and_plots("20251016", ["NH3", "PCld", "AOI", "CI"], [[0, 300], [1000,  3000], [0, 1], [0, 1]], [75, 105], [0, 200], 4)
-output_cluster_map_and_plot("20251016", ["NH3", "PCld"], [[0, 300], [1000,  3000]], [75, 105], [0, 200], 4)
+#output_comparison_and_plot("20251016", ["NH3", "PCld"], [[0, 300], [1000,  3000]], [75, 105], [0, 200], 4)
+#output_comparison_and_plot("20251016", ["AOI", "CI"], [[0, 1], [0, 1]], [75, 105], [0, 200])
+
+
+output_cluster_map_and_plots("20251016", ["NH3", "PCld", "AOI", "CI"], [[0, 300], [1000,  3000], [0, 1], [0, 1]], [75, 105], [0, 200], 4)
+#output_cluster_map_and_plot("20251016", ["NH3", "PCld"], [[0, 300], [1000,  3000]], [75, 105], [0, 200], 4)
 #create_map_comparison("20251016", ["AOI", "CI"], [[0, 1], [0, 1]], [75, 105], [0, 200])
 #output_cluster_map_and_plot("20251016", ["AOI", "CI"], [[0, 1], [0, 1]], [75, 105], [0, 200], 4)
 
