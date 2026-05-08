@@ -21,6 +21,10 @@ def create_clusters(pix_arr, cov_type, n_components, is_soft_clustering, thresho
     pipe = Pipeline([('scaler', StandardScaler()), ('gmm', gmm_model)])
   
     pipe.fit(pix_arr)
+    scaled = pipe.named_steps["scaler"].transform(pix_arr)
+    bic = pipe.named_steps["gmm"].bic(scaled)
+    print("BIC scoring")
+    print(bic)
     predictions = []
     if(not is_soft_clustering):
         predictions = pipe.predict(pix_arr)

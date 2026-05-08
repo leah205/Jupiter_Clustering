@@ -30,9 +30,8 @@ color_dict = {
 
 def create_map_comp_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold, cmap):
     # create map comparison figure
-    print(np.unique(pred, return_counts=True))
+  
     fig2, axis2 = pl.subplots(3, 1, constrained_layout = True)
-    #fig2.tight_layout(rect = [0, 0, 1, 0.95])
     map1 = pre.get_patch(keywords[0], latRng, lngRng, cm_num)
     map2 = pre.get_patch(keywords[1], latRng, lngRng, cm_num)
     MP.create_cluster_map(axis2[0], n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, cm_num)
@@ -45,8 +44,6 @@ def create_map_comp_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input
 
 def create_plot_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold, cmap, cov_type):
     fig1, axis1 = pl.subplots(2, 1)
-    print(np.unique(pred, return_counts=True))
-   
     MP.create_cluster_map(axis1[0], n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, cm_num)
     PL.create_cluster_plot(axis1[1],  keywords, 0, 1, input_arr, pred,  n_comp, cov_type, latRng, lngRng, cmap, cm_num)
     fig1.suptitle(create_plot_title(keywords, latRng, lngRng, n_comp, threshold), fontsize = 10)
@@ -193,11 +190,11 @@ def create_map_comparison(date, keywords, param_ranges,
 # longitude 0 - 200, latitude 75 - 105
 
 #output_comparison_and_plot("20251016", ["NH3", "PCld"], [[0, 300], [1000,  3000]], [75, 105], [0, 200], 4)
-#output_comparison_and_plot("20251016", ["AOI", "CI"], [[0, 1], [0, 1]], [75, 105], [0, 200])
+#output_comparison_and_plot("20251016", ["AOI", "CI"], [[0, 1], [0, 1]], [75, 105], [0, 200], 3)
 
 
-output_cluster_map_and_plots("20251016", ["NH3", "PCld", "AOI", "CI"], [[0, 300], [1000,  3000], [0, 1], [0, 1]], [75, 105], [0, 200], 4)
-#output_cluster_map_and_plot("20251016", ["NH3", "PCld"], [[0, 300], [1000,  3000]], [75, 105], [0, 200], 4)
+#output_cluster_map_and_plots("20251016", ["NH3", "PCld", "AOI", "CI"], [[0, 300], [1000,  3000], [0, 1], [0, 1]], [75, 105], [0, 200], 3)
+output_cluster_map_and_plot("20251016", ["NH3", "PCld"], [[0, 300], [1000,  3000]], [75, 105], [0, 200], 4)
 #create_map_comparison("20251016", ["AOI", "CI"], [[0, 1], [0, 1]], [75, 105], [0, 200])
 #output_cluster_map_and_plot("20251016", ["AOI", "CI"], [[0, 1], [0, 1]], [75, 105], [0, 200], 4)
 
