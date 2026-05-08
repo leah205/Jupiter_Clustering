@@ -30,21 +30,25 @@ def silhouette_graph(X):
     for n in n_clusters:
         tmp_sil=[]
         for _ in range(iterations):
+            # get random sub sample
             rand_idx = np.random.choice(len(X), 20000)
             X_sub = X[rand_idx]
-            print(X_sub)
+            # fit model and assign labe
             gmm_model = GMM(n_components=n, covariance_type="full")
             pipe = Pipeline([('scaler', StandardScaler()), ('gmm', gmm_model)])
             pipe.fit(X_sub) 
             labels=pipe.predict(X_sub)
-            
+            # compute silhouette score
             sil=metrics.silhouette_score(X_sub, labels, metric='euclidean')
             tmp_sil.append(sil)
-        #val=np.mean(SelBest(np.array(tmp_sil), int(iterations/5)))
+        # get average silhouette score
         val=np.mean(SelBest(np.array(tmp_sil), int(iterations)))
+        # get error bar
         err=np.std(tmp_sil)
         sils.append(val)
         sils_err.append(err)
+
+    # plot graph
     fig, axis = plt.subplots(1, 1)
     plt.errorbar(n_clusters, sils, yerr=sils_err)
     plt.title("Silhouette Scores", fontsize=20)
