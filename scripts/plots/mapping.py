@@ -13,7 +13,7 @@ def create_axis(axs3, LatLims, LonLims, LonSys):
     axs3.grid(linewidth=0.2)
     axs3.ylim=[LatLims[0] ,LatLims[1]]
     #axs3.xlim=[360-LonLims[0],360-LonLims[1]]
-    axs3.xlim=[LonLims[0],LonLims[1]]
+    axs3.xlim=[360 - LonLims[0],360 - LonLims[1]]
     axs3.set_xticks(np.linspace(450,0,31), minor=False)
     xticklabels=np.array(np.mod(np.linspace(450,0,31),360))
     axs3.set_xticklabels(xticklabels.astype(int))
@@ -31,17 +31,21 @@ def plot_cluster_patch(patch, LatLims, LonLims, cmap, axis, v_min, v_max, title,
         to plot a patch of clusters with appropriate longitude/latitude scales
     '''  
     n = v_max - v_min
-    bounds = [i for i in range(v_max - v_min + 1)]
-    print(patch)
-    print(bounds)
+    print("debug")
+    print(np.unique(patch))
+    print(cmap)
+    #bounds = [i for i in range(v_max - v_min + 1)]
+    bounds = np.arange(v_min - 0.5, v_max + 0.5, 1)
     norm = colors.BoundaryNorm(bounds, cmap.N)
     create_axis(axis, [LatLims[0] - 90, 90 - LatLims[1]], LonLims,  cm_num)
-    np.nan_to_num(patch, copy=False, nan=-1.0, posinf=0.0, neginf=0.0)
+    #np.nan_to_num(patch, copy=False, nan=-1.0, posinf=0.0, neginf=0.0)
+    masked_patch = np.ma.masked_invalid(patch)
+    cmap.set_bad("black")
     tx=np.linspace(v_max,v_min,n ,endpoint=True)
     
 
-    show=axis.imshow(patch,  origin='upper', interpolation = 'nearest', cmap = cmap, norm = norm,  
-               extent=[LonLims[0],LonLims[1],90-LatLims[1],
+    show=axis.imshow(masked_patch,  origin='upper', interpolation = 'nearest', cmap = cmap, norm = norm,  
+               extent=[360 - LonLims[0],360 - LonLims[1],90-LatLims[1],
                        90-LatLims[0]],
                        aspect="equal")
     #axis.set_title(title, pad = 15)
@@ -80,7 +84,7 @@ def plot_patch(patch, LatLims, LonLims, cmap, axis, v_min, v_max, title, cm_num,
     
    
     show=axis.imshow(patch,  origin='upper', cmap = cmap, vmin=vn,vmax=vx,  
-               extent=[LonLims[0],LonLims[1],90-LatLims[1],
+               extent=[360 - LonLims[0],360 - LonLims[1],90-LatLims[1],
                        90-LatLims[0]],
                        aspect="equal")
     #axis.set_title(title, pad = 15)
