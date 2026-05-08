@@ -70,47 +70,6 @@ def get_optimal_gmm_model(
     )
     print(df.sort_values(by = "BIC score").head())
 
-#silhouette graph
-def SelBest(arr:list, X:int)->list:
-    '''
-    returns the set of X configurations with shorter distance
-    '''
-    dx=np.argsort(arr)[:X]
-    return arr[dx]
-
-
-def silhouette_graph(X):
-    n_clusters=np.arange(3, 9)
-    sils=[]
-    sils_err=[]
-    iterations=5
-    
-    for n in n_clusters:
-        tmp_sil=[]
-        for _ in range(iterations):
-            rand_idx = np.random.choice(len(X), 20000)
-            X_sub = X[rand_idx]
-            print(X_sub)
-            gmm_model = GMM(n_components=n, covariance_type="full")
-            pipe = Pipeline([('scaler', StandardScaler()), ('gmm', gmm_model)])
-            pipe.fit(X_sub) 
-            labels=pipe.predict(X_sub)
-            
-            sil=metrics.silhouette_score(X_sub, labels, metric='euclidean')
-            tmp_sil.append(sil)
-        #val=np.mean(SelBest(np.array(tmp_sil), int(iterations/5)))
-        val=np.mean(SelBest(np.array(tmp_sil), int(iterations)))
-        err=np.std(tmp_sil)
-        sils.append(val)
-        sils_err.append(err)
-    fig, axis = plt.subplots(1, 1)
-    plt.errorbar(n_clusters, sils, yerr=sils_err)
-    plt.title("Silhouette Scores", fontsize=20)
-    plt.xticks(n_clusters)
-    plt.xlabel("N. of clusters")
-    plt.ylabel("Score")
-    return fig
-    
 
 
 def run_grid_search(keywords, param_ranges, 
@@ -137,8 +96,7 @@ def run_sil_graph(keywords, param_ranges,
 
     #get_optimal_gmm_model(input_arr[:, 0:len(keywords)], [3, 3])
 #run_grid_search(["NH3", "PCld", "AOI", "CI"], [[0, 300], [1000,  3000], [0, 1], [0, 1]], [75, 105], [0, 200])
-#run_sil_graph(["NH3", "PCld"], [ [0, 300], [1000, 3000]], [75, 105], [0, 200])
-run_sil_graph(["NH3", "PCld", "AOI", "CI"], [[0, 300], [1000,  3000], [0, 1], [0, 1]], [75, 105], [0, 200])
+
 
 
 
