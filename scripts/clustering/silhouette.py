@@ -68,4 +68,4 @@ def run_sil_graph(keywords, param_ranges,
     fig.savefig(f"cluster_evaluations/silhouette_chart_{keyword_str}")
 
 #run_sil_graph(["NH3", "PCld"], [ [0, 300], [1000, 3000]], [75, 105], [0, 200])
-run_sil_graph(["NH3", "PCld", "AOI", "CI"], [[0, 300], [1000,  3000], [0, 1], [0, 1]], [75, 105], [0, 200])
+run_sil_graph(["AOI", "CI"], [[0, 1], [0, 1]], [75, 105], [0, 200])
