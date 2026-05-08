@@ -154,7 +154,7 @@ def create_file_name(keywords, latRng, lngRng, n_comp, suffix, cm_num, threshold
 def create_plot_title(keywords, latRng, lngRng, n_comp, threshold):
     date = pre.get_date(keywords)
     prob_str = f'Threshold {threshold}' if config["soft_clustering"] else ""
-    return f'{date} Lat: {latRng[0]} - {latRng[1]}, Lon: {lngRng[0]} - {lngRng[1]} {date}, {n_comp} components \n {prob_str}'
+    return f'{date} Lat: {latRng[0]} - {latRng[1]}, Lon: {lngRng[0]} - {lngRng[1]}, {n_comp} components \n {prob_str}'
   #longitude range 230 - 330 for sys 1  
 def create_map_comparison(date, keywords, param_ranges, 
                            latRng = [85, 95], lngRng = [230, 260], 
