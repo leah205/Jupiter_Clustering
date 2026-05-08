@@ -83,18 +83,9 @@ def run_grid_search(keywords, param_ranges,
     pred10 = CL.create_clusters(input_arr[:, 0:len(keywords)], "full", 10, False, 0)
     pred10 = CL.create_clusters(input_arr[:, 0:len(keywords)], "full", 20, False, 0)
 
-def run_sil_graph(keywords, param_ranges, 
-                           latRng = [85, 95], lngRng = [230, 330], 
-                            cm_num = 1):
-    [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
-    fig = silhouette_graph(input_arr[:, 0:len(keywords)])
-    keyword_str = '_'.join(keywords)
-    fig.savefig(f"cluster_evaluations/silhouette_chart_{keyword_str}")
-    
 
 
-
-    #get_optimal_gmm_model(input_arr[:, 0:len(keywords)], [3, 3])
+#get_optimal_gmm_model(input_arr[:, 0:len(keywords)], [3, 3])
 #run_grid_search(["NH3", "PCld", "AOI", "CI"], [[0, 300], [1000,  3000], [0, 1], [0, 1]], [75, 105], [0, 200])
 
 
