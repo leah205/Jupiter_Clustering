@@ -35,6 +35,44 @@ def test_get_cluster_stat():
     assert mean1 == 3
     assert mean2 == 0
 
+def quantify_cluster(stats, param_ranges):
+    param_swapped = np.swapaxes(param_ranges, 0, 1)
+    normed_stats = (stats - param_swapped[0]) / (param_swapped[1] - param_swapped[0])
+    print(stats - param_swapped[0])
+    print(normed_stats.shape)
+    return np.mean(normed_stats, axis = 1)
+
+def test_quantify_cluster():
+    stats = [[[5, 7], [0.2, 5]], [[3, 4], [0.5, 3]]]
+    stats = np.array(stats)
+    mean1 = ((3 / 8) + 0.2) / 2
+    mean2 = ((1 / 8) + 0.5) / 2
+    res = np.array([mean1, mean2])
+    param_ranges = np.array([[2, 10], [0, 1]])
+    np.testing.assert_array_equal(res, quantify_cluster(stats[:, :, 0], param_ranges))
+
+
+def reassign_clusters(pred, stats, param_ranges):
+    cluster_means = quantify_cluster(stats, param_ranges)
+    print(cluster_means)
+    indices = np.argsort(cluster_means)
+    print(indices)
+    return indices[pred]
+    
+def test_reassign_cluster():
+    stats = [[[5, 7], [0.2, 5]], [[3, 4], [0.5, 3]]]
+    stats = np.array(stats)
+    mean1 = ((3 / 8) + 0.2) / 2
+    mean2 = ((1 / 8) + 0.5) / 2
+    res = np.array([mean1, mean2])
+    param_ranges = np.array([[2, 10], [0, 1]])
+    np.testing.assert_array_equal(res, quantify_cluster(stats[:, :, 0], param_ranges))
+    pred = np.array([0, 1, 1, 0])
+    res = np.array([1, 0, 0, 1])
+    np.testing.assert_array_equal(res, reassign_clusters(pred, np.flip(stats[:, :, 0], axis = 0), param_ranges))
+
+
+
 
 
 def test():
