@@ -120,7 +120,6 @@ def output_cluster_map(date, keywords, param_ranges,
     pred = CL.create_clusters(input_arr[:, 0:len(keywords)], cov_type, n_comp, config["soft_clustering"], threshold)
     stats = STAT.get_all_stats(pred, keywords, input_arr[:, len(keywords)], n_comp, latRng, lngRng, cm_num)
     pred = STAT.reassign_clusters(np.array(pred), np.swapaxes(stats[:, :, 0], 0, 1), np.array(param_ranges))
-    colors =["red", "green", "blue", "yellow", "orange", "pink"]
     cmap = ListedColormap(colors[:n_comp])
     print("plotting...")
     fig, axis = pl.subplots(1, 1)
@@ -163,7 +162,7 @@ def create_plot_title(keywords, latRng, lngRng, n_comp, threshold):
   #longitude range 230 - 330 for sys 1  
 def create_map_comparison(date, keywords, param_ranges, 
                            latRng = [85, 95], lngRng = [230, 260], 
-                            n_comp = 4, cov_type = "full",  cm_num = 1, threshold = 0.95):
+                            n_comp = 4, cov_type = "full",  cm_num = 1, threshold = 0.75):
     
   
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
@@ -200,4 +199,7 @@ def create_map_comparison(date, keywords, param_ranges,
 
 #RGB clustering longitude 0 - 200, latitude 75-105
 
-create_map_comparison("20251016", ["275", "395"], [[0, 300], [1000,  3000]], [75, 105], [0, 200], 4)
+output_cluster_map("20251016",
+                       ["275", "395", "502", "619", "631", "645", "673", "727", "889"], 
+                      [[0, 1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1]], 
+                      [75, 105], [0, 200], 3)

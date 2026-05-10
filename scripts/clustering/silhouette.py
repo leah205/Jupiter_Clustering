@@ -21,8 +21,8 @@ def SelBest(arr:list, X:int)->list:
     return arr[dx]
 
 
-def silhouette_graph(X):
-    n_clusters=np.arange(3, 9)
+def silhouette_graph(X, sample_size = 10000, n_range = [2,9]):
+    n_clusters=np.arange(n_range[0], n_range[1])
     sils=[]
     sils_err=[]
     iterations=5
@@ -31,7 +31,7 @@ def silhouette_graph(X):
         tmp_sil=[]
         for _ in range(iterations):
             # get random sub sample
-            rand_idx = np.random.choice(len(X), 20000)
+            rand_idx = np.random.choice(len(X), sample_size)
             X_sub = X[rand_idx]
             # fit model and assign labe
             gmm_model = GMM(n_components=n, covariance_type="full")
@@ -68,4 +68,8 @@ def run_sil_graph(keywords, param_ranges,
     fig.savefig(f"cluster_evaluations/silhouette_chart_{keyword_str}")
 
 #run_sil_graph(["NH3", "PCld"], [ [0, 300], [1000, 3000]], [75, 105], [0, 200])
-run_sil_graph(["AOI", "CI"], [[0, 1], [0, 1]], [75, 105], [0, 200])
+#run_sil_graph(["AOI", "CI"], [[0, 1], [0, 1]], [75, 105], [0, 200])
+
+run_sil_graph(["275", "395", "502", "619", "631", "645", "673", "727", "889"], 
+                      [[0, 1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1]], 
+                      [75, 105], [0, 200], 4)
