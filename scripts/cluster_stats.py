@@ -78,7 +78,7 @@ def reassign_clusters(pred, stats, param_ranges):
     
     
     """
-    print(stats)
+  
     cluster_means = quantify_clusters(stats, param_ranges)
     indices = np.argsort(cluster_means)
     return indices[pred]
@@ -92,7 +92,7 @@ def quantify_clusters(stats, param_ranges):
     stats - nd array, first axis is dimension, second axis, is cluster means for that dimension
     param_ranges - similiarly ordered cross-dimensional array with min and max value for each dimension
     """
-    print(stats)
+
     param_swapped = np.swapaxes(param_ranges, 0, 1)
     normed_stats = (stats - param_swapped[0]) / (param_swapped[1] - param_swapped[0])
     return np.mean(normed_stats, axis = 1)

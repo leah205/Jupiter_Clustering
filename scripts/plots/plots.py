@@ -20,10 +20,10 @@ def create_cluster_plot(ax, keywords, index_x, index_y, input_arr, pred, n_comp,
     keywords, 
     
     -----------
-
-
     """
-    ax.yaxis.set_inverted(True)
+    
+    if(keywords[index_y] == "PCld"):
+        ax.yaxis.set_inverted(True)
     x = input_arr[:, index_x]
     y = input_arr[:, index_y]
     pred = np.array(pred)
@@ -32,7 +32,7 @@ def create_cluster_plot(ax, keywords, index_x, index_y, input_arr, pred, n_comp,
         mask = pred == cl
         x_cl = x[mask]
         y_cl = y[mask]
-        print(mask)
+      
         x_mean = np.mean(x_cl)
         y_mean = np.mean(y_cl)
         x_std = np.std(x_cl)
@@ -63,27 +63,7 @@ def create_cluster_plot(ax, keywords, index_x, index_y, input_arr, pred, n_comp,
         h.set_alpha(1)
         h.set_sizes([50])
 
-    """
-    ax.scatter(x, y,c = pred,s = 1, cmap = cmap, alpha = 0.01)
 
-    clusters = np.unique(pred)
-
-    for cl in clusters:
-        if cl == -1:
-            continue
-        mask =  pred == cl
-        x_cl = x[mask]
-        y_cl = y[mask]
-        x_mean = np.mean(x_cl)
-        y_mean = np.mean(y_cl)
-        x_std = np.std(x_cl)
-        y_std = np.std(y_cl)
-        ax.scatter(x_mean, y_mean, color = "black", s = 50, marker = 'x')
-        print(f"cluster {cl}: mean=({x_mean:.2f}, {y_mean:.2f}), std=({x_std:.2f}, {y_std:.2f})")
-    
-    ax.set_xlabel(keywords[index_x])
-    ax.set_ylabel(keywords[index_y])
-    """
     
     
     return 0
