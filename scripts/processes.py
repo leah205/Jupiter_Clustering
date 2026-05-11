@@ -154,11 +154,12 @@ def create_file_name(keywords, latRng, lngRng, n_comp, suffix, cm_num, threshold
     date = pre.get_date(keywords)
     lat_lon_str = f'{latRng[0]}-{latRng[1]}_{lngRng[0]}-{lngRng[1]}'
     keyword_str = '_'.join(keywords)
-    prob_str = str(threshold) if config["soft_clustering"] else ""
-    return f'{config["output"]}/{date}_{keyword_str}_{lat_lon_str}_{n_comp}_sys_{cm_num}_p{threshold}_{suffix}.png'
+    prob_str = ("_p" + str(threshold)) if config["soft_clustering"] else ""
+    return f'{config["output"]}/{date}_{keyword_str}_{lat_lon_str}_{n_comp}_sys_{cm_num}{prob_str}_{suffix}.png'
 
 def create_plot_title(keywords, latRng, lngRng, n_comp, threshold):
     date = pre.get_date(keywords)
+    print(config["soft_clustering"])
     prob_str = f'Threshold {threshold}' if config["soft_clustering"] else ""
     return f'{date} Lat: {latRng[0]} - {latRng[1]}, Lon: {lngRng[0]} - {lngRng[1]}, {n_comp} components \n {prob_str}'
   #longitude range 230 - 330 for sys 1  
