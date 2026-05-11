@@ -25,6 +25,7 @@ def get_stat(cluster_arr, dim_arr, indices, n_clusters, dim_name):
     res = []
     for i in range(n_clusters):
         cluster_mask = cluster_arr == i
+       
         # contains indices of selected cluster
         cluster_indices = indices[cluster_mask]
 

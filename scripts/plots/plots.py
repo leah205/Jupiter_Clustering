@@ -40,6 +40,8 @@ def create_cluster_plot(ax, keywords, index_x, index_y, input_arr, pred, n_comp,
         ax.scatter(x[mask], y[mask], s = 1, alpha = 0.01, color = cmap(cl), label = f"Cluster {cl}")
         ax.scatter(x_mean, y_mean, color = "black", s = 50, marker = 'x', zorder = 9)
         #ax.text(x_mean, y_mean, str(cl), fontsize = 10, zorder = 10)
+        ax.set_xlabel(keywords[index_x])
+        ax.set_ylabel(keywords[index_y])
         ax.annotate(
             str(cl),
             (x_mean, y_mean),

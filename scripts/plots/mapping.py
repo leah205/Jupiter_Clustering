@@ -82,7 +82,7 @@ def plot_patch(patch, LatLims, LonLims, cmap, axis, v_min, v_max, title, cm_num,
     np.nan_to_num(patch, copy=False, nan=-1.0, posinf=0.0, neginf=0.0)
     tx=np.linspace(vn,vx,5 ,endpoint=True)
     
-   
+    axis.set_title(title)
     show=axis.imshow(patch,  origin='upper', cmap = cmap, vmin=vn,vmax=vx,  
                extent=[360 - LonLims[0],360 - LonLims[1],90-LatLims[1],
                        90-LatLims[0]],
@@ -95,7 +95,7 @@ def plot_patch(patch, LatLims, LonLims, cmap, axis, v_min, v_max, title, cm_num,
     im_ratio = patch.shape[0]/patch.shape[1]
     
     if cbarplot:
-        print("hello world")
+        
         cbar = fig.colorbar(show, ticks=tx, 
                    orientation='vertical',
                    ax=axis,fraction=0.046*im_ratio, pad=0.05)
