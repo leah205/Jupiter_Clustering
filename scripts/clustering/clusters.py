@@ -20,6 +20,7 @@ def create_clusters(pix_arr, cov_type, n_components, is_soft_clustering, thresho
     gmm_model = GMM(n_components=n_components, covariance_type=cov_type)
     pipe = Pipeline([('scaler', StandardScaler()), ('gmm', gmm_model)])
   
+  
     pipe.fit(pix_arr)
     scaled = pipe.named_steps["scaler"].transform(pix_arr)
     gm = pipe.named_steps["gmm"]
@@ -40,7 +41,7 @@ def create_clusters(pix_arr, cov_type, n_components, is_soft_clustering, thresho
         
     
 
-
+ 
     return predictions
 
 

@@ -57,6 +57,7 @@ def output_comparison_and_plot(date, keywords, param_ranges,
                            latRng = [85, 95], lngRng = [230, 330], 
                            n_comp = 4, cov_type = "full", cm_num = 1, threshold = 0.95):
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
+    
     pred = CL.create_clusters(input_arr[:, 0:len(keywords)], cov_type, n_comp, config["soft_clustering"], threshold)
     stats = STAT.get_all_stats(pred, keywords, input_arr[:, len(keywords)], n_comp, latRng, lngRng, cm_num)
     pred = STAT.reassign_clusters(np.array(pred), np.swapaxes(stats[:, :, 0], 0, 1), np.array(param_ranges))
@@ -117,7 +118,9 @@ def output_cluster_map(date, keywords, param_ranges,
                            latRng = [65, 115], lngRng = [0, 50], 
                             n_comp = 4, cov_type = "full", cm_num = 3, threshold = 0.75):
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
+    print(subset_shape)
     pred = CL.create_clusters(input_arr[:, 0:len(keywords)], cov_type, n_comp, config["soft_clustering"], threshold)
+    print(pred)
     stats = STAT.get_all_stats(pred, keywords, input_arr[:, len(keywords)], n_comp, latRng, lngRng, cm_num)
     pred = STAT.reassign_clusters(np.array(pred), np.swapaxes(stats[:, :, 0], 0, 1), np.array(param_ranges))
     cmap = ListedColormap(colors[:n_comp])
@@ -166,8 +169,11 @@ def create_map_comparison(date, keywords, param_ranges,
     
   
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
+
+    indices = input_arr[:, input_arr.shape[1] - 1]
+   
     pred = CL.create_clusters(input_arr[:, 0:len(keywords)], cov_type, n_comp, config["soft_clustering"], threshold)
-    stats = STAT.get_all_stats(pred, keywords, input_arr[:, len(keywords)], n_comp, latRng, lngRng, cm_num)
+    stats = STAT.get_all_stats(pred, keywords, indices, n_comp, latRng, lngRng, cm_num)
     pred = STAT.reassign_clusters(np.array(pred), np.swapaxes(stats[:, :, 0], 0, 1), np.array(param_ranges))
     cmap = ListedColormap(colors[: n_comp])
     create_map_comp_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold, cmap)
@@ -180,7 +186,7 @@ def create_map_comparison(date, keywords, param_ranges,
 
 # physical parameter/Index clustering longitude 0 - 200, latitude 75 - 105
 
-output_comparison_and_plot("20251016", ["NH3", "PCld"], [[0, 300], [1000,  3000]], [75, 105], [0, 200], 4)
+#output_comparison_and_plot("20251016", ["NH3", "PCld"], [[0, 300], [1000,  3000]], [75, 105], [0, 200], 4)
 #create_map_comparison("20251016", ["NH3", "PCld"], [[0, 300], [1000,  3000]], [75, 105], [0, 200], 4)
 #output_comparison_and_plot("20251016", ["AOI", "CI"], [[0.1, 0.4], [0.4, 0.8]], [75, 105], [0, 200], 4)
 
@@ -188,10 +194,26 @@ output_comparison_and_plot("20251016", ["NH3", "PCld"], [[0, 300], [1000,  3000]
 #output_cluster_map_and_plot("20251016", ["NH3", "PCld"], [[0, 300], [1000,  3000]], [75, 105], [0, 200], 4)
 
 #RGB clustering longitude 0 - 200, latitude 75-105
-
-
 # add rgb context (map comparison)
 """output_cluster_map("20251016",
                        ["275", "395", "502", "619", "631", "645", "673", "727", "889"], 
                       [[0, 1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1]], 
                       [75, 105], [0, 200], 6, "full", 1)"""
+
+
+# Run processes for longitude 0 - 30, latitude 90 - 105
+lon_range = [320, 360]
+lat_range = [75, 105]
+
+
+output_comparison_and_plot("20251016", ["NH3", "PCld"], [[0, 300], [1000,  3000]], lat_range, lon_range, 4)
+
+#output_comparison_and_plot("20251016", ["AOI", "CI"], [[0.1, 0.4], [0.4, 0.8]], lat_range, lon_range, 4)
+"""
+
+output_cluster_map("20251016",
+                       ["275", "395", "502", "619", "631", "645", "673", "727", "889"], 
+                      [[0, 1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1]], 
+                      lat_range, lon_range, 6, "full", 1)
+                      
+"""

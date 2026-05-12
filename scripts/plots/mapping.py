@@ -31,7 +31,8 @@ def plot_cluster_patch(patch, LatLims, LonLims, cmap, axis, v_min, v_max, title,
         to plot a patch of clusters with appropriate longitude/latitude scales
     '''  
     n = v_max - v_min
- 
+    print("patch being mapped:")
+    print(patch)
     #bounds = [i for i in range(v_max - v_min + 1)]
     bounds = np.arange(v_min - 0.5, v_max + 0.5, 1)
     norm = colors.BoundaryNorm(bounds, cmap.N)
