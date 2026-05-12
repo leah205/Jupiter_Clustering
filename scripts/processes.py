@@ -202,8 +202,8 @@ def create_map_comparison(date, keywords, param_ranges,
 
 
 # Run processes for longitude 0 - 30, latitude 90 - 105
-lon_range = [320, 360]
-lat_range = [75, 105]
+lon_range = [330, 360]
+lat_range = [90, 105]
 
 
 output_comparison_and_plot("20251016", ["NH3", "PCld"], [[0, 300], [1000,  3000]], lat_range, lon_range, 4)

@@ -186,9 +186,15 @@ def subset_map(map, LatLims, LonLims,  CM):
     if(CM == 0):
 
         return np.copy(map[LatLims[0]:LatLims[1],LonLims[0]:LonLims[1]])
+    if CM >= LonRng and CM <= lon_max - LonRng:
+        patch = np.copy(
+            map[
+                int(LatLims[0]):int(LatLims[1]),
+                int(LonLims[0]):int(LonLims[1])
+            ]
+        )
    
-  
-    if CM<LonRng:
+    elif CM<LonRng:
         print("case 1")
         #crosses longitude boundary to the left of CM
         #print("******************  CM2deg<LonRng")
@@ -198,7 +204,7 @@ def subset_map(map, LatLims, LonLims,  CM):
         
         patch=np.concatenate((np.copy(map[LatLims[0]:LatLims[1],LonLims[0]:lon_max]),
                               np.copy(map[LatLims[0]:LatLims[1],0:LonLims[1]-lon_max])),axis=1)
-    if CM>lon_max-LonRng:
+    elif CM>lon_max-LonRng:
         print("case 2")
         #crossses longitude boundary to the right of CM
         #print("******************  CM2deg>LonRng")
