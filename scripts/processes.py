@@ -155,7 +155,7 @@ def output_cluster_plot(date, keywords, param_ranges,
 
 def create_file_name(keywords, latRng, lngRng, n_comp, suffix, cm_num, threshold):
     date = pre.get_date(keywords)
-    lat_lon_str = f'{90 - latRng[1]}-{90 - latRng[0]}_{360 - lngRng[0]}-{ 360 - lngRng[1]}'
+    lat_lon_str = f'{90 - latRng[1]}-{90 - latRng[0]}_{360 - lngRng[1]}-{ 360 - lngRng[0]}'
     keyword_str = '_'.join(keywords)
     prob_str = ("_p" + str(threshold)) if config["soft_clustering"] else ""
     return f'{config["output"]}/{date}_{keyword_str}_{lat_lon_str}_{n_comp}_sys_{cm_num}{prob_str}_{suffix}.png'
@@ -163,7 +163,7 @@ def create_file_name(keywords, latRng, lngRng, n_comp, suffix, cm_num, threshold
 def create_plot_title(keywords, latRng, lngRng, n_comp, threshold):
     date = pre.get_date(keywords)
     prob_str = f'Threshold {threshold}' if config["soft_clustering"] else ""
-    return f'{date} Lat: {90 - latRng[0]} - {90 - latRng[1]}, Lon: {360 - lngRng[0]} - {360 - lngRng[1]}, {n_comp} components \n {prob_str}'
+    return f'{date} Lat: {90 - latRng[1]} - {90 - latRng[0]}, Lon: {360 - lngRng[1]} - {360 - lngRng[0]}, {n_comp} components \n {prob_str}'
   #longitude range 230 - 330 for sys 1  
 def create_map_comparison(date, keywords, param_ranges, 
                            latRng = [85, 95], lngRng = [230, 260], 
@@ -210,11 +210,11 @@ lon_range = [0, 30]
 lat_range = [0, 15]
 
 lon_range = [360 - lon_range[1], 360 - lon_range[0]]
-lat_range = [90 - lat_range[0], 90 - lat_range[1]]
+lat_range = [90 - lat_range[1], 90 - lat_range[0]]
 
-output_comparison_and_plot("20251016", ["NH3", "PCld"], [[0, 300], [1000,  3000]], lat_range, lon_range, 4)
+#output_comparison_and_plot("20251016", ["NH3", "PCld"], [[0, 300], [1000,  3000]], lat_range, lon_range, 4)
 
-#output_comparison_and_plot("20251016", ["AOI", "CI"], [[0.1, 0.4], [0.4, 0.8]], lat_range, lon_range, 4)
+output_comparison_and_plot("20251016", ["AOI", "CI"], [[0.1, 0.4], [0.4, 0.8]], lat_range, lon_range, 4)
 """
 
 output_cluster_map("20251016",

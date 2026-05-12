@@ -82,12 +82,23 @@ def run_grid_search(keywords, param_ranges,
     get_optimal_gmm_model(input_arr[:, 0: len(keywords)])
 
 
+lon_range = [0, 30]
+lat_range = [0, 15]
+
+lon_range = [360 - lon_range[1], 360 - lon_range[0]]
+lat_range = [90 - lat_range[1], 90 - lat_range[0]]
+
+run_grid_search(["NH3", "PCld"], [[0, 300], [1000,  3000]], lat_range, lon_range, 4)
+
+#output_comparison_and_plot("AOI", "CI"], [[0.1, 0.4], [0.4, 0.8]], lat_range, lon_range, 4)
+
+
 
 #get_optimal_gmm_model(input_arr[:, 0:len(keywords)], [3, 3])
 #run_grid_search(["NH3", "PCld", "AOI", "CI"], [[0, 300], [1000,  3000], [0, 1], [0, 1]], [75, 105], [0, 200])
-run_grid_search(["275", "395", "502", "619", "631", "645", "673", "727", "889"], 
-                      [[0, 1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1]], 
-                      [75, 105], [0, 200], 4)
+#run_grid_search(["275", "395", "502", "619", "631", "645", "673", "727", "889"], 
+                     # [[0, 1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1]], 
+                     # [75, 105], [0, 200], 4)
 
 
 
