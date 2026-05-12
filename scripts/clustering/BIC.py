@@ -11,8 +11,8 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 #full, tied, diagonal, spherical
 
-def create_bic_plot(pix_arr, sample_size = 10000):
-    n_cluster = np.arange(2, 15)
+def create_bic_plot(pix_arr, n_range = [2, 10], sample_size = 10000):
+    n_cluster = np.arange(n_range[0], n_range[1])
     bics = []
     bic_errs = []
     iterations = 10
@@ -41,11 +41,11 @@ def create_bic_plot(pix_arr, sample_size = 10000):
 
 
 def run_bic(subdir, keywords, param_ranges, 
-                           latRng = [85, 95], lngRng = [230, 330], 
+                           latRng = [85, 95], lngRng = [230, 330], cluster_rng = [2, 10],
                             cm_num = 1):
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
     pix_arr = input_arr[:, 0: len(keywords)]
-    fig = create_bic_plot(pix_arr)
+    fig = create_bic_plot(pix_arr, cluster_rng)
     keyword_str = "_".join(keywords)
     fig.savefig(f"cluster_evaluations/{subdir}/BIC_plot_{keyword_str}")
 
@@ -55,4 +55,4 @@ lat_range = [0, 15]
 lon_range = [360 - lon_range[1], 360 - lon_range[0]]
 lat_range = [90 - lat_range[1], 90 - lat_range[0]]
 
-run_bic("20251016UTc/lon_0-30", ["NH3", "PCld"], [[0, 300], [1000,  3000]], lat_range, lon_range, 4)
+#run_bic("20251016UTc/lon_0-30", ["NH3", "PCld"], [[0, 300], [1000,  3000]], lat_range, lon_range, 4)

@@ -27,9 +27,9 @@ def get_js(m1, m2, n_sample = 10**5):
             + log_2_y.mean() - (log_mix_Y.mean() - np.log(2))) / 2
     return np.sqrt(np.maximum(0, squared_dist))
 
-def create_js_plot(X):
-    n_clusters = np.arange(2, 9)
-    sample_size = 20000
+def create_js_plot(X, n_range, sample_size = 10000):
+    n_clusters = np.arange(n_range[0], n_range[1])
+  
     iterations = 10
     results = []
     res_errs = []
@@ -68,14 +68,14 @@ def create_js_plot(X):
 
 
 def run_js_dist(keywords, param_ranges, 
-                           latRng = [85, 95], lngRng = [230, 330], 
+                           latRng = [85, 95], lngRng = [230, 330], cluster_rng = [2, 10],
                             cm_num = 1):
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
     pix_arr = input_arr[:, 0: len(keywords)]
-    fig = create_js_plot(pix_arr)
+    fig = create_js_plot(pix_arr, cluster_rng)
     keyword_str = "_".join(keywords)
     fig.savefig(f"cluster_evaluations/GMM_distance_{keyword_str}")
     
 
-run_js_dist(["AOI", "CI"], [[0.1, 0.4], [0.4, 0.8]], [75, 105], [0, 200])
-run_js_dist(["NH3", "PCld"], [[0, 300], [1000, 3000]], [75, 105], [0, 200])
+#run_js_dist(["AOI", "CI"], [[0.1, 0.4], [0.4, 0.8]], [75, 105], [0, 200])
+#run_js_dist(["NH3", "PCld"], [[0, 300], [1000, 3000]], [75, 105], [0, 200])

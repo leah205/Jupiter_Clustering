@@ -214,7 +214,7 @@ lat_range = [90 - lat_range[1], 90 - lat_range[0]]
 
 #output_comparison_and_plot("20251016", ["NH3", "PCld"], [[0, 300], [1000,  3000]], lat_range, lon_range, 4)
 
-output_comparison_and_plot("20251016", ["AOI", "CI"], [[0.1, 0.4], [0.4, 0.8]], lat_range, lon_range, 4)
+#output_comparison_and_plot("20251016", ["AOI", "CI"], [[0.1, 0.4], [0.4, 0.8]], lat_range, lon_range, 4)
 """
 
 output_cluster_map("20251016",
