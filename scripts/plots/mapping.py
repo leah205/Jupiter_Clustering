@@ -7,13 +7,15 @@ import scripts.clustering.clusters as CL
 from sklearn.metrics import silhouette_score
 from config.config import config
 from matplotlib import colors
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+
 
 def create_axis(axs3, LatLims, LonLims, LonSys):
     #fig3,axs3=pl.subplots(dpi=150, facecolor="white")
     axs3.grid(linewidth=0.2)
     axs3.ylim=[LatLims[0] ,LatLims[1]]
-    #axs3.xlim=[360-LonLims[0],360-LonLims[1]]
-    axs3.xlim=[360 - LonLims[0],360 - LonLims[1]]
+    axs3.xlim=[360-LonLims[0],360-LonLims[1]]
+    #axs3.xlim=[LonLims[0],LonLims[1]]
     axs3.set_xticks(np.linspace(450,0,31), minor=False)
     xticklabels=np.array(np.mod(np.linspace(450,0,31),360))
     axs3.set_xticklabels(xticklabels.astype(int))
@@ -25,7 +27,7 @@ def create_axis(axs3, LatLims, LonLims, LonSys):
     axs3.set_adjustable('box') 
     return axs3
 
-def plot_cluster_patch(patch, LatLims, LonLims, cmap, axis, v_min, v_max, title, cm_num, fig = None, cbarplot = False, cbar_title = "test"):
+def plot_cluster_patch(patch, LatLims, LonLims, cmap, axis, v_min, v_max, title, cm_num, fig = None, cbarplot = True, cbar_title = "test"):
     '''
     Purpose:
         to plot a patch of clusters with appropriate longitude/latitude scales

@@ -184,7 +184,6 @@ def subset_map(map, LatLims, LonLims,  CM):
     print(CM)
     #print(lon_max,LatLims,LonRng,CM,LonLims)
     if(CM == 0):
-
         return np.copy(map[LatLims[0]:LatLims[1],LonLims[0]:LonLims[1]])
     if CM >= LonRng and CM <= lon_max - LonRng:
         patch = np.copy(

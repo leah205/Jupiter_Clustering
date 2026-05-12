@@ -56,8 +56,10 @@ def create_plot_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr
 def output_comparison_and_plot(date, keywords, param_ranges, 
                            latRng = [85, 95], lngRng = [230, 330], 
                            n_comp = 4, cov_type = "full", cm_num = 1, threshold = 0.95):
+
+
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
-    
+
     pred = CL.create_clusters(input_arr[:, 0:len(keywords)], cov_type, n_comp, config["soft_clustering"], threshold)
     stats = STAT.get_all_stats(pred, keywords, input_arr[:, len(keywords)], n_comp, latRng, lngRng, cm_num)
     pred = STAT.reassign_clusters(np.array(pred), np.swapaxes(stats[:, :, 0], 0, 1), np.array(param_ranges))
@@ -153,7 +155,7 @@ def output_cluster_plot(date, keywords, param_ranges,
 
 def create_file_name(keywords, latRng, lngRng, n_comp, suffix, cm_num, threshold):
     date = pre.get_date(keywords)
-    lat_lon_str = f'{latRng[0]}-{latRng[1]}_{lngRng[0]}-{lngRng[1]}'
+    lat_lon_str = f'{90 - latRng[1]}-{90 - latRng[0]}_{360 - lngRng[0]}-{ 360 - lngRng[1]}'
     keyword_str = '_'.join(keywords)
     prob_str = ("_p" + str(threshold)) if config["soft_clustering"] else ""
     return f'{config["output"]}/{date}_{keyword_str}_{lat_lon_str}_{n_comp}_sys_{cm_num}{prob_str}_{suffix}.png'
@@ -161,7 +163,7 @@ def create_file_name(keywords, latRng, lngRng, n_comp, suffix, cm_num, threshold
 def create_plot_title(keywords, latRng, lngRng, n_comp, threshold):
     date = pre.get_date(keywords)
     prob_str = f'Threshold {threshold}' if config["soft_clustering"] else ""
-    return f'{date} Lat: {latRng[0]} - {latRng[1]}, Lon: {lngRng[0]} - {lngRng[1]}, {n_comp} components \n {prob_str}'
+    return f'{date} Lat: {90 - latRng[0]} - {90 - latRng[1]}, Lon: {360 - lngRng[0]} - {360 - lngRng[1]}, {n_comp} components \n {prob_str}'
   #longitude range 230 - 330 for sys 1  
 def create_map_comparison(date, keywords, param_ranges, 
                            latRng = [85, 95], lngRng = [230, 260], 
@@ -178,6 +180,8 @@ def create_map_comparison(date, keywords, param_ranges,
     cmap = ListedColormap(colors[: n_comp])
     create_map_comp_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold, cmap)
    
+# enter latitude and longitude reversed
+
 
 
 #output_cluster_map("20251214", ["NH3", "PCld"], [[0, 300], [1000, 3000]], 5)
@@ -202,9 +206,11 @@ def create_map_comparison(date, keywords, param_ranges,
 
 
 # Run processes for longitude 0 - 30, latitude 90 - 105
-lon_range = [330, 360]
-lat_range = [90, 105]
+lon_range = [0, 30]
+lat_range = [0, 15]
 
+lon_range = [360 - lon_range[1], 360 - lon_range[0]]
+lat_range = [90 - lat_range[0], 90 - lat_range[1]]
 
 output_comparison_and_plot("20251016", ["NH3", "PCld"], [[0, 300], [1000,  3000]], lat_range, lon_range, 4)
 
