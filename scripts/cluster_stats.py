@@ -25,6 +25,7 @@ def get_stat(cluster_arr, dim_arr, indices, n_clusters, dim_name):
     res = []
     for i in range(n_clusters):
         cluster_mask = cluster_arr == i
+       
         # contains indices of selected cluster
         cluster_indices = indices[cluster_mask]
 
@@ -77,11 +78,21 @@ def reassign_clusters(pred, stats, param_ranges):
     
     
     """
-    print(stats)
-    cluster_means = quantify_clusters(stats, param_ranges)
-    indices = np.argsort(cluster_means)
-    return indices[pred]
     
+    cluster_means = quantify_clusters(stats, param_ranges)
+    res = np.full(pred.shape, -1)
+    print("pred values")
+    unique, counts = np.unique(pred, return_counts = True)
+    print(unique)
+    print(counts)
+    mask = ~(pred == -1)
+    indices = np.argsort(cluster_means)
+    res[mask] = indices[pred[mask]]
+    unique, counts = np.unique(res, return_counts = True)
+    print(unique)
+    print(counts)
+    return res
+
 def quantify_clusters(stats, param_ranges):
     # convert param_ranges to numpy array
     """
@@ -91,7 +102,7 @@ def quantify_clusters(stats, param_ranges):
     stats - nd array, first axis is dimension, second axis, is cluster means for that dimension
     param_ranges - similiarly ordered cross-dimensional array with min and max value for each dimension
     """
-    print(stats)
+
     param_swapped = np.swapaxes(param_ranges, 0, 1)
     normed_stats = (stats - param_swapped[0]) / (param_swapped[1] - param_swapped[0])
     return np.mean(normed_stats, axis = 1)

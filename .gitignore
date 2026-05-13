@@ -1,0 +1,6 @@
+data/
+lib/
+lib64/
+bin/
+.pytest_cache
+_pycache_/

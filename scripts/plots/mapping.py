@@ -7,13 +7,15 @@ import scripts.clustering.clusters as CL
 from sklearn.metrics import silhouette_score
 from config.config import config
 from matplotlib import colors
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+
 
 def create_axis(axs3, LatLims, LonLims, LonSys):
     #fig3,axs3=pl.subplots(dpi=150, facecolor="white")
     axs3.grid(linewidth=0.2)
     axs3.ylim=[LatLims[0] ,LatLims[1]]
-    #axs3.xlim=[360-LonLims[0],360-LonLims[1]]
-    axs3.xlim=[360 - LonLims[0],360 - LonLims[1]]
+    axs3.xlim=[360-LonLims[0],360-LonLims[1]]
+    #axs3.xlim=[LonLims[0],LonLims[1]]
     axs3.set_xticks(np.linspace(450,0,31), minor=False)
     xticklabels=np.array(np.mod(np.linspace(450,0,31),360))
     axs3.set_xticklabels(xticklabels.astype(int))
@@ -25,15 +27,14 @@ def create_axis(axs3, LatLims, LonLims, LonSys):
     axs3.set_adjustable('box') 
     return axs3
 
-def plot_cluster_patch(patch, LatLims, LonLims, cmap, axis, v_min, v_max, title, cm_num, fig = None, cbarplot = False, cbar_title = "test"):
+def plot_cluster_patch(patch, LatLims, LonLims, cmap, axis, v_min, v_max, title, cm_num, fig = None, cbarplot = True, cbar_title = "test"):
     '''
     Purpose:
         to plot a patch of clusters with appropriate longitude/latitude scales
     '''  
     n = v_max - v_min
-    print("debug")
-    print(np.unique(patch))
-    print(cmap)
+    print("patch being mapped:")
+    print(patch)
     #bounds = [i for i in range(v_max - v_min + 1)]
     bounds = np.arange(v_min - 0.5, v_max + 0.5, 1)
     norm = colors.BoundaryNorm(bounds, cmap.N)
@@ -82,7 +83,7 @@ def plot_patch(patch, LatLims, LonLims, cmap, axis, v_min, v_max, title, cm_num,
     np.nan_to_num(patch, copy=False, nan=-1.0, posinf=0.0, neginf=0.0)
     tx=np.linspace(vn,vx,5 ,endpoint=True)
     
-   
+    axis.set_title(title)
     show=axis.imshow(patch,  origin='upper', cmap = cmap, vmin=vn,vmax=vx,  
                extent=[360 - LonLims[0],360 - LonLims[1],90-LatLims[1],
                        90-LatLims[0]],
@@ -95,7 +96,7 @@ def plot_patch(patch, LatLims, LonLims, cmap, axis, v_min, v_max, title, cm_num,
     im_ratio = patch.shape[0]/patch.shape[1]
     
     if cbarplot:
-        print("hello world")
+        
         cbar = fig.colorbar(show, ticks=tx, 
                    orientation='vertical',
                    ax=axis,fraction=0.046*im_ratio, pad=0.05)
