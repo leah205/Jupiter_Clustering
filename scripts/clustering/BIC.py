@@ -12,6 +12,7 @@ from sklearn.preprocessing import StandardScaler
 #full, tied, diagonal, spherical
 
 def create_bic_plot(pix_arr, n_range = [2, 10], sample_size = 10000):
+    print(n_range)
     n_cluster = np.arange(n_range[0], n_range[1])
     bics = []
     bic_errs = []
@@ -23,8 +24,9 @@ def create_bic_plot(pix_arr, n_range = [2, 10], sample_size = 10000):
             gmm_model = GMM(n_components=n, covariance_type="full")
             scaled = StandardScaler().fit(X).transform(X)
             gm = gmm_model.fit(scaled)
-            tmp_bic.append(gm.bic(X))
-        val = -1 * np.mean(tmp_bic)
+            bic = gm.bic(scaled)
+            tmp_bic.append(bic)
+        val =  np.mean(tmp_bic)
         err = np.std(tmp_bic)
         bics.append(val)
         bic_errs.append(err)
@@ -54,5 +56,12 @@ lat_range = [0, 15]
 
 lon_range = [360 - lon_range[1], 360 - lon_range[0]]
 lat_range = [90 - lat_range[1], 90 - lat_range[0]]
+cluster_rng = [2,16]
 
-#run_bic("20251016UTc/lon_0-30", ["NH3", "PCld"], [[0, 300], [1000,  3000]], lat_range, lon_range, 4)
+#run_bic("20251016UTc/lon_0-30", ["NH3", "PCld"], [[0, 300], [1000,  3000]], lat_range, lon_range)
+#run_bic("20251016UTc/lon_0-30", ["AOI", "CI"], [[0.1, 0.4], [0.4, 0.8]], lat_range, lon_range, cluster_rng, 1)
+# run_bic("20251016UTc/lon_0-30", ["275", "395", "502", "619", "631", "645", "673", "727", "889"], 
+#                  [[0, 1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1]], lat_range, lon_range, cluster_rng, 1)
+
+ 
+

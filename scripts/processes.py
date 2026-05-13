@@ -11,7 +11,7 @@ from matplotlib.colors import ListedColormap
 import scripts.cluster_stats as STAT
 import pylab as pl
 
-colors =["red", "green", "blue", "yellow", "orange", "pink"]
+colors =["red", "green", "blue", "yellow", "orange", "pink", "purple", "gray"]
 
 keyword_dict = {
     "PCld": "Cloud Pressure",
@@ -55,7 +55,7 @@ def create_plot_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr
 
 def output_comparison_and_plot(date, keywords, param_ranges, 
                            latRng = [85, 95], lngRng = [230, 330], 
-                           n_comp = 4, cov_type = "full", cm_num = 1, threshold = 0.95):
+                           n_comp = 4, cov_type = "full", cm_num = 1, threshold = 0.75):
 
 
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
@@ -212,14 +212,14 @@ lat_range = [0, 15]
 lon_range = [360 - lon_range[1], 360 - lon_range[0]]
 lat_range = [90 - lat_range[1], 90 - lat_range[0]]
 
-#output_comparison_and_plot("20251016", ["NH3", "PCld"], [[0, 300], [1000,  3000]], lat_range, lon_range, 4)
+#output_comparison_and_plot("20251016", ["NH3", "PCld"], [[0, 300], [1000,  3100]], lat_range, lon_range, 6)
 
-#output_comparison_and_plot("20251016", ["AOI", "CI"], [[0.1, 0.4], [0.4, 0.8]], lat_range, lon_range, 4)
+output_comparison_and_plot("20251016", ["AOI", "CI"], [[0.1, 0.4], [0.4, 0.8]], lat_range, lon_range, 5)
+
 """
-
 output_cluster_map("20251016",
                        ["275", "395", "502", "619", "631", "645", "673", "727", "889"], 
                       [[0, 1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1]], 
-                      lat_range, lon_range, 6, "full", 1)
+                      lat_range, lon_range, 8, "full", 1)
                       
 """
