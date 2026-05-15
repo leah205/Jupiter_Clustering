@@ -12,7 +12,7 @@ from sklearn.preprocessing import StandardScaler
 #full, tied, diagonal, spherical
 
 def create_bic_plot(pix_arr, n_range = [2, 10], sample_size = 10000):
-    print(n_range)
+  
     n_cluster = np.arange(n_range[0], n_range[1])
     bics = []
     bic_errs = []
