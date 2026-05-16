@@ -11,6 +11,63 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.patches as patches
 
 
+ROI_cmap = {
+"Hot Spot": 'red',
+                     "Gyre": "green",
+                     "Cloud Plume": "blue",
+                     "Reference": "black"
+}
+
+def label_features(axis, LonLims, LatLims, ROI, showbands):
+    ylim = axis.get_ylim()
+    if ROI:
+        for R in ROI:
+                axis.plot(np.array([ROI[R][2]+ROI[R][3],ROI[R][2]-ROI[R][3],
+                              ROI[R][2]-ROI[R][3],ROI[R][2]+ROI[R][3],
+                              ROI[R][2]+ROI[R][3]]),
+                              90.-np.array([ROI[R][0],ROI[R][0],ROI[R][1],
+                              ROI[R][1],ROI[R][0]]), color = ROI_cmap[R])
+                
+    # box = axis.get_position()
+    
+    belt={"SSTB":[-39.6,-36.2],
+          "STB":[-32.4,-27.1],
+          "SEB":[-19.7,-7.2],
+          "NEB":[6.9,17.4],
+          "NTB":[24.2,31.4],
+          "NNTB":[35.4,39.6]}
+    
+    zone={"STZ":[-36.2,-32.4],
+          "STrZ":[-27.1,-19.7],
+          "EZ":[-7.2,6.9],
+          "NTrZ":[17.4,24.2],
+          "NTZ":[31.4,35.4]}
+
+    bounds = [
+        -39.6, -36.2, -32.4, -27.1, -19.7, -7.2, 6.9, 17.4, 24.2, 31.4, 35.4, 39.6
+    ]
+
+    ticks = [(bounds[i] + bounds[i + 1]) / 2 for i in range(len(bounds) - 1) ]
+
+    lat_range_labels = ["SSTB", "STZ", "STB", "STrZ", "SEB", "EZ", "NEB", "NTrZ", "NTB",  "NTZ", "NNTB"]
+    axis.set_yticks(ticks)
+    axis.set_yticklabels(lat_range_labels)
+  
+    if showbands:
+        for zb in belt:
+            #print(zb,belt[zb])
+            axis.fill_between([360-LonLims[0],360-LonLims[1]],[belt[zb][0],belt[zb][0]],[belt[zb][1],belt[zb][1]],
+                                    color="0.5",alpha=0.25)
+            axis.fill_between([360-LonLims[0],360-LonLims[1]],[belt[zb][0],belt[zb][0]],[belt[zb][1],belt[zb][1]],
+                                    color="0.8",alpha=0.1)
+        #axs1[1].annotate(zb,xy=[np.mean(belt[zb]),51],ha="center")
+    #for zb in zone:
+        #axs1[1].annotate(zb,xy=[np.mean(zone[zb]),51],ha="center")
+    
+    axis.tick_params(axis='both', which='major', labelsize=9)
+    axis.set_ylim(ylim)
+    return axis
+
 def create_axis(axs3, LatLims, LonLims, LonSys):
     #fig3,axs3=pl.subplots(dpi=150, facecolor="white")
     axs3.grid(linewidth=0.2)
@@ -28,15 +85,13 @@ def create_axis(axs3, LatLims, LonLims, LonSys):
     axs3.set_adjustable('box') 
     return axs3
 
-def plot_cluster_patch(patch, LatLims, LonLims, cmap, ROI, axis, v_min, v_max, title, cm_num, fig = None, cbarplot = True, cbar_title = "test"):
+def plot_cluster_patch(patch, LatLims, LonLims, cmap, ROI, axis, v_min, v_max, title, cm_num, fig = None, cbarplot = True, cbar_title = "test", showbands = True):
     '''
     Purpose:
         to plot a patch of clusters with appropriate longitude/latitude scales
     '''  
     n = v_max - v_min
-    print("patch being mapped:")
-    print(patch)
-    #bounds = [i for i in range(v_max - v_min + 1)]
+
     bounds = np.arange(v_min - 0.5, v_max + 0.5, 1)
     norm = colors.BoundaryNorm(bounds, cmap.N)
     create_axis(axis, [LatLims[0] - 90, 90 - LatLims[1]], LonLims,  cm_num)
@@ -50,15 +105,11 @@ def plot_cluster_patch(patch, LatLims, LonLims, cmap, ROI, axis, v_min, v_max, t
                extent=[360 - LonLims[0],360 - LonLims[1],90-LatLims[1],
                        90-LatLims[0]],
                        aspect="equal")
- 
-    if ROI:
-        for R in ROI:
-                axis.plot(np.array([ROI[R][2]+ROI[R][3],ROI[R][2]-ROI[R][3],
-                              ROI[R][2]-ROI[R][3],ROI[R][2]+ROI[R][3],
-                              ROI[R][2]+ROI[R][3]]),
-                              90.-np.array([ROI[R][0],ROI[R][0],ROI[R][1],
-                              ROI[R][1],ROI[R][0]]))
+   
 
+
+    axis = label_features(axis, LonLims, LatLims,  ROI, showbands)
+    
     #axis.set_title(title, pad = 15)
 
     im_ratio = patch.shape[0]/patch.shape[1]
@@ -81,7 +132,7 @@ def plot_cluster_patch(patch, LatLims, LonLims, cmap, ROI, axis, v_min, v_max, t
         #cbar.remove()
 
 
-def plot_patch(patch, LatLims, LonLims, cmap, ROI, axis, v_min, v_max, title, cm_num, fig = None, cbarplot = True, cbar_title = "test", cbar_reverse = False):
+def plot_patch(patch, LatLims, LonLims, cmap, ROI, axis, v_min, v_max, title, cm_num, fig = None, cbarplot = True, cbar_title = "test", cbar_reverse = False, showbands = True):
     '''
     Purpose:
         to plot a patch with appropriate longitude/latitude scales
@@ -104,7 +155,8 @@ def plot_patch(patch, LatLims, LonLims, cmap, ROI, axis, v_min, v_max, title, cm
     #axis.set_title(title, pad = 15)
 
     im_ratio = patch.shape[0]/patch.shape[1]
-    
+    axis = label_features(axis,  LonLims, LatLims, ROI, showbands)
+
     if cbarplot:
         
         cbar = fig.colorbar(show, ticks=tx, 

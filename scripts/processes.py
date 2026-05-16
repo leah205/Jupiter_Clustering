@@ -10,8 +10,8 @@ import matplotlib
 from matplotlib.colors import ListedColormap
 import scripts.cluster_stats as STAT
 import pylab as pl
-
-colors =["red", "green", "blue", "yellow", "orange", "pink", "purple", "gray"]
+# red, green, blue, yellow, orange, pink, purple, gray
+colors =[(1, 0.639, 0.639), (0.647, 1, 0.639), (0.639, 0.894, 1), (1, 0.996, 0.639), (1, 0.82, 0.639), (1, 0.639, 0.839), (0.937, 0.639, 1), (0.678, 0.678, 0.678)]
 
 keyword_dict = {
     "PCld": "Cloud Pressure",
@@ -287,7 +287,7 @@ ROI={"Hot Spot":[82,83,14.0,2.0],
 
 #output_comparison_and_plot("20251016", ["AOI", "CI"], [[0.1, 0.4], [0.4, 0.8]], lat_range, lon_range, 5)
 
-output_cluster_map_and_plot("20251016", ["NH3", "PCld"], [[0, 300], [1000,  3100]], lat_range, lon_range, 6, ROI)
+output_cluster_map_and_plot("20251016", ["NH3", "PCld"], [[0, 300], [1000,  3100]], lat_range, lon_range, 4, ROI)
 
 
 # output_cluster_map("20251016",
