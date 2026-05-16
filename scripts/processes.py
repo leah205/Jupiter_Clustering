@@ -28,8 +28,37 @@ color_dict = {
 
 }
 
+"""
+Helper functions to create mapping and plotting figures
+
+
+Parameters
+    --------------------------------
+   
+    keywords
+        - substrings in radiance array file name to identify file (Ex: PCld)
+    latRng
+        - two element python list with minimum and maximum latitude specified
+    lonRng
+        - two element python list with minimum and maximum longitude specified
+    n_comp
+        - number of clusters for model
+    pred
+        - one dimensional array of cluster assignments
+    input_arr
+        - original processed data np array for clustering with indices as last column
+    subset_shape
+        - dimensions of original spatial subset pixel data 
+    param_ranges
+        - list of length two lists with desired values ranges for each dimension in clustering, same order as keywords
+    threshold, 
+        - if soft clustering is enabled, specifies probability threshold for clustering
+    cmap, 
+        color map object for clusters
+"""
+
 def create_map_comp_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold, cmap):
-    # create map comparison figure
+   
   
     fig2, axis2 = pl.subplots(3, 1, constrained_layout = True)
     map1 = pre.get_patch(keywords[0], latRng, lngRng, cm_num)
@@ -44,6 +73,8 @@ def create_map_comp_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input
 
 
 def create_plot_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold, cmap, cov_type):
+    # creates and saves cluster map and cluster scatter plot
+    
     fig1, axis1 = pl.subplots(2, 1)
     MP.create_cluster_map(axis1[0], n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, cm_num)
     PL.create_cluster_plot(axis1[1],  keywords, 0, 1, input_arr, pred,  n_comp, cov_type, latRng, lngRng, cmap, cm_num)
@@ -53,9 +84,38 @@ def create_plot_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr
     fig1.savefig(output_file_name)
 
 
+"""
+functions to run various clustering --> visualization pipelines
+
+ Parameters
+    --------------------------------
+    date
+        - date observation was taken
+    keywords
+        - substrings in radiance array file name to identify file (Ex: PCld)
+    param_ranges
+        - list of length two lists with desired values ranges for each dimension in clustering, same order as keywords
+    latRng, OPTIONAL, default = [85, 95]
+        - two element python list with minimum and maximum latitude specified
+    lonRng, OPTIONAL, default = [230, 330]
+        - two element python list with minimum and maximum longitude specified
+    n_comp, OPTIONAL, default = 4
+        - number of clusters for model
+    cov_type, OPTIONAL, default = "full"
+        - type of covariance for model
+    cm_num, OPTIONAL, default = 1
+        - number 1 - 3 specifying longitudinal mapping system
+    threshold, OPTIONAL, default = 0.75
+        - if soft clustering is enabled, specifies probability threshold for clustering
+"""
+
 def output_comparison_and_plot(date, keywords, param_ranges, 
                            latRng = [85, 95], lngRng = [230, 330], 
                            n_comp = 4, cov_type = "full", cm_num = 1, threshold = 0.75):
+    
+
+    #creates two visualization files, one is a map comparison, the other has cluster map and scatter plot
+
 
 
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
@@ -74,6 +134,8 @@ def output_comparison_and_plot(date, keywords, param_ranges,
 def output_cluster_map_and_plot(date, keywords, param_ranges, 
                            latRng = [85, 95], lngRng = [230, 330], 
                            n_comp = 4, cov_type = "full", cm_num = 1, threshold = 0.75):
+    
+    # creates cluster spatial map and cluster scatter plot
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
     pred = CL.create_clusters(input_arr[:, 0:len(keywords)], cov_type, n_comp, config["soft_clustering"], threshold)
     stats = STAT.get_all_stats(pred, keywords, input_arr[:, len(keywords)], n_comp, latRng, lngRng, cm_num)
@@ -91,13 +153,13 @@ def output_cluster_map_and_plot(date, keywords, param_ranges,
 def output_cluster_map_and_plots(date, keywords, param_ranges, 
                            latRng = [85, 95], lngRng = [230, 240], 
                            n_comp = 4, cov_type = "full", cm_num = 1, threshold = 0.75):
+    # creates spatial cluster map and two cluster scatter plots
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
     pred = CL.create_clusters(input_arr[:, 0:len(keywords)], cov_type, n_comp, config["soft_clustering"], threshold)
     stats = STAT.get_all_stats(pred, keywords, input_arr[:, len(keywords)], n_comp, latRng, lngRng, cm_num)
     pred = STAT.reassign_clusters(np.array(pred), np.swapaxes(stats[:, :, 0], 0, 1), np.array(param_ranges))
     
     cmap = ListedColormap(colors[:n_comp])
-    #sil_score = str(round(silhouette_score(input_arr, pred), 3))
     fig, axis = pl.subplots(3, 1)
   
     indices = input_arr[:, input_arr.shape[1] - 1]
@@ -118,7 +180,9 @@ def output_cluster_map_and_plots(date, keywords, param_ranges,
 
 def output_cluster_map(date, keywords, param_ranges, 
                            latRng = [65, 115], lngRng = [0, 50], 
-                            n_comp = 4, cov_type = "full", cm_num = 3, threshold = 0.75):
+                            n_comp = 4, ROI = {}, cov_type = "full", cm_num = 3, threshold = 0.75):
+    
+    # creates spatial cluster map
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
     print(subset_shape)
     pred = CL.create_clusters(input_arr[:, 0:len(keywords)], cov_type, n_comp, config["soft_clustering"], threshold)
@@ -128,7 +192,7 @@ def output_cluster_map(date, keywords, param_ranges,
     cmap = ListedColormap(colors[:n_comp])
 
     fig, axis = pl.subplots(1, 1)
-    MP.create_cluster_map(axis, n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, cm_num)
+    MP.create_cluster_map(axis, n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, ROI, cm_num)
     fig.suptitle(create_plot_title(keywords, latRng, lngRng, n_comp, threshold), fontsize = 10)
     output_file_name = create_file_name(keywords, latRng, lngRng, n_comp, "cluster_map", cm_num, threshold)
     fig.savefig(output_file_name)
@@ -138,7 +202,7 @@ def output_cluster_plot(date, keywords, param_ranges,
                            latRng = [90, 95], lngRng = [330, 330], sys = 3,
                            n_comp = 4, cov_type = "full",  cm_num = 3, threshold = 0.75):
     
-   
+    # creates cluster scatter plot 
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
     pred = CL.create_clusters(input_arr[:, 0: len(keywords)], cov_type, n_comp, config["soft_clustering"])
     stats = STAT.get_all_stats(pred, keywords, input_arr[:, len(keywords)], n_comp, latRng, lngRng, cm_num)
@@ -164,12 +228,12 @@ def create_plot_title(keywords, latRng, lngRng, n_comp, threshold):
     date = pre.get_date(keywords)
     prob_str = f'Threshold {threshold}' if config["soft_clustering"] else ""
     return f'{date} Lat: {90 - latRng[1]} - {90 - latRng[0]}, Lon: {360 - lngRng[1]} - {360 - lngRng[0]}, {n_comp} components \n {prob_str}'
-  #longitude range 230 - 330 for sys 1  
+
 def create_map_comparison(date, keywords, param_ranges, 
                            latRng = [85, 95], lngRng = [230, 260], 
-                            n_comp = 4, cov_type = "full",  cm_num = 1, threshold = 0.75):
+                            n_comp = 4, ROI = {},cov_type = "full",  cm_num = 1, threshold = 0.75):
     
-  
+    # creates spatial cluster map comparison with dimension maps
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
 
     indices = input_arr[:, input_arr.shape[1] - 1]
@@ -178,14 +242,11 @@ def create_map_comparison(date, keywords, param_ranges,
     stats = STAT.get_all_stats(pred, keywords, indices, n_comp, latRng, lngRng, cm_num)
     pred = STAT.reassign_clusters(np.array(pred), np.swapaxes(stats[:, :, 0], 0, 1), np.array(param_ranges))
     cmap = ListedColormap(colors[: n_comp])
-    create_map_comp_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold, cmap)
+    create_map_comp_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold, cmap, ROI)
    
-# enter latitude and longitude reversed
-
 
 
 #output_cluster_map("20251214", ["NH3", "PCld"], [[0, 300], [1000, 3000]], 5)
-#get correct filters
 #create_map_comparison("20251016", ["NH3", "PCld", "AOI", "CI"], [[100, 300], [1500,  2500], [0, 1], [0, 1]], [75, 105], [0, 200])#
 
 # physical parameter/Index clustering longitude 0 - 200, latitude 75 - 105
@@ -212,14 +273,23 @@ lat_range = [0, 15]
 lon_range = [360 - lon_range[1], 360 - lon_range[0]]
 lat_range = [90 - lat_range[1], 90 - lat_range[0]]
 
-output_comparison_and_plot("20251016", ["NH3", "PCld"], [[0, 300], [1000,  3100]], lat_range, lon_range, 4)
+#output_comparison_and_plot("20251016", ["NH3", "PCld"], [[0, 300], [1000,  3100]], lat_range, lon_range, 4)
+
+
+#First two elements are the north and south colatitudes. Third is the central longitude and the fourth with the longitude halfwidth
+ROI={"Hot Spot":[82,83,14.0,2.0],
+                     "Gyre":[84,86,15.0,3.0],
+                     "Cloud Plume":[82,84,5.0,3.0],
+                     "Reference":[76,78,15,4.0]} 
+
+#output_cluster_map_and_plots("20251016", ["NH3", "PCld", "AOI", "CI"], [[0, 300], [1000,  3100], [0.1, 0.4], [0.4, 0.8]], lat_range, lon_range, 5)
 
 #output_comparison_and_plot("20251016", ["AOI", "CI"], [[0.1, 0.4], [0.4, 0.8]], lat_range, lon_range, 5)
 
-"""
+
 output_cluster_map("20251016",
                        ["275", "395", "502", "619", "631", "645", "673", "727", "889"], 
                       [[0, 1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1]], 
-                      lat_range, lon_range, 8, "full", 1)
+                      lat_range, lon_range, 8, ROI, "full", 1)
                       
-"""
+
