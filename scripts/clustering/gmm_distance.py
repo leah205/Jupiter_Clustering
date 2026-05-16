@@ -10,8 +10,9 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 
+print("ooh")
 
-def get_js(m1, m2, n_sample = 10**5):
+def get_js(m1, m2, n_sample = 10**4):
    
     x = m1.sample(n_sample)[0]
     log_1_x = m1.score_samples(x)
@@ -44,9 +45,6 @@ def create_js_plot(X, n_range, sample_size = 10000):
 
             #fit models
             gmm_model = GMM(n_components=n, covariance_type="full", n_init = 20)
-            #pipe = Pipeline([('scaler', StandardScaler()), ('gmm', gmm_model)])
-            #gmm_1 = pipe.fit(x1)
-            #gmm_2 = pipe.fit(x2)
 
             scaled1 = scaler.transform(x1)
             scaled2 = scaler.transform(x2)
@@ -84,7 +82,9 @@ lat_range = [90 - lat_range[1], 90 - lat_range[0]]
 cluster_rng = [2, 12]
 
 
-run_js_dist("20251016UTc/lon_0-30", ["AOI", "CI"], [[0.1, 0.4], [0.4, 0.8]],  lat_range, lon_range, cluster_rng, 1)
-run_js_dist("20251016UTc/lon_0-30", ["NH3", "PCld"], [[0, 300], [1000, 3000]],  lat_range, lon_range, cluster_rng, 1)
-run_js_dist("20251016UTc/lon_0-30", ["275", "395", "502", "619", "631", "645", "673", "727", "889"], 
-                  [[0, 1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1]], lat_range, lon_range, cluster_rng, 1)
+# run_js_dist("20251016UTc/lon_0-30", ["AOI", "CI"], [[0.1, 0.4], [0.4, 0.8]],  lat_range, lon_range, cluster_rng, 1)
+# run_js_dist("20251016UTc/lon_0-30", ["NH3", "PCld"], [[0, 300], [1000, 3000]],  lat_range, lon_range, cluster_rng, 1)
+# run_js_dist("20251016UTc/lon_0-30", ["275", "395", "502", "619", "631", "645", "673", "727", "889"], 
+#                   [[0, 1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1]], lat_range, lon_range, cluster_rng, 1)
+
+#run_js_dist("20251016UTc/lon_0-30", ["NH3", "PCld", "AOI", "CI"], [[0, 300], [1000,  3000], [0.1, 0.4], [0.4, 0.8]], lat_range, lon_range, cluster_rng, 1)

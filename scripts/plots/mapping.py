@@ -8,6 +8,7 @@ from sklearn.metrics import silhouette_score
 from config.config import config
 from matplotlib import colors
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+import matplotlib.patches as patches
 
 
 def create_axis(axs3, LatLims, LonLims, LonSys):
@@ -27,7 +28,7 @@ def create_axis(axs3, LatLims, LonLims, LonSys):
     axs3.set_adjustable('box') 
     return axs3
 
-def plot_cluster_patch(patch, LatLims, LonLims, cmap, axis, v_min, v_max, title, cm_num, fig = None, cbarplot = True, cbar_title = "test"):
+def plot_cluster_patch(patch, LatLims, LonLims, cmap, ROI, axis, v_min, v_max, title, cm_num, fig = None, cbarplot = True, cbar_title = "test"):
     '''
     Purpose:
         to plot a patch of clusters with appropriate longitude/latitude scales
@@ -49,6 +50,10 @@ def plot_cluster_patch(patch, LatLims, LonLims, cmap, axis, v_min, v_max, title,
                extent=[360 - LonLims[0],360 - LonLims[1],90-LatLims[1],
                        90-LatLims[0]],
                        aspect="equal")
+    for key, value in ROI.items():
+        
+        axis.add_patch(rect)
+
     #axis.set_title(title, pad = 15)
 
     im_ratio = patch.shape[0]/patch.shape[1]
@@ -115,12 +120,12 @@ def plot_patch(patch, LatLims, LonLims, cmap, axis, v_min, v_max, title, cm_num,
             cbar.ax.invert_yaxis()
 
 def create_cluster_map(axis,  n_comp, pred, input_arr, subset_shape, 
-                           latRng, lngRng, cmap, cm_num = 3, fig = None, cbar = False):
+                           latRng, lngRng, cmap, ROI = {}, cm_num = 3, fig = None, cbar = False):
    
     cluster_map = create_cluster_arr(input_arr, subset_shape, pred)
     
     cmap.set_under("black")
-    plot_cluster_patch(cluster_map, latRng, lngRng,  cmap, axis,  0, n_comp, "cluster map", cm_num, fig, cbar)
+    plot_cluster_patch(cluster_map, latRng, lngRng,  cmap, ROI, axis,  0, n_comp, "cluster map", cm_num, fig, cbar)
 
 
 
