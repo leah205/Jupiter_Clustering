@@ -57,16 +57,16 @@ Parameters
         color map object for clusters
 """
 
-def create_map_comp_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold, cmap):
+def create_map_comp_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold, cmap, ROI):
    
   
     fig2, axis2 = pl.subplots(3, 1, constrained_layout = True)
     map1 = pre.get_patch(keywords[0], latRng, lngRng, cm_num)
     map2 = pre.get_patch(keywords[1], latRng, lngRng, cm_num)
 
-    MP.create_cluster_map(axis2[0], n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, cm_num)
-    MP.plot_patch(map1, latRng, lngRng, color_dict[keywords[0]], axis2[1], param_ranges[0][0], param_ranges[0][1],  keyword_dict[keywords[0]], cm_num, fig2, True)
-    MP.plot_patch(map2, latRng, lngRng, color_dict[keywords[1]], axis2[2], param_ranges[1][0], param_ranges[1][1], keyword_dict[keywords[1]], cm_num, fig2, True)
+    MP.create_cluster_map(axis2[0], n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, ROI, cm_num)
+    MP.plot_patch(map1, latRng, lngRng, color_dict[keywords[0]], axis2[1], param_ranges[0][0], ROI, param_ranges[0][1],  keyword_dict[keywords[0]], cm_num, fig2, True)
+    MP.plot_patch(map2, latRng, lngRng, color_dict[keywords[1]], axis2[2], param_ranges[1][0], ROI, param_ranges[1][1], keyword_dict[keywords[1]], cm_num, fig2, True)
     fig2.suptitle(create_plot_title(keywords, latRng, lngRng, n_comp, threshold), fontsize = 10)
     output_file_name = create_file_name(keywords, latRng, lngRng, n_comp, "map_comparison", cm_num, threshold)
     fig2.savefig(output_file_name)
@@ -111,7 +111,7 @@ functions to run various clustering --> visualization pipelines
 
 def output_comparison_and_plot(date, keywords, param_ranges, 
                            latRng = [85, 95], lngRng = [230, 330], 
-                           n_comp = 4, cov_type = "full", cm_num = 1, threshold = 0.75):
+                           n_comp = 4, ROI = {}, cov_type = "full", cm_num = 1, threshold = 0.75):
     
 
     #creates two visualization files, one is a map comparison, the other has cluster map and scatter plot
@@ -127,13 +127,13 @@ def output_comparison_and_plot(date, keywords, param_ranges,
   
     cmap = ListedColormap(colors[:n_comp])
     create_plot_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold, cmap, cov_type)
-    create_map_comp_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold, cmap)
+    create_map_comp_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold, cmap, ROI)
    
 
 
 def output_cluster_map_and_plot(date, keywords, param_ranges, 
                            latRng = [85, 95], lngRng = [230, 330], 
-                           n_comp = 4, cov_type = "full", cm_num = 1, threshold = 0.75):
+                           n_comp = 4, ROI = {}, cov_type = "full", cm_num = 1, threshold = 0.75):
     
     # creates cluster spatial map and cluster scatter plot
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
@@ -143,7 +143,7 @@ def output_cluster_map_and_plot(date, keywords, param_ranges,
     cmap = ListedColormap(colors[:n_comp])
     fig, axis = pl.subplots(2, 1)
   
-    MP.create_cluster_map(axis[0], n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, cm_num)
+    MP.create_cluster_map(axis[0], n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, ROI, cm_num)
     PL.create_cluster_plot(axis[1],  keywords, 0, 1, input_arr, pred,  n_comp, cov_type, latRng, lngRng, cmap, cm_num)
     fig.suptitle(create_plot_title(keywords, latRng, lngRng, n_comp, threshold), fontsize = 10)
     
@@ -152,7 +152,7 @@ def output_cluster_map_and_plot(date, keywords, param_ranges,
 
 def output_cluster_map_and_plots(date, keywords, param_ranges, 
                            latRng = [85, 95], lngRng = [230, 240], 
-                           n_comp = 4, cov_type = "full", cm_num = 1, threshold = 0.75):
+                           n_comp = 4, ROI = {}, cov_type = "full", cm_num = 1, threshold = 0.75):
     # creates spatial cluster map and two cluster scatter plots
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
     pred = CL.create_clusters(input_arr[:, 0:len(keywords)], cov_type, n_comp, config["soft_clustering"], threshold)
@@ -169,7 +169,7 @@ def output_cluster_map_and_plots(date, keywords, param_ranges,
     pred = STAT.reassign_clusters(np.array(pred), np.swapaxes(stats[:, :, 0], 0, 1), np.array(param_ranges))
     
     #create figures
-    MP.create_cluster_map(axis[0], n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, cm_num)
+    MP.create_cluster_map(axis[0], n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, ROI, cm_num)
     PL.create_cluster_plot(axis[1],  keywords, 0, 1, input_arr, pred,  n_comp, cov_type, latRng, lngRng, cmap, cm_num)
     PL.create_cluster_plot(axis[2],  keywords, 2, 3, input_arr, pred,  n_comp, cov_type, latRng, lngRng, cmap, cm_num)
 
@@ -184,9 +184,9 @@ def output_cluster_map(date, keywords, param_ranges,
     
     # creates spatial cluster map
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
-    print(subset_shape)
+   
     pred = CL.create_clusters(input_arr[:, 0:len(keywords)], cov_type, n_comp, config["soft_clustering"], threshold)
-    print(pred)
+    
     stats = STAT.get_all_stats(pred, keywords, input_arr[:, len(keywords)], n_comp, latRng, lngRng, cm_num)
     pred = STAT.reassign_clusters(np.array(pred), np.swapaxes(stats[:, :, 0], 0, 1), np.array(param_ranges))
     cmap = ListedColormap(colors[:n_comp])
@@ -277,6 +277,7 @@ lat_range = [90 - lat_range[1], 90 - lat_range[0]]
 
 
 #First two elements are the north and south colatitudes. Third is the central longitude and the fourth with the longitude halfwidth
+
 ROI={"Hot Spot":[82,83,14.0,2.0],
                      "Gyre":[84,86,15.0,3.0],
                      "Cloud Plume":[82,84,5.0,3.0],
@@ -286,10 +287,12 @@ ROI={"Hot Spot":[82,83,14.0,2.0],
 
 #output_comparison_and_plot("20251016", ["AOI", "CI"], [[0.1, 0.4], [0.4, 0.8]], lat_range, lon_range, 5)
 
+output_cluster_map_and_plot("20251016", ["NH3", "PCld"], [[0, 300], [1000,  3100]], lat_range, lon_range, 6, ROI)
 
-output_cluster_map("20251016",
-                       ["275", "395", "502", "619", "631", "645", "673", "727", "889"], 
-                      [[0, 1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1]], 
-                      lat_range, lon_range, 8, ROI, "full", 1)
+
+# output_cluster_map("20251016",
+#                        ["275", "395", "502", "619", "631", "645", "673", "727", "889"], 
+#                       [[0, 1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1]], 
+#                       lat_range, lon_range, 8, ROI, "full", 1)
                       
 

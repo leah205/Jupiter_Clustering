@@ -50,9 +50,14 @@ def plot_cluster_patch(patch, LatLims, LonLims, cmap, ROI, axis, v_min, v_max, t
                extent=[360 - LonLims[0],360 - LonLims[1],90-LatLims[1],
                        90-LatLims[0]],
                        aspect="equal")
-    for key, value in ROI.items():
-        
-        axis.add_patch(rect)
+ 
+    if ROI:
+        for R in ROI:
+                axis.plot(np.array([ROI[R][2]+ROI[R][3],ROI[R][2]-ROI[R][3],
+                              ROI[R][2]-ROI[R][3],ROI[R][2]+ROI[R][3],
+                              ROI[R][2]+ROI[R][3]]),
+                              90.-np.array([ROI[R][0],ROI[R][0],ROI[R][1],
+                              ROI[R][1],ROI[R][0]]))
 
     #axis.set_title(title, pad = 15)
 
@@ -76,7 +81,7 @@ def plot_cluster_patch(patch, LatLims, LonLims, cmap, ROI, axis, v_min, v_max, t
         #cbar.remove()
 
 
-def plot_patch(patch, LatLims, LonLims, cmap, axis, v_min, v_max, title, cm_num, fig = None, cbarplot = True, cbar_title = "test", cbar_reverse = False):
+def plot_patch(patch, LatLims, LonLims, cmap, ROI, axis, v_min, v_max, title, cm_num, fig = None, cbarplot = True, cbar_title = "test", cbar_reverse = False):
     '''
     Purpose:
         to plot a patch with appropriate longitude/latitude scales
