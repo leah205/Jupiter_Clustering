@@ -9,6 +9,7 @@ from config.config import config
 from matplotlib import colors
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.patches as patches
+from matplotlib.lines import Line2D
 
 
 ROI_cmap = {
@@ -18,7 +19,7 @@ ROI_cmap = {
                      "Reference": "black"
 }
 
-def label_features(axis, LonLims, LatLims, ROI, showbands):
+def label_features(axis, LonLims, LatLims, ROI, showbands, is_cluster = False):
     ylim = axis.get_ylim()
     if ROI:
         for R in ROI:
@@ -66,6 +67,13 @@ def label_features(axis, LonLims, LatLims, ROI, showbands):
     
     axis.tick_params(axis='both', which='major', labelsize=9)
     axis.set_ylim(ylim)
+    if(is_cluster):
+        ROI_lines = []
+        for R in ROI:
+            ROI_lines.append( Line2D([0], [0], color = ROI_cmap[R], lw = 2))
+
+
+        axis.legend(ROI_lines, list(ROI.keys()))
     return axis
 
 def create_axis(axs3, LatLims, LonLims, LonSys):
@@ -108,7 +116,7 @@ def plot_cluster_patch(patch, LatLims, LonLims, cmap, ROI, axis, v_min, v_max, t
    
 
 
-    axis = label_features(axis, LonLims, LatLims,  ROI, showbands)
+    axis = label_features(axis, LonLims, LatLims,  ROI, showbands, True)
     
     #axis.set_title(title, pad = 15)
 
