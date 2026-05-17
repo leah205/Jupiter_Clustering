@@ -73,7 +73,8 @@ def label_features(axis, LonLims, LatLims, ROI, showbands, is_cluster = False):
             ROI_lines.append( Line2D([0], [0], color = ROI_cmap[R], lw = 2))
 
 
-        axis.legend(ROI_lines, list(ROI.keys()))
+        axis.legend(ROI_lines, list(ROI.keys()), fontsize = 8, loc = "upper left", bbox_to_anchor=(0.95, 1))
+              
     return axis
 
 def create_axis(axs3, LatLims, LonLims, LonSys):

@@ -142,7 +142,7 @@ def output_cluster_map_and_plot(date, keywords, param_ranges,
     pred = STAT.reassign_clusters(np.array(pred), np.swapaxes(stats[:, :, 0], 0, 1), np.array(param_ranges))
     cmap = ListedColormap(colors[:n_comp])
     fig, axis = pl.subplots(2, 1)
-  
+    fig.subplots_adjust(hspace=0.4)
     MP.create_cluster_map(axis[0], n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, ROI, cm_num)
     PL.create_cluster_plot(axis[1],  keywords, 0, 1, input_arr, pred,  n_comp, cov_type, latRng, lngRng, cmap, cm_num)
     fig.suptitle(create_plot_title(keywords, latRng, lngRng, n_comp, threshold), fontsize = 10)
@@ -283,11 +283,11 @@ ROI={"Hot Spot":[82,83,14.0,2.0],
                      "Cloud Plume":[82,84,5.0,3.0],
                      "Reference":[76,78,15,4.0]} 
 
-#output_cluster_map_and_plots("20251016", ["NH3", "PCld", "AOI", "CI"], [[0, 300], [1000,  3100], [0.1, 0.4], [0.4, 0.8]], lat_range, lon_range, 5)
+output_cluster_map_and_plots("20251016", ["NH3", "PCld", "AOI", "CI"], [[0, 300], [1000,  3100], [0.1, 0.4], [0.4, 0.8]], lat_range, lon_range, 5, ROI)
 
-#output_comparison_and_plot("20251016", ["AOI", "CI"], [[0.1, 0.4], [0.4, 0.8]], lat_range, lon_range, 5)
+#output_cluster_map_and_plot("20251016", ["AOI", "CI"], [[0.1, 0.4], [0.4, 0.8]], lat_range, lon_range, 4, ROI)
 
-output_cluster_map_and_plot("20251016", ["NH3", "PCld"], [[0, 300], [1000,  3100]], lat_range, lon_range, 4, ROI)
+#output_cluster_map_and_plot("20251016", ["NH3", "PCld"], [[0, 300], [1000,  3100]], lat_range, lon_range, 4, ROI)
 
 
 # output_cluster_map("20251016",
