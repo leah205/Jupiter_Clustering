@@ -15,6 +15,14 @@ from sklearn.preprocessing import StandardScaler
 
 
 def create_clusters(pix_arr, cov_type, n_components, is_soft_clustering, threshold):
+
+    """
+    Parameters
+    --------
+    pix_arr, 
+    numpy array with axis 0 as pixels within lon/lat range and axis 1 as parameter pixel radiances
+    
+    """
     if(is_soft_clustering):
         print("Clustering with probability threshold " + str(threshold))
     gmm_model = GMM(n_components=n_components, covariance_type=cov_type)

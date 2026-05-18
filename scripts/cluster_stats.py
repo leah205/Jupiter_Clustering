@@ -81,16 +81,14 @@ def reassign_clusters(pred, stats, param_ranges):
     
     cluster_means = quantify_clusters(stats, param_ranges)
     res = np.full(pred.shape, -1)
-    print("pred values")
+   
     unique, counts = np.unique(pred, return_counts = True)
-    print(unique)
-    print(counts)
+ 
     mask = ~(pred == -1)
     indices = np.argsort(cluster_means)
     res[mask] = indices[pred[mask]]
     unique, counts = np.unique(res, return_counts = True)
-    print(unique)
-    print(counts)
+   
     return res
 
 def quantify_clusters(stats, param_ranges):

@@ -60,7 +60,7 @@ Parameters
 
 """
 
-def create_map_comp_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold,  ROI):
+def create_map_comp_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold,  ROI, description = "", suffix = ""):
    
     cmap = ListedColormap(colors[:n_comp])
     fig2, axis2 = pl.subplots(3, 1, constrained_layout = True)
@@ -70,24 +70,24 @@ def create_map_comp_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input
     MP.create_cluster_map(axis2[0], n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, ROI, cm_num)
     MP.plot_patch(map1, latRng, lngRng, color_dict[keywords[0]], ROI, axis2[1], param_ranges[0][0],  param_ranges[0][1],  keyword_dict[keywords[0]], cm_num, fig2, True)
     MP.plot_patch(map2, latRng, lngRng, color_dict[keywords[1]], ROI, axis2[2], param_ranges[1][0],  param_ranges[1][1], keyword_dict[keywords[1]], cm_num, fig2, True)
-    fig2.suptitle(create_plot_title(keywords, latRng, lngRng, n_comp, threshold), fontsize = 10)
-    output_file_name = create_file_name(keywords, latRng, lngRng, n_comp, "map_comparison", cm_num, threshold)
+    fig2.suptitle(create_plot_title(keywords, latRng, lngRng, n_comp, threshold, description), fontsize = 10)
+    output_file_name = create_file_name(keywords, latRng, lngRng, n_comp, f"map_comparison_{suffix}", cm_num, threshold)
     fig2.savefig(output_file_name)
 
 
-def create_plot_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold,  cov_type, ROI):
+def create_plot_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold,  cov_type, ROI, description = "", suffix = ""):
     # creates and saves cluster map and cluster scatter plot
     cmap = ListedColormap(colors[:n_comp])
     fig1, axis1 = pl.subplots(2, 1)
     MP.create_cluster_map(axis1[0], n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, ROI, cm_num)
     PL.create_cluster_plot(axis1[1],  keywords, 0, 1, input_arr, pred,  n_comp, cov_type, latRng, lngRng, cmap, cm_num)
-    fig1.suptitle(create_plot_title(keywords, latRng, lngRng, n_comp, threshold), fontsize = 10)
+    fig1.suptitle(create_plot_title(keywords, latRng, lngRng, n_comp, threshold, description), fontsize = 10)
     STAT.get_all_stats(pred, keywords, input_arr[:, input_arr.shape[1] - 1], n_comp, latRng, lngRng, cm_num)
-    output_file_name = create_file_name(keywords, latRng, lngRng, n_comp, "map_plot", cm_num, threshold)
+    output_file_name = create_file_name(keywords, latRng, lngRng, n_comp, f"map_plot_{suffix}", cm_num, threshold)
     fig1.savefig(output_file_name)
 
 
-def create_plots_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold, cov_type, ROI):
+def create_plots_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold, cov_type, ROI, description = "", suffix = ""):
     # creates and saves cluster map and cluster scatter plot
     cmap = ListedColormap(colors[:n_comp])
     fig, axis = pl.subplots(3, 1)
@@ -95,25 +95,25 @@ def create_plots_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_ar
     PL.create_cluster_plot(axis[1],  keywords, 0, 1, input_arr, pred,  n_comp, cov_type, latRng, lngRng, cmap, cm_num)
     PL.create_cluster_plot(axis[2],  keywords, 2, 3, input_arr, pred,  n_comp, cov_type, latRng, lngRng, cmap, cm_num)
 
-    fig.suptitle(create_plot_title(keywords, latRng, lngRng, n_comp, threshold), fontsize = 10)
-    output_file_name = create_file_name(keywords, latRng, lngRng, n_comp, "map_plots", cm_num, threshold)
+    fig.suptitle(create_plot_title(keywords, latRng, lngRng, n_comp, threshold, description), fontsize = 10)
+    output_file_name = create_file_name(keywords, latRng, lngRng, n_comp, f"map_plots_{suffix}", cm_num, threshold)
     fig.savefig(output_file_name) 
 
-def create_cluster_map(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold, cov_type, ROI):
+def create_cluster_map(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, threshold,  ROI, description = "", suffix = ""):
     cmap = ListedColormap(colors[:n_comp])
     fig, axis = pl.subplots(1, 1)
     MP.create_cluster_map(axis, n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, ROI, cm_num)
-    fig.suptitle(create_plot_title(keywords, latRng, lngRng, n_comp, threshold), fontsize = 10)
-    output_file_name = create_file_name(keywords, latRng, lngRng, n_comp, "cluster_map", cm_num, threshold)
+    fig.suptitle(create_plot_title(keywords, latRng, lngRng, n_comp, threshold, description), fontsize = 10)
+    output_file_name = create_file_name(keywords, latRng, lngRng, n_comp, f"cluster_map_{suffix}", cm_num, threshold)
     fig.savefig(output_file_name)
 
-def create_cluster_plot(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold, cov_type, ROI):
+def create_cluster_plot(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold, cov_type, ROI, description = "", suffix = ""):
     cmap = ListedColormap(colors[:n_comp])
 
     fig, axis = pl.subplots(1, 1)
     PL.create_cluster_plot(axis, keywords, 0, 1, input_arr, pred,  n_comp, cov_type, latRng, lngRng, cmap, cm_num)
-    fig.suptitle(create_plot_title(keywords, latRng, lngRng, n_comp, threshold), fontsize = 10)
-    output_file_name = create_file_name(keywords, latRng, lngRng, n_comp, "cluster plot", cm_num, threshold)
+    fig.suptitle(create_plot_title(keywords, latRng, lngRng, n_comp, threshold, description), fontsize = 10)
+    output_file_name = create_file_name(keywords, latRng, lngRng, n_comp, f"cluster_plot_{suffix}", cm_num, threshold)
     fig.savefig(output_file_name)
 
 def create_file_name(keywords, latRng, lngRng, n_comp, suffix, cm_num, threshold):
