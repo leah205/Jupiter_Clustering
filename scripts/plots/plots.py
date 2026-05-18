@@ -21,7 +21,7 @@ def create_cluster_plot(ax, keywords, index_x, index_y, input_arr, pred, n_comp,
     
     -----------
     """
-    print(pred)
+  
     cmap.set_under("black")
     if(keywords[index_y] == "PCld"):
         ax.yaxis.set_inverted(True)

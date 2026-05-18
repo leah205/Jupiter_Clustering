@@ -12,7 +12,7 @@ from matplotlib import colormaps
 import math
 import scripts.cluster_stats as STAT
 import pylab as pl
-from pathlib import Path
+import scripts.plotting_processes as PLP
 # red, green, blue, yellow, orange, pink, purple, gray
 colors =[(1, 0.639, 0.639), (0.647, 1, 0.639), (0.639, 0.894, 1), (1, 0.996, 0.639), (1, 0.82, 0.639), (1, 0.639, 0.839), (0.937, 0.639, 1), (0.678, 0.678, 0.678)]
 
@@ -45,8 +45,8 @@ def create_uncertainty_fig(keywords, probs, indices, subset_shape, latRng, lngRn
     
      for a in ax[n_comp:]: 
          fig.delaxes(a)
-     fig.suptitle(create_plot_title(keywords, latRng, lngRng, n_comp, threshold), fontsize = 10)
-     output_file_name = create_file_name(keywords, latRng, lngRng, n_comp, "posterior_probs", cm_num, threshold)
+     fig.suptitle(PLP.create_plot_title(keywords, latRng, lngRng, n_comp, threshold), fontsize = 10)
+     output_file_name = PLP.create_file_name(keywords, latRng, lngRng, n_comp, "posterior_probs", cm_num, threshold)
      fig.savefig(output_file_name)
 
 def create_max_prob_map(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold):
