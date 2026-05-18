@@ -1,6 +1,8 @@
 import numpy as np
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 def run_PCA(X, n_comp):
     pca = PCA(n_components = n_comp)
@@ -25,7 +27,9 @@ def get_pca_comp(X, var_threshold = 0.95):
 
     Returns
     ---------
-    numpy array with axis 0 as pixels within lon/lat range and axis 1 as pixel radiances in new dimensions
+    python list
+        First element: numpy array with axis 0 as pixels within lon/lat range and axis 1 as pixel radiances in new dimensions
+        Second Element: fitted PCA object
     
     """
     scaler = StandardScaler()
@@ -35,4 +39,24 @@ def get_pca_comp(X, var_threshold = 0.95):
     # gets array of percentage of variance explained by each component
     print("variances")
     print(pca.explained_variance_ratio_)
-    return X_transformed
+    return [X_transformed, pca]
+
+def get_loadings_heatmap(pca_obj, keywords):
+    """
+    Purpose
+    ----------------
+
+
+    Parameters
+    ---------------
+    pca_obj
+        fitted pca object
+    
+    """
+    loadings = pca_obj.components_.T * np.sqrt(pca_obj.explained_variance_)
+    print("pca loadings:")
+    print(loadings)
+    fig, ax = plt.subplots(1, 1)
+    ax.set_title("PCA Loadings Heat Map")
+    sns.heatmap(loadings, ax = ax, annot = True, cmap = "coolwarm", yticklabels = keywords)
+    return fig

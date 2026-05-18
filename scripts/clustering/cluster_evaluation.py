@@ -32,7 +32,7 @@ def pca_evaluation_pipeline(subdir, keywords, param_ranges,
     
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
     pix_arr = input_arr[:, 0: len(keywords)] 
-    pca_reduced = PCA.get_pca_comp(input_arr[:, 0:len(keywords)])
+    [pca_reduced, pca_obj] = PCA.get_pca_comp(input_arr[:, 0:len(keywords)])
     keyword_str = "_".join(keywords)
 
     print("doing bic:")

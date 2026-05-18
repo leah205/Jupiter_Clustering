@@ -17,7 +17,7 @@ import pylab as pl
 from pathlib import Path
 import scripts.plotting_processes as PPL
 import scripts.pca as PCA
-import scripts.clustering.cluster_evaluation as EV
+
 
 
 
@@ -171,7 +171,7 @@ def pca_pipeline(date, keywords, param_ranges,
     # creates spatial cluster map comparison with dimension maps
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
     indices = input_arr[:, input_arr.shape[1] - 1]
-    pca_reduced = PCA.get_pca_comp(input_arr[:, 0:len(keywords)])
+    [pca_reduced, pca_obj] = PCA.get_pca_comp(input_arr[:, 0:len(keywords)])
     [pred, probs] = CL.create_clusters(pca_reduced, cov_type, n_comp, config["soft_clustering"], threshold)
    
     stats = STAT.get_all_stats(pred, keywords, indices, n_comp, latRng, lngRng, cm_num)
@@ -179,6 +179,9 @@ def pca_pipeline(date, keywords, param_ranges,
     PLP.create_cluster_map(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, threshold, ROI, "PCA Reduced", "pca")
     PP.create_uncertainty_fig(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold,  "PCA Reduced", "pca")
     PP.create_max_prob_map(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold, ROI,  "PCA Reduced", "pca")
+    heat_map_fig = PCA.get_loadings_heatmap(pca_obj, keywords)
+    heat_map_fig.savefig(PLP.create_file_name(keywords, latRng, lngRng, n_comp, "pca_heat_map", cm_num, threshold))
+
    
 
 # Run processes for longitude 0 - 30, latitude 90 - 105
