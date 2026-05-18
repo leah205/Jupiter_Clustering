@@ -125,7 +125,7 @@ def create_file_name(keywords, latRng, lngRng, n_comp, suffix, cm_num, threshold
     save_path.parent.mkdir(parents = True, exist_ok = True)
     return save_path
 
-def create_plot_title(keywords, latRng, lngRng, n_comp, threshold):
+def create_plot_title(keywords, latRng, lngRng, n_comp, threshold, description = ""):
     date = pre.get_date(keywords)
     prob_str = f'Threshold {threshold}' if config["soft_clustering"] else ""
-    return f'{date} Lat: {90 - latRng[1]} - {90 - latRng[0]}, Lon: {360 - lngRng[1]} - {360 - lngRng[0]}, {n_comp} components \n {prob_str}'
+    return f'{date} Lat: {90 - latRng[1]} - {90 - latRng[0]}, Lon: {360 - lngRng[1]} - {360 - lngRng[0]}, {n_comp} components \n {prob_str} {description}'

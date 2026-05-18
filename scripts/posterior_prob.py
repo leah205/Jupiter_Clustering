@@ -61,7 +61,7 @@ def create_max_prob_map(keywords, probs, indices, subset_shape, latRng, lngRng, 
     cmap = LinearSegmentedColormap.from_list("cluster_color", ["white", "yellow", "orange", "red"], N = 256)
     max_prob_map = MP.create_cluster_arr(indices, subset_shape, max_probs)
     MP.plot_patch(max_prob_map, latRng, lngRng, cmap, {}, ax, 0, 1, "", cm_num, fig, True, True, "probability")
-    fig.suptitle(PLP.create_plot_title(keywords, latRng, lngRng, n_comp, threshold), fontsize = 10)
+    fig.suptitle(PLP.create_plot_title(keywords, latRng, lngRng, n_comp, threshold, "maximum probability map"), fontsize = 10)
     output_file_name = PLP.create_file_name(keywords, latRng, lngRng, n_comp, "max_prob_map", cm_num, threshold)
     fig.savefig(output_file_name)
 
