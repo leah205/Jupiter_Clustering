@@ -17,6 +17,7 @@ import pylab as pl
 from pathlib import Path
 import scripts.plotting_processes as PPL
 import scripts.pca as PCA
+import scripts.clustering.cluster_evaluation as EV
 
 
 
@@ -179,9 +180,6 @@ def pca_pipeline(date, keywords, param_ranges,
     PP.create_uncertainty_fig(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold,  "PCA Reduced", "pca")
     PP.create_max_prob_map(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold, ROI,  "PCA Reduced", "pca")
    
-    
-
-
 
 # Run processes for longitude 0 - 30, latitude 90 - 105
 lon_range = [0, 30]
