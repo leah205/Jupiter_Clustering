@@ -1,7 +1,8 @@
 
 import numpy as np
 import scripts.preprocessing.preprocessing as pre
-
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 def get_stat(cluster_arr, dim_arr, indices, n_clusters, dim_name):
     '''
@@ -106,7 +107,28 @@ def quantify_clusters(stats, param_ranges):
     return np.mean(normed_stats, axis = 1)
 
     
+def get_centroids_figure(keywords, cluster_centroids):
+    """
+    Purpose
+    --------------
+    Gets a table of the means of each cluster in each original dimension
 
+    Parameters
+    --------------
+    keywords
+        array of dimension names
+    cluster_centroid
+        2D np array with axis 0 as clusters, axis 1 as dimensions (same order as keywords)
+
+    Returns
+    --------------
+    Centroids table figure for each cluster and dimension
+
+    """
+    fig, ax = plt.subplots(1, 1)
+    ax.set_title("Cluster Means")
+    sns.heatmap(cluster_centroids, ax = ax, annot = True, cmap = "coolwarm", xticklabels = keywords)
+    return fig
 
 
 

@@ -57,7 +57,7 @@ def output_comparison_and_plot(date, keywords, param_ranges,
 
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
   
-    [pred,probs] = CL.create_clusters(input_arr[:, 0:len(keywords)], cov_type, n_comp, config["soft_clustering"], threshold)
+    pred,probs, *_ = CL.create_clusters(input_arr[:, 0:len(keywords)], cov_type, n_comp, config["soft_clustering"], threshold)
     stats = STAT.get_all_stats(pred, keywords, input_arr[:, len(keywords)], n_comp, latRng, lngRng, cm_num)
     #pred = STAT.reassign_clusters(np.array(pred), np.swapaxes(stats[:, :, 0], 0, 1), np.array(param_ranges))
     # create scatter plots figure
@@ -76,7 +76,7 @@ def output_cluster_map_and_plot(date, keywords, param_ranges,
     
     # creates cluster spatial map and cluster scatter plot
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
-    [pred, probs] = CL.create_clusters(input_arr[:, 0:len(keywords)], cov_type, n_comp, config["soft_clustering"], threshold)
+    pred, probs, *_ = CL.create_clusters(input_arr[:, 0:len(keywords)], cov_type, n_comp, config["soft_clustering"], threshold)
     stats = STAT.get_all_stats(pred, keywords, input_arr[:, len(keywords)], n_comp, latRng, lngRng, cm_num)
     #pred = STAT.reassign_clusters(np.array(pred), np.swapaxes(stats[:, :, 0], 0, 1), np.array(param_ranges))
     PLP.create_plot_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold, cov_type, ROI)
@@ -90,7 +90,7 @@ def output_cluster_map_and_plots(date, keywords, param_ranges,
                            n_comp = 4, ROI = {}, cov_type = "full", cm_num = 1, threshold = 0.75):
     # creates spatial cluster map and two cluster scatter plots
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
-    [pred, probs] = CL.create_clusters(input_arr[:, 0:len(keywords)], cov_type, n_comp, config["soft_clustering"], threshold)
+    pred, probs, *_ = CL.create_clusters(input_arr[:, 0:len(keywords)], cov_type, n_comp, config["soft_clustering"], threshold)
     stats = STAT.get_all_stats(pred, keywords, input_arr[:, len(keywords)], n_comp, latRng, lngRng, cm_num)
     #pred = STAT.reassign_clusters(np.array(pred), np.swapaxes(stats[:, :, 0], 0, 1), np.array(param_ranges))
     
@@ -117,7 +117,7 @@ def output_cluster_map(date, keywords, param_ranges,
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
     indices = input_arr[:, input_arr.shape[1] - 1]
 
-    [pred, probs] = CL.create_clusters(input_arr[:, 0:len(keywords)], cov_type, n_comp, config["soft_clustering"], threshold)
+    pred, probs, *_ = CL.create_clusters(input_arr[:, 0:len(keywords)], cov_type, n_comp, config["soft_clustering"], threshold)
     
     stats = STAT.get_all_stats(pred, keywords, input_arr[:, len(keywords)], n_comp, latRng, lngRng, cm_num)
     #pred = STAT.reassign_clusters(np.array(pred), np.swapaxes(stats[:, :, 0], 0, 1), np.array(param_ranges))
@@ -136,7 +136,7 @@ def output_cluster_plot(date, keywords, param_ranges,
     # creates cluster scatter plot 
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
     indices = input_arr[:, input_arr.shape[1] - 1]
-    [pred, probs] = CL.create_clusters(input_arr[:, 0: len(keywords)], cov_type, n_comp, config["soft_clustering"])
+    pred, probs, *_ = CL.create_clusters(input_arr[:, 0: len(keywords)], cov_type, n_comp, config["soft_clustering"])
     stats = STAT.get_all_stats(pred, keywords, input_arr[:, len(keywords)], n_comp, latRng, lngRng, cm_num)
     #pred = STAT.reassign_clusters(np.array(pred), np.swapaxes(stats[:, :, 0], 0, 1), np.array(param_ranges))
     
@@ -156,7 +156,7 @@ def create_map_comparison(date, keywords, param_ranges,
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
     indices = input_arr[:, input_arr.shape[1] - 1]
    
-    [pred, probs] = CL.create_clusters(input_arr[:, 0:len(keywords)], cov_type, n_comp, config["soft_clustering"], threshold)
+    pred, probs, *_ = CL.create_clusters(input_arr[:, 0:len(keywords)], cov_type, n_comp, config["soft_clustering"], threshold)
     stats = STAT.get_all_stats(pred, keywords, indices, n_comp, latRng, lngRng, cm_num)
     #pred = STAT.reassign_clusters(np.array(pred), np.swapaxes(stats[:, :, 0], 0, 1), np.array(param_ranges))
    
@@ -171,16 +171,21 @@ def pca_pipeline(date, keywords, param_ranges,
     # creates spatial cluster map comparison with dimension maps
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
     indices = input_arr[:, input_arr.shape[1] - 1]
-    [pca_reduced, pca_obj] = PCA.get_pca_comp(input_arr[:, 0:len(keywords)])
-    [pred, probs] = CL.create_clusters(pca_reduced, cov_type, n_comp, config["soft_clustering"], threshold)
-   
-    stats = STAT.get_all_stats(pred, keywords, indices, n_comp, latRng, lngRng, cm_num)
+    [pca_reduced, pca_obj, scaler] = PCA.get_pca_comp(input_arr[:, 0:len(keywords)])
+    pred, probs, means = CL.create_clusters(pca_reduced, cov_type, n_comp, config["soft_clustering"], threshold)
+    means = pca_obj.inverse_transform(means)
+    means = scaler.inverse_transform(means)
+    print(means)
+    
+    #stats = STAT.get_all_stats(pred, keywords, indices, n_comp, latRng, lngRng, cm_num)
     
     PLP.create_cluster_map(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, threshold, ROI, "PCA Reduced", "pca")
     PP.create_uncertainty_fig(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold,  "PCA Reduced", "pca")
     PP.create_max_prob_map(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold, ROI,  "PCA Reduced", "pca")
     heat_map_fig = PCA.get_loadings_heatmap(pca_obj, keywords)
     heat_map_fig.savefig(PLP.create_file_name(keywords, latRng, lngRng, n_comp, "pca_heat_map", cm_num, threshold))
+    centroids_fig = STAT.get_centroids_figure(keywords, means)
+    centroids_fig.savefig(PLP.create_file_name(keywords, latRng, lngRng, n_comp, "pca_centroids", cm_num, threshold))
 
    
 

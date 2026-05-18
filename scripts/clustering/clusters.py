@@ -30,7 +30,8 @@ def create_clusters(pix_arr, cov_type, n_components, is_soft_clustering, thresho
   
   
     pipe.fit(pix_arr)
-    scaled = pipe.named_steps["scaler"].transform(pix_arr)
+    scaler = pipe.named_steps["scaler"]
+    scaled = scaler.transform(pix_arr)
     gm = pipe.named_steps["gmm"]
     #P = gm.eval(pix_arr)[0]
     #print(P)
@@ -50,9 +51,9 @@ def create_clusters(pix_arr, cov_type, n_components, is_soft_clustering, thresho
             predictions.append(index)
         
     
-
+    means = scaler.inverse_transform(gm.means_)
  
-    return [predictions, pixel_probs]
+    return [predictions, pixel_probs, means]
 
 
 

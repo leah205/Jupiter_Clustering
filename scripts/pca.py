@@ -39,7 +39,7 @@ def get_pca_comp(X, var_threshold = 0.95):
     # gets array of percentage of variance explained by each component
     print("variances")
     print(pca.explained_variance_ratio_)
-    return [X_transformed, pca]
+    return [X_transformed, pca, scaler]
 
 def get_loadings_heatmap(pca_obj, keywords):
     """
@@ -60,3 +60,7 @@ def get_loadings_heatmap(pca_obj, keywords):
     ax.set_title("PCA Loadings Heat Map")
     sns.heatmap(loadings, ax = ax, annot = True, cmap = "coolwarm", yticklabels = keywords)
     return fig
+
+
+
+
