@@ -73,23 +73,25 @@ def label_features(axis, LonLims, LatLims, ROI, showbands, is_cluster = False):
             ROI_lines.append( Line2D([0], [0], color = ROI_cmap[R], lw = 2))
 
 
-        axis.legend(ROI_lines, list(ROI.keys()), fontsize = 8, loc = "upper left", bbox_to_anchor=(0.95, 1))
+        axis.legend(ROI_lines, list(ROI.keys()), fontsize = 8, loc = "upper left", bbox_to_anchor=(0.92, 1))
               
     return axis
 
-def create_axis(axs3, LatLims, LonLims, LonSys):
+def create_axis(axs3, LatLims, LonLims, LonSys, annotated = True):
     #fig3,axs3=pl.subplots(dpi=150, facecolor="white")
     axs3.grid(linewidth=0.2)
     axs3.ylim=[LatLims[0] ,LatLims[1]]
     axs3.xlim=[360-LonLims[0],360-LonLims[1]]
     #axs3.xlim=[LonLims[0],LonLims[1]]
     axs3.set_xticks(np.linspace(450,0,31), minor=False)
-    xticklabels=np.array(np.mod(np.linspace(450,0,31),360))
-    axs3.set_xticklabels(xticklabels.astype(int))
     axs3.set_yticks(np.linspace(-45,45,7), minor=False)
-    axs3.tick_params(axis='both', which='major', labelsize=9)
-    axs3.set_ylabel("Latitude (deg)",fontsize=10)
-    axs3.set_xlabel("Sys. "+ str(LonSys) +" Longitude (deg)",fontsize=10)
+    
+    if(annotated):
+        axs3.set_ylabel("Latitude (deg)",fontsize=10)
+        axs3.set_xlabel("Sys. "+ str(LonSys) +" Longitude (deg)",fontsize=10)
+        xticklabels=np.array(np.mod(np.linspace(450,0,31),360))
+        axs3.set_xticklabels(xticklabels.astype(int))
+        axs3.tick_params(axis='both', which='major', labelsize=9)
  
     axs3.set_adjustable('box') 
     return axs3
@@ -141,7 +143,7 @@ def plot_cluster_patch(patch, LatLims, LonLims, cmap, ROI, axis, v_min, v_max, t
         #cbar.remove()
 
 
-def plot_patch(patch, LatLims, LonLims, cmap, ROI, axis, v_min, v_max, title, cm_num, fig = None, cbarplot = True, cbar_title = "test", cbar_reverse = False, showbands = True):
+def plot_patch(patch, LatLims, LonLims, cmap, ROI, axis, v_min, v_max, title, cm_num, fig = None, cbarplot = True, annotated = True, cbar_title = "test", cbar_reverse = False, showbands = True):
     '''
     Purpose:
         to plot a patch with appropriate longitude/latitude scales
@@ -149,7 +151,7 @@ def plot_patch(patch, LatLims, LonLims, cmap, ROI, axis, v_min, v_max, title, cm
     vn = v_min
     vx = v_max
     n = vx - vn
-    create_axis(axis, [LatLims[0] - 90, 90 - LatLims[1]], LonLims,  cm_num)
+    create_axis(axis, [LatLims[0] - 90, 90 - LatLims[1]], LonLims,  cm_num, annotated)
     np.nan_to_num(patch, copy=False, nan=-1.0, posinf=0.0, neginf=0.0)
     tx=np.linspace(vn,vx,5 ,endpoint=True)
     
@@ -164,7 +166,8 @@ def plot_patch(patch, LatLims, LonLims, cmap, ROI, axis, v_min, v_max, title, cm
     #axis.set_title(title, pad = 15)
 
     im_ratio = patch.shape[0]/patch.shape[1]
-    axis = label_features(axis,  LonLims, LatLims, ROI, showbands)
+    if(annotated):
+        axis = label_features(axis,  LonLims, LatLims, ROI, showbands)
 
     if cbarplot:
         
@@ -187,8 +190,8 @@ def plot_patch(patch, LatLims, LonLims, cmap, ROI, axis, v_min, v_max, title, cm
 
 def create_cluster_map(axis,  n_comp, pred, input_arr, subset_shape, 
                            latRng, lngRng, cmap, ROI = {}, cm_num = 3, fig = None, cbar = False):
-   
-    cluster_map = create_cluster_arr(input_arr, subset_shape, pred)
+    indices = input_arr[:, input_arr.shape[1] - 1]
+    cluster_map = create_cluster_arr(indices, subset_shape, pred)
     
     cmap.set_under("black")
     plot_cluster_patch(cluster_map, latRng, lngRng,  cmap, ROI, axis,  0, n_comp, "cluster map", cm_num, fig, cbar)
@@ -197,14 +200,16 @@ def create_cluster_map(axis,  n_comp, pred, input_arr, subset_shape,
 
 
 
-def create_cluster_arr(input_arr, subset_shape, pred):
+def create_cluster_arr(indices, subset_shape, pred):
+    # takes index array and prediction array and reshapes into original shape with pixels at original indices
+    
     subset_length = subset_shape[0] * subset_shape[1]
-    indices = input_arr[:, input_arr.shape[1] - 1]
+   
     #concatenat indexed and cluster array
     indexed_clusters = np.column_stack((indices, pred))
     oned_mapped_clusters = np.full(shape = subset_length, fill_value = np.nan)
     for r in range(indexed_clusters.shape[0]):
-        index, cluster = int(indexed_clusters[r][0]), int(indexed_clusters[r][1])
+        index, cluster = int(indexed_clusters[r][0]), indexed_clusters[r][1]
         oned_mapped_clusters[index] = cluster
     mapped_clusters = oned_mapped_clusters.reshape(subset_shape)
     return mapped_clusters

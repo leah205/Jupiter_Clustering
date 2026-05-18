@@ -10,9 +10,9 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
 
-print("ooh")
 
-def get_js(m1, m2, n_sample = 10**4):
+
+def get_js(m1, m2, n_sample = 10**3):
    
     x = m1.sample(n_sample)[0]
     log_1_x = m1.score_samples(x)
@@ -39,17 +39,21 @@ def create_js_plot(X, n_range, sample_size = 10000):
         dist = []
         for _ in range(iterations):
             X_sub = X[np.random.choice(len(X), sample_size)]
-            scaler = StandardScaler().fit(X_sub)
+            
             # create 50/50 data split
             x1, x2 = train_test_split(X_sub, test_size = 0.5)
 
-            #fit models
-            gmm_model = GMM(n_components=n, covariance_type="full", n_init = 20)
+            scaler1 = StandardScaler().fit(x1)
+            scaler2 = StandardScaler().fit(x2)
 
-            scaled1 = scaler.transform(x1)
-            scaled2 = scaler.transform(x2)
-            gmm_1 = gmm_model.fit(scaled1)
-            gmm_2 = gmm_model.fit(scaled2)
+            #fit models
+            gmm_model_1 = GMM(n_components=n, covariance_type="full", n_init = 2)
+            gmm_model_2 = GMM(n_components=n, covariance_type="full", n_init = 2)
+
+            scaled1 = scaler1.transform(x1)
+            scaled2 = scaler2.transform(x2)
+            gmm_1 = gmm_model_1.fit(scaled1)
+            gmm_2 = gmm_model_2.fit(scaled2)
             dist.append(get_js(gmm_1, gmm_2))
         result = np.mean(np.array(dist))
         res_err = np.std(np.array(dist))
@@ -82,9 +86,9 @@ lat_range = [90 - lat_range[1], 90 - lat_range[0]]
 cluster_rng = [2, 12]
 
 
-# run_js_dist("20251016UTc/lon_0-30", ["AOI", "CI"], [[0.1, 0.4], [0.4, 0.8]],  lat_range, lon_range, cluster_rng, 1)
+# run_js_dist("20251016UTc/lon_0-30", ["AOI", "CI"], [[0.1, 0.4], [0.3, 0.8]],  lat_range, lon_range, cluster_rng, 1)
 # run_js_dist("20251016UTc/lon_0-30", ["NH3", "PCld"], [[0, 300], [1000, 3000]],  lat_range, lon_range, cluster_rng, 1)
 # run_js_dist("20251016UTc/lon_0-30", ["275", "395", "502", "619", "631", "645", "673", "727", "889"], 
 #                   [[0, 1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1]], lat_range, lon_range, cluster_rng, 1)
 
-#run_js_dist("20251016UTc/lon_0-30", ["NH3", "PCld", "AOI", "CI"], [[0, 300], [1000,  3000], [0.1, 0.4], [0.4, 0.8]], lat_range, lon_range, cluster_rng, 1)
+run_js_dist("20251016UTc/lon_0-30", ["NH3", "PCld", "AOI", "CI"], [[0, 300], [1000,  3000], [0.1, 0.4], [0.3, 0.8]], lat_range, lon_range, cluster_rng, 1)
