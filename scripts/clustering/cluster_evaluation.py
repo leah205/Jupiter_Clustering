@@ -8,8 +8,7 @@ def get_clustering_evaluations(subdir, keywords, param_ranges,
                            latRng = [85, 95], lngRng = [230, 330], 
                            cluster_rng = [2, 10],
                             cm_num = 1):
-    print("hellooooo")
-    print("running")
+    
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
     print("got input:")
     pix_arr = input_arr[:, 0: len(keywords)]

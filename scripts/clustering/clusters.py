@@ -29,11 +29,13 @@ def create_clusters(pix_arr, cov_type, n_components, is_soft_clustering, thresho
     #p = posterior(gm, pix_ar)
     #bic = pipe.named_steps["gmm"].bic(scaled)
     
+    pixel_probs = pipe.predict_proba(pix_arr)
+
     predictions = []
     if(not is_soft_clustering):
         predictions = pipe.predict(pix_arr)
     if(is_soft_clustering):
-        pixel_probs = pipe.predict_proba(pix_arr)
+        
         print("soft clustering.....")
         for pixel in pixel_probs:
             index = next((i for i, x in enumerate(pixel) if x > threshold), - 1)
@@ -42,7 +44,7 @@ def create_clusters(pix_arr, cov_type, n_components, is_soft_clustering, thresho
     
 
  
-    return predictions
+    return [predictions, pixel_probs]
 
 
 
