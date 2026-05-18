@@ -202,6 +202,7 @@ def create_cluster_map(axis,  n_comp, pred, input_arr, subset_shape,
 
 def create_cluster_arr(indices, subset_shape, pred):
     # takes index array and prediction array and reshapes into original shape with pixels at original indices
+    
     subset_length = subset_shape[0] * subset_shape[1]
    
     #concatenat indexed and cluster array
