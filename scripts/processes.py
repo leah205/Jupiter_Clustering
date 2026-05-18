@@ -12,6 +12,7 @@ from matplotlib import colormaps
 import math
 import scripts.cluster_stats as STAT
 import pylab as pl
+from pathlib import Path
 # red, green, blue, yellow, orange, pink, purple, gray
 colors =[(1, 0.639, 0.639), (0.647, 1, 0.639), (0.639, 0.894, 1), (1, 0.996, 0.639), (1, 0.82, 0.639), (1, 0.639, 0.839), (0.937, 0.639, 1), (0.678, 0.678, 0.678)]
 
@@ -87,7 +88,7 @@ def create_uncertainty_fig(keywords, probs, indices, subset_shape, latRng, lngRn
         prob_map = MP.create_cluster_arr(indices, subset_shape, probs[:, i])
         cbar = True if i == n_comp - 1 else False
         annotated = True if i == 0 else False
-        MP.plot_patch(prob_map, latRng, lngRng, cmap, {}, ax[i], 0, 1, "", cm_num, fig, cbar, annotated)
+        MP.plot_patch(prob_map, latRng, lngRng, cmap, {}, ax[i], 0, 1, "", cm_num, fig, cbar, annotated, "probability")
         ax[i].set_title(f"Cluster {i}")
     
      for a in ax[n_comp:]: 
@@ -170,7 +171,6 @@ def output_comparison_and_plot(date, keywords, param_ranges,
 
     #creates two visualization files, one is a map comparison, the other has cluster map and scatter plot
 
-    print(ROI)
 
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
   
@@ -231,12 +231,16 @@ def output_cluster_map(date, keywords, param_ranges,
     
     # creates spatial cluster map
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
-   
+    indices = input_arr[:, input_arr.shape[1] - 1]
+
     [pred, probs] = CL.create_clusters(input_arr[:, 0:len(keywords)], cov_type, n_comp, config["soft_clustering"], threshold)
     
     stats = STAT.get_all_stats(pred, keywords, input_arr[:, len(keywords)], n_comp, latRng, lngRng, cm_num)
     pred = STAT.reassign_clusters(np.array(pred), np.swapaxes(stats[:, :, 0], 0, 1), np.array(param_ranges))
     create_cluster_map(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold, cov_type, ROI)
+
+    # cluster probability maps
+    create_uncertainty_fig(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold)
    
 
 
@@ -246,11 +250,15 @@ def output_cluster_plot(date, keywords, param_ranges,
     
     # creates cluster scatter plot 
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
+    indices = input_arr[:, input_arr.shape[1] - 1]
     [pred, probs] = CL.create_clusters(input_arr[:, 0: len(keywords)], cov_type, n_comp, config["soft_clustering"])
     stats = STAT.get_all_stats(pred, keywords, input_arr[:, len(keywords)], n_comp, latRng, lngRng, cm_num)
     pred = STAT.reassign_clusters(np.array(pred), np.swapaxes(stats[:, :, 0], 0, 1), np.array(param_ranges))
     
     create_cluster_plot(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold, cov_type, ROI)
+
+    # cluster probability maps
+    create_uncertainty_fig(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold)
 
 
 def create_file_name(keywords, latRng, lngRng, n_comp, suffix, cm_num, threshold):
@@ -258,7 +266,9 @@ def create_file_name(keywords, latRng, lngRng, n_comp, suffix, cm_num, threshold
     lat_lon_str = f'{90 - latRng[1]}-{90 - latRng[0]}_{360 - lngRng[1]}-{ 360 - lngRng[0]}'
     keyword_str = '_'.join(keywords)
     prob_str = ("_p" + str(threshold)) if config["soft_clustering"] else ""
-    return f'{config["output"]}/{date}_{keyword_str}_{lat_lon_str}_{n_comp}_sys_{cm_num}{prob_str}_{suffix}.png'
+    save_path = Path(f'{config["output"]}/{keyword_str}/{n_comp}_cl/{date}_{keyword_str}_{lat_lon_str}_{n_comp}_sys_{cm_num}{prob_str}_{suffix}.png')
+    save_path.parent.mkdir(parents = True, exist_ok = True)
+    return save_path
 
 def create_plot_title(keywords, latRng, lngRng, n_comp, threshold):
     date = pre.get_date(keywords)
@@ -319,11 +329,11 @@ ROI={"Hot Spot":[82,83,14.0,2.0],
                      "Cloud Plume":[82,84,5.0,3.0],
                      "Reference":[76,78,15,4.0]} 
 
-output_cluster_map_and_plots("20251016", ["NH3", "PCld", "AOI", "CI"], [[0, 300], [1000,  3100], [0.1, 0.4], [0.4, 0.8]], lat_range, lon_range, 5)
+# output_cluster_map_and_plots("20251016", ["NH3", "PCld", "AOI", "CI"], [[0, 300], [1000,  3100], [0.1, 0.4], [0.3, 0.8]], lat_range, lon_range, 5)
 
-#output_cluster_map_and_plot("20251016", ["AOI", "CI"], [[0.1, 0.4], [0.4, 0.8]], lat_range, lon_range, 4, ROI)
+#output_cluster_map_and_plot("20251016", ["AOI", "CI"], [[0.1, 0.4], [0.3, 0.8]], lat_range, lon_range, 4, ROI)
 
-#output_cluster_map_and_plot("20251016", ["NH3", "PCld"], [[0, 300], [1000,  3100]], lat_range, lon_range, 4, ROI)
+output_cluster_map_and_plot("20251016", ["NH3", "PCld"], [[0, 300], [1000,  3100]], lat_range, lon_range, 4, ROI)
 
 
 # output_cluster_map("20251016",
