@@ -35,7 +35,7 @@ def create_cluster_plot(ax, keywords, index_x, index_y, input_arr, pred, n_comp,
         y_cl = y[mask]
       
         
-        cluster_label = f"{cl}" if cl >= 0 else "Uncertain"
+        cluster_label = f"{cl}" if cl >= 0 else "NA"
         ax.scatter(x[mask], y[mask], s = 1, alpha = 0.01, color = cmap(cl), label = cluster_label)
       
         
