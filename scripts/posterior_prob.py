@@ -49,7 +49,7 @@ def create_uncertainty_fig(keywords, probs, indices, subset_shape, latRng, lngRn
      output_file_name = PLP.create_file_name(keywords, latRng, lngRng, n_comp, "posterior_probs", cm_num, threshold)
      fig.savefig(output_file_name)
 
-def create_max_prob_map(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold):
+def create_max_prob_map(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold, ROI):
     """
      Purpose
      --------------
@@ -58,10 +58,12 @@ def create_max_prob_map(keywords, probs, indices, subset_shape, latRng, lngRng, 
      """
     fig, ax = pl.subplots(1, 1)
     max_probs = np.max(probs, axis = 1)
+    mean = round(np.mean(max_probs), 3)
     cmap = LinearSegmentedColormap.from_list("cluster_color", ["white", "yellow", "orange", "red"], N = 256)
     max_prob_map = MP.create_cluster_arr(indices, subset_shape, max_probs)
-    MP.plot_patch(max_prob_map, latRng, lngRng, cmap, {}, ax, 0, 1, "", cm_num, fig, True, True, "probability")
+    MP.plot_patch(max_prob_map, latRng, lngRng, cmap, ROI, ax, 0, 1, "", cm_num, fig, True, True, "probability")
     fig.suptitle(PLP.create_plot_title(keywords, latRng, lngRng, n_comp, threshold, "maximum probability map"), fontsize = 10)
+    ax.set_title(f"Mean Probabilitiy: {mean}")
     output_file_name = PLP.create_file_name(keywords, latRng, lngRng, n_comp, "max_prob_map", cm_num, threshold)
     fig.savefig(output_file_name)
 

@@ -86,7 +86,7 @@ def output_cluster_map_and_plot(date, keywords, param_ranges,
     # cluster probability maps
     indices = input_arr[:, input_arr.shape[1] - 1]
     PP.create_uncertainty_fig(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold)
-    PP.create_max_prob_map(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold)
+    PP.create_max_prob_map(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold, ROI)
 
 def output_cluster_map_and_plots(date, keywords, param_ranges, 
                            latRng = [85, 95], lngRng = [230, 240], 
