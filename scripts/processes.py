@@ -55,13 +55,12 @@ Parameters
         - list of length two lists with desired values ranges for each dimension in clustering, same order as keywords
     threshold, 
         - if soft clustering is enabled, specifies probability threshold for clustering
-    cmap, 
-        color map object for clusters
+
 """
 
-def create_map_comp_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold, cmap, ROI):
+def create_map_comp_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold,  ROI):
    
-  
+    cmap = ListedColormap(colors[:n_comp])
     fig2, axis2 = pl.subplots(3, 1, constrained_layout = True)
     map1 = pre.get_patch(keywords[0], latRng, lngRng, cm_num)
     map2 = pre.get_patch(keywords[1], latRng, lngRng, cm_num)
@@ -98,9 +97,9 @@ def create_uncertainty_fig(keywords, probs, indices, subset_shape, latRng, lngRn
      fig.savefig(output_file_name)
 
 
-def create_plot_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold, cmap, cov_type, ROI):
+def create_plot_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold,  cov_type, ROI):
     # creates and saves cluster map and cluster scatter plot
-    
+    cmap = ListedColormap(colors[:n_comp])
     fig1, axis1 = pl.subplots(2, 1)
     MP.create_cluster_map(axis1[0], n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, ROI, cm_num)
     PL.create_cluster_plot(axis1[1],  keywords, 0, 1, input_arr, pred,  n_comp, cov_type, latRng, lngRng, cmap, cm_num)
@@ -109,6 +108,35 @@ def create_plot_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr
     output_file_name = create_file_name(keywords, latRng, lngRng, n_comp, "map_plot", cm_num, threshold)
     fig1.savefig(output_file_name)
 
+
+def create_plots_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold, cov_type, ROI):
+    # creates and saves cluster map and cluster scatter plot
+    cmap = ListedColormap(colors[:n_comp])
+    fig, axis = pl.subplots(3, 1)
+    MP.create_cluster_map(axis[0], n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, ROI, cm_num)
+    PL.create_cluster_plot(axis[1],  keywords, 0, 1, input_arr, pred,  n_comp, cov_type, latRng, lngRng, cmap, cm_num)
+    PL.create_cluster_plot(axis[2],  keywords, 2, 3, input_arr, pred,  n_comp, cov_type, latRng, lngRng, cmap, cm_num)
+
+    fig.suptitle(create_plot_title(keywords, latRng, lngRng, n_comp, threshold), fontsize = 10)
+    output_file_name = create_file_name(keywords, latRng, lngRng, n_comp, "map_plots", cm_num, threshold)
+    fig.savefig(output_file_name) 
+
+def create_cluster_map(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold, cov_type, ROI):
+    cmap = ListedColormap(colors[:n_comp])
+    fig, axis = pl.subplots(1, 1)
+    MP.create_cluster_map(axis, n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, ROI, cm_num)
+    fig.suptitle(create_plot_title(keywords, latRng, lngRng, n_comp, threshold), fontsize = 10)
+    output_file_name = create_file_name(keywords, latRng, lngRng, n_comp, "cluster_map", cm_num, threshold)
+    fig.savefig(output_file_name)
+
+def create_cluster_plot(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold, cov_type, ROI):
+    cmap = ListedColormap(colors[:n_comp])
+
+    fig, axis = pl.subplots(1, 1)
+    PL.create_cluster_plot(axis, keywords, 0, 1, input_arr, pred,  n_comp, cov_type, latRng, lngRng, cmap, cm_num)
+    fig.suptitle(create_plot_title(keywords, latRng, lngRng, n_comp, threshold), fontsize = 10)
+    output_file_name = create_file_name(keywords, latRng, lngRng, n_comp, "cluster plot", cm_num, threshold)
+    fig.savefig(output_file_name)
 
 """
 functions to run various clustering --> visualization pipelines
@@ -151,9 +179,8 @@ def output_comparison_and_plot(date, keywords, param_ranges,
     #pred = STAT.reassign_clusters(np.array(pred), np.swapaxes(stats[:, :, 0], 0, 1), np.array(param_ranges))
     # create scatter plots figure
   
-    cmap = ListedColormap(colors[:n_comp])
-    create_plot_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold, cmap, cov_type, ROI)
-    create_map_comp_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold, cmap, ROI)
+    create_plot_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold,  cov_type, ROI)
+    create_map_comp_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold,  ROI)
     indices = input_arr[:, input_arr.shape[1] - 1]
     create_uncertainty_fig(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold)
    
@@ -168,15 +195,12 @@ def output_cluster_map_and_plot(date, keywords, param_ranges,
     [pred, probs] = CL.create_clusters(input_arr[:, 0:len(keywords)], cov_type, n_comp, config["soft_clustering"], threshold)
     stats = STAT.get_all_stats(pred, keywords, input_arr[:, len(keywords)], n_comp, latRng, lngRng, cm_num)
     pred = STAT.reassign_clusters(np.array(pred), np.swapaxes(stats[:, :, 0], 0, 1), np.array(param_ranges))
-    cmap = ListedColormap(colors[:n_comp])
-    fig, axis = pl.subplots(2, 1)
-    fig.subplots_adjust(hspace=0.4)
-    MP.create_cluster_map(axis[0], n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, ROI, cm_num)
-    PL.create_cluster_plot(axis[1],  keywords, 0, 1, input_arr, pred,  n_comp, cov_type, latRng, lngRng, cmap, cm_num)
-    fig.suptitle(create_plot_title(keywords, latRng, lngRng, n_comp, threshold), fontsize = 10)
-    
-    output_file_name = create_file_name(keywords, latRng, lngRng, n_comp, "map_plot", cm_num, threshold)
-    fig.savefig(output_file_name)
+    create_plot_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold, cov_type, ROI)
+
+
+    # cluster probability maps
+    indices = input_arr[:, input_arr.shape[1] - 1]
+    create_uncertainty_fig(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold)
 
 def output_cluster_map_and_plots(date, keywords, param_ranges, 
                            latRng = [85, 95], lngRng = [230, 240], 
@@ -187,8 +211,6 @@ def output_cluster_map_and_plots(date, keywords, param_ranges,
     stats = STAT.get_all_stats(pred, keywords, input_arr[:, len(keywords)], n_comp, latRng, lngRng, cm_num)
     pred = STAT.reassign_clusters(np.array(pred), np.swapaxes(stats[:, :, 0], 0, 1), np.array(param_ranges))
     
-    cmap = ListedColormap(colors[:n_comp])
-    fig, axis = pl.subplots(3, 1)
   
     indices = input_arr[:, input_arr.shape[1] - 1]
 
@@ -197,13 +219,10 @@ def output_cluster_map_and_plots(date, keywords, param_ranges,
     pred = STAT.reassign_clusters(np.array(pred), np.swapaxes(stats[:, :, 0], 0, 1), np.array(param_ranges))
     
     #create figures
-    MP.create_cluster_map(axis[0], n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, ROI, cm_num)
-    PL.create_cluster_plot(axis[1],  keywords, 0, 1, input_arr, pred,  n_comp, cov_type, latRng, lngRng, cmap, cm_num)
-    PL.create_cluster_plot(axis[2],  keywords, 2, 3, input_arr, pred,  n_comp, cov_type, latRng, lngRng, cmap, cm_num)
-
-    fig.suptitle(create_plot_title(keywords, latRng, lngRng, n_comp, threshold), fontsize = 10)
-    output_file_name = create_file_name(keywords, latRng, lngRng, n_comp, "map_plots", cm_num, threshold)
-    fig.savefig(output_file_name) 
+    create_plots_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold, cov_type, ROI)
+    
+    # cluster probability maps
+    create_uncertainty_fig(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold)
 
 
 def output_cluster_map(date, keywords, param_ranges, 
@@ -217,13 +236,8 @@ def output_cluster_map(date, keywords, param_ranges,
     
     stats = STAT.get_all_stats(pred, keywords, input_arr[:, len(keywords)], n_comp, latRng, lngRng, cm_num)
     pred = STAT.reassign_clusters(np.array(pred), np.swapaxes(stats[:, :, 0], 0, 1), np.array(param_ranges))
-    cmap = ListedColormap(colors[:n_comp])
-
-    fig, axis = pl.subplots(1, 1)
-    MP.create_cluster_map(axis, n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, ROI, cm_num)
-    fig.suptitle(create_plot_title(keywords, latRng, lngRng, n_comp, threshold), fontsize = 10)
-    output_file_name = create_file_name(keywords, latRng, lngRng, n_comp, "cluster_map", cm_num, threshold)
-    fig.savefig(output_file_name)
+    create_cluster_map(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold, cov_type, ROI)
+   
 
 
 def output_cluster_plot(date, keywords, param_ranges, 
@@ -236,13 +250,7 @@ def output_cluster_plot(date, keywords, param_ranges,
     stats = STAT.get_all_stats(pred, keywords, input_arr[:, len(keywords)], n_comp, latRng, lngRng, cm_num)
     pred = STAT.reassign_clusters(np.array(pred), np.swapaxes(stats[:, :, 0], 0, 1), np.array(param_ranges))
     
-    cmap = ListedColormap(colors[:n_comp])
-
-    fig, axis = pl.subplots(1, 1)
-    PL.create_cluster_plot(axis, keywords, 0, 1, input_arr, pred,  n_comp, cov_type, latRng, lngRng, cmap, cm_num)
-    fig.suptitle(create_plot_title(keywords, latRng, lngRng, n_comp, threshold), fontsize = 10)
-    output_file_name = create_file_name(keywords, latRng, lngRng, n_comp, "cluster plot", cm_num, threshold)
-    fig.savefig(output_file_name)
+    create_cluster_plot(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold, cov_type, ROI)
 
 
 def create_file_name(keywords, latRng, lngRng, n_comp, suffix, cm_num, threshold):
@@ -311,7 +319,7 @@ ROI={"Hot Spot":[82,83,14.0,2.0],
                      "Cloud Plume":[82,84,5.0,3.0],
                      "Reference":[76,78,15,4.0]} 
 
-output_comparison_and_plot("20251016", ["NH3", "PCld", "AOI", "CI"], [[0, 300], [1000,  3100], [0.1, 0.4], [0.4, 0.8]], lat_range, lon_range, 5)
+output_cluster_map_and_plots("20251016", ["NH3", "PCld", "AOI", "CI"], [[0, 300], [1000,  3100], [0.1, 0.4], [0.4, 0.8]], lat_range, lon_range, 5)
 
 #output_cluster_map_and_plot("20251016", ["AOI", "CI"], [[0.1, 0.4], [0.4, 0.8]], lat_range, lon_range, 4, ROI)
 
