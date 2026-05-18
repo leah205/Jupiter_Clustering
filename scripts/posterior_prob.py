@@ -18,7 +18,7 @@ colors =[(1, 0.639, 0.639), (0.647, 1, 0.639), (0.639, 0.894, 1), (1, 0.996, 0.6
 
 # uncertainty maps
 
-def create_uncertainty_fig(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold, description, suffix):
+def create_uncertainty_fig(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold, description = "", suffix = ""):
      """
      Purpose
      --------------
@@ -49,7 +49,7 @@ def create_uncertainty_fig(keywords, probs, indices, subset_shape, latRng, lngRn
      output_file_name = PLP.create_file_name(keywords, latRng, lngRng, n_comp, f"posterior_probs_{suffix}", cm_num, threshold)
      fig.savefig(output_file_name)
 
-def create_max_prob_map(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold, ROI, description, suffix):
+def create_max_prob_map(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold, ROI, description = "", suffix = ""):
     """
      Purpose
      --------------
