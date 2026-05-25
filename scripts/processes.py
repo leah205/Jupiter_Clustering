@@ -232,7 +232,7 @@ ROI={"Hot Spot":[82,83,14.0,2.0],
 
 #output_cluster_map_and_plot("20251016", ["AOI", "CI"], [[0.1, 0.4], [0.3, 0.8]], lat_range, lon_range, 6, ROI)
 
-output_cluster_map_and_plot("20251016", ["NH3", "PCld"], [[0, 300], [1000,  3200]], lat_range, lon_range, 6, ROI)
+#output_cluster_map_and_plot("20251016", ["NH3", "PCld"], [[0, 300], [1000,  3200]], lat_range, lon_range, 6, ROI)
 
 
 # output_cluster_map("20251016",
@@ -247,8 +247,8 @@ output_cluster_map_and_plot("20251016", ["NH3", "PCld"], [[0, 300], [1000,  3200
 #                       lat_range, lon_range, 5, ROI, "full", 1)
 
 
-# output_cluster_map("20251016",
-#                        [ "619", "631", "645"], 
-#                       [[0, 1], [0,  1], [0,  1]], 
-#                       lat_range, lon_range, 5, ROI, "full", 1)
+output_cluster_map("20251016",
+                       [ "619", "631", "645"], 
+                      [[0, 1], [0,  1], [0,  1]], 
+                      lat_range, lon_range, 5, ROI, "full", 1)
                       

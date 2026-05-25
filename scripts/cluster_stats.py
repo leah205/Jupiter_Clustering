@@ -126,7 +126,13 @@ def get_centroids_figure(keywords, cluster_centroids):
 
     """
     fig, ax = plt.subplots(1, 1)
-    ax.set_title("Cluster Means")
+
+    #check if dimension is wavelength (valid number)
+    if(keywords[0].isdigit()):
+        ax.set_title("Mean Cluster Reflectance per Wavelength")
+    else:
+        ax.set_title("Mean Cluster Value per Parameter")
+
     sns.heatmap(cluster_centroids, ax = ax, annot = True, cmap = "coolwarm", xticklabels = keywords)
     return fig
 
