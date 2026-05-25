@@ -165,18 +165,18 @@ def plot_patch(patch, LatLims, LonLims, cmap, ROI, axis, v_min, v_max, title, cm
         
         cbar = fig.colorbar(show, ticks=tx, 
                    orientation='vertical',
-                   ax=axis,fraction=0.046*im_ratio, pad=0.05)
+                   ax=axis,fraction=0.046*im_ratio, pad=0.1)
         cbar.ax.set_yticklabels(np.around(tx,3))
 
 
         cbar.set_ticks(tx)
         cbar.set_ticklabels(np.around(tx, 3))
         cbar.ax.tick_params(labelsize=6,color="k")#if iSession >1:
-        cbar.ax.set_ylabel(cbar_title, size=6)#,labelpad=-20, y=0.5)
+        cbar.ax.set_ylabel(cbar_title, size=9,labelpad=5, y=0.5)
 
 
-        cbar.ax.yaxis.set_label_coords(-1.5, 0.5)
-        cbar.ax.yaxis.set_label_coords(-2.1, 0.5)
+        # cbar.ax.yaxis.set_label_coords(-1.5, 0.5)
+        # cbar.ax.yaxis.set_label_coords(-2.1, 0.5)
         if cbar_reverse:
             cbar.ax.invert_yaxis()
 
