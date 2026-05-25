@@ -109,7 +109,7 @@ def create_plots_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_ar
 def create_cluster_map(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, threshold,  ROI, description = "", suffix = ""):
     cmap = ListedColormap(colors[:n_comp])
     fig, axis = pl.subplots(1, 1)
-    MP.create_cluster_map(axis, n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, ROI, cm_num)
+    MP.create_cluster_map(axis, n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, ROI, cm_num, fig, True)
     fig.suptitle(create_plot_title(keywords, latRng, lngRng, n_comp, threshold, description), fontsize = 10)
     output_file_name = create_file_name(keywords, latRng, lngRng, n_comp, f"cluster_map_{suffix}", cm_num, threshold)
     fig.savefig(output_file_name)

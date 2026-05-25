@@ -96,7 +96,7 @@ def create_axis(axs3, LatLims, LonLims, LonSys, annotated = True):
     axs3.set_adjustable('box') 
     return axs3
 
-def plot_cluster_patch(patch, LatLims, LonLims, cmap, ROI, axis, v_min, v_max, title, cm_num, fig = None, cbarplot = True, cbar_title = "test", showbands = True):
+def plot_cluster_patch(patch, LatLims, LonLims, cmap, ROI, axis, v_min, v_max, title, cm_num, fig = None, cbarplot = True, cbar_title = "clusters", showbands = True):
     '''
     Purpose:
         to plot a patch of clusters with appropriate longitude/latitude scales
@@ -111,36 +111,28 @@ def plot_cluster_patch(patch, LatLims, LonLims, cmap, ROI, axis, v_min, v_max, t
     cmap.set_bad("black")
     tx=np.linspace(v_max,v_min,n ,endpoint=True)
     
-
     show=axis.imshow(masked_patch,  origin='upper', interpolation = 'nearest', cmap = cmap, norm = norm,  
                extent=[360 - LonLims[0],360 - LonLims[1],90-LatLims[1],
                        90-LatLims[0]],
                        aspect="equal")
    
-
-
     axis = label_features(axis, LonLims, LatLims,  ROI, showbands, True)
     
     #axis.set_title(title, pad = 15)
 
     im_ratio = patch.shape[0]/patch.shape[1]
-    
+
+ 
     if cbarplot:
-        cbar = fig.colorbar(show, ticks=tx, 
-                   orientation='vertical',
-                   ax=axis,fraction=0.046*im_ratio, pad=0.05)
-        cbar.ax.set_yticklabels(np.around(tx,3))
-
-
-        cbar.set_ticks(tx)
-        cbar.set_ticklabels(np.around(tx, 3))
-        cbar.ax.tick_params(labelsize=6,color="k")#if iSession >1:
-        cbar.ax.set_ylabel(cbar_title, size=6)#,labelpad=-20, y=0.5)
+ 
+        cbar = fig.colorbar(show, ticks = np.linspace(1, v_max, v_max),  orientation='vertical',
+                 ax=axis,fraction=0.046*im_ratio, pad=0.2)
+        cbar.ax.set_ylabel(cbar_title, size=12)#,labelpad=-20, y=0.5)
 
 
         cbar.ax.yaxis.set_label_coords(-1.5, 0.5)
         cbar.ax.yaxis.set_label_coords(-2.1, 0.5)
-        #cbar.remove()
+      
 
 
 def plot_patch(patch, LatLims, LonLims, cmap, ROI, axis, v_min, v_max, title, cm_num, fig = None, cbarplot = True, annotated = True, cbar_title = "test", cbar_reverse = False, showbands = True):

@@ -62,10 +62,10 @@ def create_js_plot(X, n_range, sample_size = 10000):
 
     fig, ax = plt.subplots(1, 1)
     plt.errorbar(n_clusters, results, yerr = res_errs)
-    plt.title("Difference Between GMMS")
+    plt.title("Jensen-Shannon Distance between GMMs")
     plt.xticks(n_clusters)
-    plt.xlabel("Number of Clusters")
-    plt.ylabel("GMM JS Distance")
+    plt.xlabel("Number of Clusters", fontsize = 14)
+    plt.ylabel("Distance", fontsize = 14)
     return fig
 
 
