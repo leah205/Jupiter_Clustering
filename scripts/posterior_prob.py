@@ -63,7 +63,7 @@ def create_max_prob_map(keywords, probs, indices, subset_shape, latRng, lngRng, 
     max_prob_map = MP.create_cluster_arr(indices, subset_shape, max_probs)
     MP.plot_patch(max_prob_map, latRng, lngRng, cmap, ROI, ax, 0, 1, "", cm_num, fig, True, True, "probability")
     fig.suptitle(PLP.create_plot_title(keywords, latRng, lngRng, n_comp, threshold, f"maximum probability map {description}"), fontsize = 10)
-    ax.set_title(f"Mean Probabilitiy: {mean}")
+    ax.set_title(f"Mean Probability: {mean}")
     output_file_name = PLP.create_file_name(keywords, latRng, lngRng, n_comp, f"max_prob_map_{suffix}", cm_num, threshold)
     fig.savefig(output_file_name)
 

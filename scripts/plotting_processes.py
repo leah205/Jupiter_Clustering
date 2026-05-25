@@ -78,7 +78,14 @@ def create_map_comp_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input
 def create_plot_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold,  cov_type, ROI, description = "", suffix = ""):
     # creates and saves cluster map and cluster scatter plot
     cmap = ListedColormap(colors[:n_comp])
-    fig1, axis1 = pl.subplots(2, 1)
+    fig1, axis1 = pl.subplots(2, 1, figsize = (8,8))
+    pl.tight_layout()
+    fig1.subplots_adjust(
+        top = 0.95,
+        left = 0.1,
+        right = 0.9,
+        bottom = 0.05
+    )
     MP.create_cluster_map(axis1[0], n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, ROI, cm_num)
     PL.create_cluster_plot(axis1[1],  keywords, 0, 1, input_arr, pred,  n_comp, cov_type, latRng, lngRng, cmap, cm_num)
     fig1.suptitle(create_plot_title(keywords, latRng, lngRng, n_comp, threshold, description), fontsize = 10)

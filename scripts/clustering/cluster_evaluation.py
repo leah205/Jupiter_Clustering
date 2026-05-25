@@ -61,10 +61,13 @@ cluster_rng = [2, 12]
 
 #raw_evaluation_pipeline("20251016UTc/lon_0-30", ["NH3", "PCld"], [[0, 300], [1000,  3000]], lat_range, lon_range, cluster_rng, 1)
 # raw_evaluation_pipeline("20251016UTc/lon_0-30", ["AOI", "CI"], [[0.1, 0.4], [0.4, 0.8]], lat_range, lon_range, cluster_rng, 1)
-pca_evaluation_pipeline("20251016UTc/lon_0-30", ["275", "395", "502", "619", "631", "645", "673", "727", "889"], 
-                 [[0, 1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1]], lat_range, lon_range, cluster_rng, 1)
+# pca_evaluation_pipeline("20251016UTc/lon_0-30", ["275", "395", "502", "619", "631", "645", "673", "727", "889"], 
+#                  [[0, 1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1]], lat_range, lon_range, cluster_rng, 1)
 
 
 #raw_evaluation_pipeline("20251016UTc/lon_0-30", ["NH3", "PCld", "AOI", "CI"], [[0, 300], [1000,  3000], [0.1, 0.4], [0.4, 0.8]], lat_range, lon_range, cluster_rng, 1)
 
 #pca_evaluation_pipeline("20251016UTc/lon_0-30", ["NH3", "PCld", "AOI", "CI"], [[0, 300], [1000,  3000], [0.1, 0.4], [0.4, 0.8]], lat_range, lon_range, cluster_rng, 1)
+
+raw_evaluation_pipeline("20251016UTc/lon_0-30", [ "619", "631", "645"], 
+                 [[0, 1], [0,  1], [0,  1]], lat_range, lon_range, cluster_rng, 1)

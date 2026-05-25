@@ -10,7 +10,7 @@ def run_PCA(X, n_comp):
     # gets array of percentage of variance explained by each component
     print(pca.explained_variance_ratio_)
 
-def get_pca_comp(X, var_threshold = 0.95):
+def get_pca_comp(X, var_threshold = 0.98):
     """
     Purpose
     ----------
