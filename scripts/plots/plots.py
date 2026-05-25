@@ -29,14 +29,15 @@ def create_cluster_plot(ax, keywords, index_x, index_y, input_arr, pred, n_comp,
     y = input_arr[:, index_y]
     pred = np.array(pred)
     for cl in range(-1, n_comp):
-        
+        if(cl == -1 and config["soft_clustering"] == False):
+            continue
         mask = pred == cl
         x_cl = x[mask]
         y_cl = y[mask]
       
         
-        cluster_label = f"{cl}" if cl >= 0 else "NA"
-        ax.scatter(x[mask], y[mask], s = 1, alpha = 0.01, color = cmap(cl), label = cluster_label)
+        cluster_label = f"{cl + 1}" if cl >= 0 else "NA"
+        ax.scatter(x[mask], y[mask], s = 1, alpha = 0.02, color = cmap(cl), label = cluster_label)
       
         
         #ax.text(x_mean, y_mean, str(cl), fontsize = 10, zorder = 10)
@@ -49,7 +50,7 @@ def create_cluster_plot(ax, keywords, index_x, index_y, input_arr, pred, n_comp,
             y_std = np.std(y_cl)
             ax.scatter(x_mean, y_mean, color = "black", s = 50, marker = 'x', zorder = 9)
             ax.annotate(
-                str(cl),
+                str(cl + 1),
                 (x_mean, y_mean),
                 xytext=(8, 0),
                 textcoords='offset points',
