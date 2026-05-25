@@ -132,8 +132,9 @@ def get_centroids_figure(keywords, cluster_centroids):
         ax.set_title("Mean Cluster Reflectance per Wavelength")
     else:
         ax.set_title("Mean Cluster Value per Parameter")
-
-    sns.heatmap(cluster_centroids, ax = ax, annot = True, cmap = "coolwarm", xticklabels = keywords)
+    c_num = cluster_centroids.shape[0]
+    cluster_labels = np.linspace(1, c_num, c_num).astype(np.int64)
+    sns.heatmap(cluster_centroids, ax = ax, annot = True, cmap = "coolwarm", xticklabels = keywords, yticklabels = cluster_labels )
     return fig
 
 
