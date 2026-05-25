@@ -41,7 +41,7 @@ def create_uncertainty_fig(keywords, probs, indices, subset_shape, latRng, lngRn
         cbar = True if i == n_comp - 1 else False
         annotated = True if i == 0 else False
         MP.plot_patch(prob_map, latRng, lngRng, cmap, {}, ax[i], 0, 1, "", cm_num, fig, cbar, annotated, "probability")
-        ax[i].set_title(f"Cluster {i}")
+        ax[i].set_title(f"Cluster {i + 1}")
     
      for a in ax[n_comp:]: 
          fig.delaxes(a)
