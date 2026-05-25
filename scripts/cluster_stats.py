@@ -4,6 +4,14 @@ import scripts.preprocessing.preprocessing as pre
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+
+keyword_dict = {
+    "NH3": "Ammonia Mole Fraction (ppm)",
+    "PCld": "Cloud Pressure (mb)",
+    "AOI": "Altitude Opacity Index",
+    "CI": "Color Index"
+}
+
 def get_stat(cluster_arr, dim_arr, indices, n_clusters, dim_name):
     '''
         Purpose: Takes a cluster and outputs the mean and standard deviation of that cluster in a certain dimension

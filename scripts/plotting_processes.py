@@ -84,9 +84,9 @@ def create_plot_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr
         top = 0.95,
         left = 0.1,
         right = 0.9,
-        bottom = 0.05
+        bottom = 0.1
     )
-    MP.create_cluster_map(axis1[0], n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, ROI, cm_num)
+    MP.create_cluster_map(axis1[0], n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, ROI, cm_num, fig1, True)
     PL.create_cluster_plot(axis1[1],  keywords, 0, 1, input_arr, pred,  n_comp, cov_type, latRng, lngRng, cmap, cm_num)
     fig1.suptitle(create_plot_title(keywords, latRng, lngRng, n_comp, threshold, description), fontsize = 10)
     STAT.get_all_stats(pred, keywords, input_arr[:, input_arr.shape[1] - 1], n_comp, latRng, lngRng, cm_num)
@@ -98,7 +98,7 @@ def create_plots_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_ar
     # creates and saves cluster map and cluster scatter plot
     cmap = ListedColormap(colors[:n_comp])
     fig, axis = pl.subplots(3, 1)
-    MP.create_cluster_map(axis[0], n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, ROI, cm_num)
+    MP.create_cluster_map(axis[0], n_comp, pred, input_arr, subset_shape, latRng, lngRng, cmap, ROI, cm_num, fig, True)
     PL.create_cluster_plot(axis[1],  keywords, 0, 1, input_arr, pred,  n_comp, cov_type, latRng, lngRng, cmap, cm_num)
     PL.create_cluster_plot(axis[2],  keywords, 2, 3, input_arr, pred,  n_comp, cov_type, latRng, lngRng, cmap, cm_num)
 

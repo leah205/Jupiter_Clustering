@@ -124,9 +124,10 @@ def plot_cluster_patch(patch, LatLims, LonLims, cmap, ROI, axis, v_min, v_max, t
 
  
     if cbarplot:
- 
-        cbar = fig.colorbar(show, ticks = np.linspace(1, v_max, v_max),  orientation='vertical',
+        
+        cbar = fig.colorbar(show, ticks = np.arange(v_max),  orientation='vertical',
                  ax=axis,fraction=0.046*im_ratio, pad=0.2)
+        cbar.set_ticklabels(np.arange(1, v_max + 1))
         cbar.ax.set_ylabel(cbar_title, size=12)#,labelpad=-20, y=0.5)
 
 

@@ -7,6 +7,13 @@ import numpy as np
 from scipy.stats import gaussian_kde
 
 
+keyword_dict = {
+    "NH3": "Ammonia Mole Fraction (ppm)",
+    "PCld": "Cloud Pressure (mb)",
+    "AOI": "Altitude Opacity Index",
+    "CI": "Color Index"
+}
+
 def create_cluster_plot(ax, keywords, index_x, index_y, input_arr, pred, n_comp, cov_type, 
                         latRng, lngRng, cmap, cm_num = 3
                         ):
@@ -41,8 +48,8 @@ def create_cluster_plot(ax, keywords, index_x, index_y, input_arr, pred, n_comp,
       
         
         #ax.text(x_mean, y_mean, str(cl), fontsize = 10, zorder = 10)
-        ax.set_xlabel(keywords[index_x])
-        ax.set_ylabel(keywords[index_y])
+        ax.set_xlabel(keyword_dict[keywords[index_x]])
+        ax.set_ylabel(keyword_dict[keywords[index_y]])
         if(cl >= 0):
             x_mean = np.mean(x_cl)
             y_mean = np.mean(y_cl)
