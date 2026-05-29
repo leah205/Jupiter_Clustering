@@ -47,13 +47,11 @@ functions to run various clustering --> visualization pipelines
         - if soft clustering is enabled, specifies probability threshold for clustering
 """
 
-def output_comparison_and_plot(date, keywords, param_ranges, 
+
+def run_pipeline(date, keywords, param_ranges, 
                            latRng = [85, 95], lngRng = [230, 330], 
                            n_comp = 4, ROI = {}, cov_type = "full", cm_num = 1, threshold = 0.75):
-    
-
-    #creates two visualization files, one is a map comparison, the other has cluster map and scatter plot
-
+        
 
     [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
   
@@ -63,132 +61,28 @@ def output_comparison_and_plot(date, keywords, param_ranges,
     # create scatter plots figure
 
     means_swapped = np.swapaxes(stats[:,:, 0], 0, 1)
-    centroids_fig = STAT.get_centroids_figure(keywords, means_swapped)
-    centroids_fig.savefig(PLP.create_file_name(keywords, latRng, lngRng, n_comp, "centroids", cm_num, threshold))
-  
-    PLP.create_plot_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold,  cov_type, ROI)
-    PLP.create_map_comp_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold,  ROI)
+    isPca = False
+    prefix = PLP.create_file_prefix(keywords, latRng, lngRng, n_comp, cm_num, threshold, isPca)
+
+    if(len(keywords) == 2):
+        plot_fig = PLP.create_plot_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold,  cov_type, ROI)
+        plot_fig.savefig(f"{prefix}plot.png")
+        PLP.create_map_comp_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold,  ROI)
+
+    if(len(keywords) == 4):
+        plots_fig = PLP.create_plots_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold, cov_type, ROI)
+        plots_fig.savefig(f"{prefix}plot.png")
+
     indices = input_arr[:, input_arr.shape[1] - 1]
-    PP.create_uncertainty_fig(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold)
-    PP.create_max_prob_map(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold, ROI)
+    map_fig = PLP.create_cluster_map(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, threshold,  ROI)
+    map_fig.savefig(f"{prefix}cluster_map.png")
    
-
-
-def output_cluster_map_and_plot(date, keywords, param_ranges, 
-                           latRng = [85, 95], lngRng = [230, 330], 
-                           n_comp = 4, ROI = {}, cov_type = "full", cm_num = 1, threshold = 0.75):
-    
-    # creates cluster spatial map and cluster scatter plot
-    [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
-    pred, probs, *_ = CL.create_clusters(input_arr[:, 0:len(keywords)], cov_type, n_comp, config["soft_clustering"], threshold)
-    stats = STAT.get_all_stats(pred, keywords, input_arr[:, len(keywords)], n_comp, latRng, lngRng, cm_num)
-    #pred = STAT.reassign_clusters(np.array(pred), np.swapaxes(stats[:, :, 0], 0, 1), np.array(param_ranges))
-
-    means_swapped = np.swapaxes(stats[:,:, 0], 0, 1)
+    uncertainty_fig = PP.create_uncertainty_fig(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold, "PCA Reduced")
+    uncertainty_fig.savefig(f"{prefix}uncertainty_map.png")
+    max_prob_fig = PP.create_max_prob_map(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold, ROI,   "PCA Reduced")
+    max_prob_fig.savefig(f"{prefix}max_prob_fig.png")
     centroids_fig = STAT.get_centroids_figure(keywords, means_swapped)
-    centroids_fig.savefig(PLP.create_file_name(keywords, latRng, lngRng, n_comp, "centroids", cm_num, threshold))
-
-    PLP.create_plot_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold, cov_type, ROI)
-     # cluster probability maps
-    indices = input_arr[:, input_arr.shape[1] - 1]
-    PP.create_uncertainty_fig(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold)
-    PP.create_max_prob_map(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold, ROI)
-
-def output_cluster_map_and_plots(date, keywords, param_ranges, 
-                           latRng = [85, 95], lngRng = [230, 240], 
-                           n_comp = 4, ROI = {}, cov_type = "full", cm_num = 1, threshold = 0.75):
-    # creates spatial cluster map and two cluster scatter plots
-    [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
-    pred, probs, *_ = CL.create_clusters(input_arr[:, 0:len(keywords)], cov_type, n_comp, config["soft_clustering"], threshold)
-    stats = STAT.get_all_stats(pred, keywords, input_arr[:, len(keywords)], n_comp, latRng, lngRng, cm_num)
-    #pred = STAT.reassign_clusters(np.array(pred), np.swapaxes(stats[:, :, 0], 0, 1), np.array(param_ranges))
-    
-  
-    indices = input_arr[:, input_arr.shape[1] - 1]
-
-
-    stats = STAT.get_all_stats(pred, keywords, indices, n_comp, latRng, lngRng, cm_num)
-    #pred = STAT.reassign_clusters(np.array(pred), np.swapaxes(stats[:, :, 0], 0, 1), np.array(param_ranges))
-
-    means_swapped = np.swapaxes(stats[:,:, 0], 0, 1)
-    centroids_fig = STAT.get_centroids_figure(keywords, means_swapped)
-    centroids_fig.savefig(PLP.create_file_name(keywords, latRng, lngRng, n_comp, "centroids", cm_num, threshold))
-    
-    #create figures
-    PLP.create_plots_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold, cov_type, ROI)
-    
-    # cluster probability maps
-    PP.create_uncertainty_fig(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold)
-    PP.create_max_prob_map(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold, ROI)
-
-
-def output_cluster_map(date, keywords, param_ranges, 
-                           latRng = [65, 115], lngRng = [0, 50], 
-                            n_comp = 4, ROI = {}, cov_type = "full", cm_num = 3, threshold = 0.75):
-    
-    # creates spatial cluster map
-    [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
-    indices = input_arr[:, input_arr.shape[1] - 1]
-
-    pred, probs, *_ = CL.create_clusters(input_arr[:, 0:len(keywords)], cov_type, n_comp, config["soft_clustering"], threshold)
-    
-    stats = STAT.get_all_stats(pred, keywords, input_arr[:, len(keywords)], n_comp, latRng, lngRng, cm_num)
-
-
-    means_swapped = np.swapaxes(stats[:,:, 0], 0, 1)
-    centroids_fig = STAT.get_centroids_figure(keywords, means_swapped)
-    centroids_fig.savefig(PLP.create_file_name(keywords, latRng, lngRng, n_comp, "centroids", cm_num, threshold))
-
-
-    #pred = STAT.reassign_clusters(np.array(pred), np.swapaxes(stats[:, :, 0], 0, 1), np.array(param_ranges))
-    PLP.create_cluster_map(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, threshold,  ROI)
-
-    # cluster probability maps
-    PP.create_uncertainty_fig(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold)
-    PP.create_max_prob_map(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold, ROI)
-   
-
-
-def output_cluster_plot(date, keywords, param_ranges, 
-                           latRng = [90, 95], lngRng = [330, 330], sys = 3,
-                           n_comp = 4, cov_type = "full",  cm_num = 3, threshold = 0.75):
-    
-    # creates cluster scatter plot 
-    [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
-    indices = input_arr[:, input_arr.shape[1] - 1]
-    pred, probs, *_ = CL.create_clusters(input_arr[:, 0: len(keywords)], cov_type, n_comp, config["soft_clustering"])
-    stats = STAT.get_all_stats(pred, keywords, input_arr[:, len(keywords)], n_comp, latRng, lngRng, cm_num)
-    #pred = STAT.reassign_clusters(np.array(pred), np.swapaxes(stats[:, :, 0], 0, 1), np.array(param_ranges))
-    
-    means_swapped = np.swapaxes(stats[:,:, 0], 0, 1)
-    centroids_fig = STAT.get_centroids_figure(keywords, means_swapped)
-    centroids_fig.savefig(PLP.create_file_name(keywords, latRng, lngRng, n_comp, "centroids", cm_num, threshold))
-
-
-    PLP.create_cluster_plot(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold, cov_type, ROI)
-
-    # cluster probability maps
-    PP.create_uncertainty_fig(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold)
-    PP.create_max_prob_map(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold, ROI)
-
-
-
-def create_map_comparison(date, keywords, param_ranges, 
-                           latRng = [85, 95], lngRng = [230, 260], 
-                            n_comp = 4, ROI = {},cov_type = "full",  cm_num = 1, threshold = 0.75):
-    
-    # creates spatial cluster map comparison with dimension maps
-    [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
-    indices = input_arr[:, input_arr.shape[1] - 1]
-   
-    pred, probs, *_ = CL.create_clusters(input_arr[:, 0:len(keywords)], cov_type, n_comp, config["soft_clustering"], threshold)
-    stats = STAT.get_all_stats(pred, keywords, indices, n_comp, latRng, lngRng, cm_num)
-    #pred = STAT.reassign_clusters(np.array(pred), np.swapaxes(stats[:, :, 0], 0, 1), np.array(param_ranges))
-   
-    PLP.create_map_comp_figure(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, param_ranges, threshold, ROI)
-    PP.create_uncertainty_fig(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold)
-    PP.create_max_prob_map(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold, ROI)
-
+    centroids_fig.savefig(f"{prefix}centroids.png")
 
 def pca_pipeline(date, keywords, param_ranges, 
                            latRng = [85, 95], lngRng = [230, 260], 
@@ -200,14 +94,21 @@ def pca_pipeline(date, keywords, param_ranges,
     pred, probs, means = CL.create_clusters(pca_reduced, cov_type, n_comp, config["soft_clustering"], threshold)
     means = pca_obj.inverse_transform(means)
     means = scaler.inverse_transform(means)
+    isPca = True
+    prefix = PLP.create_file_prefix(keywords, latRng, lngRng, n_comp, cm_num, threshold, isPca)
+   
+
+    map_fig = PLP.create_cluster_map(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, threshold, ROI, "PCA Reduced")
+    map_fig.savefig(f"{prefix}cluster_map.png")
+    uncertainty_fig = PP.create_uncertainty_fig(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold, "PCA Reduced")
+    uncertainty_fig.savefig(f"{prefix}uncertainty_map.png")
+    max_prob_fig = PP.create_max_prob_map(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold, ROI,   "PCA Reduced")
+    max_prob_fig.savefig(f"{prefix}max_prob_fig.png")
     
-    PLP.create_cluster_map(keywords, latRng, lngRng, cm_num, n_comp, pred, input_arr, subset_shape, threshold, ROI, "PCA Reduced", "pca")
-    PP.create_uncertainty_fig(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold,  "PCA Reduced", "pca")
-    PP.create_max_prob_map(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold, ROI,  "PCA Reduced", "pca")
     heat_map_fig = PCA.get_loadings_heatmap(pca_obj, keywords)
-    heat_map_fig.savefig(PLP.create_file_name(keywords, latRng, lngRng, n_comp, "pca_heat_map", cm_num, threshold))
+    heat_map_fig.savefig(f"{prefix}loadings.png")
     centroids_fig = STAT.get_centroids_figure(keywords, means)
-    centroids_fig.savefig(PLP.create_file_name(keywords, latRng, lngRng, n_comp, "pca_centroids", cm_num, threshold))
+    centroids_fig.savefig(f"{prefix}centroids.png")
 
    
 
@@ -228,11 +129,11 @@ ROI={"Hot Spot":[82,83,14.0,2.0],
                      "Cloud Plume":[82,84,5.0,3.0],
                      "Reference":[76,78,15,4.0]} 
 
-#output_cluster_map_and_plots("20251016", ["NH3", "PCld", "AOI", "CI"], [[0, 300], [1000,  3100], [0.1, 0.4], [0.3, 0.8]], lat_range, lon_range, 8)
+run_pipeline("20251016", ["NH3", "PCld", "AOI", "CI"], [[0, 300], [1000,  3100], [0.1, 0.4], [0.3, 0.8]], lat_range, lon_range, 8)
 
-#output_cluster_map_and_plot("20251016", ["AOI", "CI"], [[0.1, 0.4], [0.3, 0.8]], lat_range, lon_range, 6, ROI)
+#run_pipeline("20251016", ["AOI", "CI"], [[0.1, 0.4], [0.3, 0.8]], lat_range, lon_range, 6, ROI)
 
-output_cluster_map_and_plot("20251016", ["NH3", "PCld"], [[0, 300], [1000,  3200]], lat_range, lon_range, 6, ROI)
+#output_cluster_map_and_plot("20251016", ["NH3", "PCld"], [[0, 300], [1000,  3200]], lat_range, lon_range, 6, ROI)
 
 
 # output_cluster_map("20251016",
@@ -247,7 +148,7 @@ output_cluster_map_and_plot("20251016", ["NH3", "PCld"], [[0, 300], [1000,  3200
 #                       lat_range, lon_range, 5, ROI, "full", 1)
 
 
-# output_cluster_map("20251016",
+# run_pipeline("20251016",
 #                        [ "619", "631", "645"], 
 #                       [[0, 1], [0,  1], [0,  1]], 
 #                       lat_range, lon_range, 5, ROI, "full", 1)

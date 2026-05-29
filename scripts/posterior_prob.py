@@ -18,7 +18,7 @@ colors =[(1, 0.639, 0.639), (0.647, 1, 0.639), (0.639, 0.894, 1), (1, 0.996, 0.6
 
 # uncertainty maps
 
-def create_uncertainty_fig(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold, description = "", suffix = ""):
+def create_uncertainty_fig(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold, description = ""):
      """
      Purpose
      --------------
@@ -47,10 +47,9 @@ def create_uncertainty_fig(keywords, probs, indices, subset_shape, latRng, lngRn
      for a in ax[n_comp:]: 
          fig.delaxes(a)
      fig.suptitle(PLP.create_plot_title(keywords, latRng, lngRng, n_comp, threshold, description), fontsize = 10)
-     output_file_name = PLP.create_file_name(keywords, latRng, lngRng, n_comp, f"posterior_probs_{suffix}", cm_num, threshold)
-     fig.savefig(output_file_name)
+     return fig
 
-def create_max_prob_map(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold, ROI, description = "", suffix = ""):
+def create_max_prob_map(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold, ROI, description = ""):
     """
      Purpose
      --------------
@@ -65,8 +64,7 @@ def create_max_prob_map(keywords, probs, indices, subset_shape, latRng, lngRng, 
     MP.plot_patch(max_prob_map, latRng, lngRng, cmap, ROI, ax, 0, 1, "", cm_num, fig, True, True, "probability")
     fig.suptitle(PLP.create_plot_title(keywords, latRng, lngRng, n_comp, threshold, f"maximum probability map {description}"), fontsize = 10)
     ax.set_title(f"Mean Probability: {mean}")
-    output_file_name = PLP.create_file_name(keywords, latRng, lngRng, n_comp, f"max_prob_map_{suffix}", cm_num, threshold)
-    fig.savefig(output_file_name)
+    return fig
 
 
    
