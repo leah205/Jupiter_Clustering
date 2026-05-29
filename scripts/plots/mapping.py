@@ -20,7 +20,7 @@ ROI_cmap = {
 }
 
 def label_features(axis, LonLims, LatLims, ROI, showbands, is_cluster = False):
-    secaxis  = axis.secondary_yaxis('right')
+    #secaxis  = axis.secondary_yaxis('right')
     ylim = axis.get_ylim()
     if ROI:
         for R in ROI:
@@ -52,8 +52,8 @@ def label_features(axis, LonLims, LatLims, ROI, showbands, is_cluster = False):
     ticks = [(bounds[i] + bounds[i + 1]) / 2 for i in range(len(bounds) - 1) ]
 
     lat_range_labels = ["SSTB", "STZ", "STB", "STrZ", "SEB", "EZ", "NEB", "NTrZ", "NTB",  "NTZ", "NNTB"]
-    secaxis.set_yticks(ticks)
-    secaxis.set_yticklabels(lat_range_labels)
+    #secaxis.set_yticks(ticks)
+    #secaxis.set_yticklabels(lat_range_labels)
   
     if showbands:
         for zb in belt:
@@ -66,14 +66,12 @@ def label_features(axis, LonLims, LatLims, ROI, showbands, is_cluster = False):
     #for zb in zone:
         #axs1[1].annotate(zb,xy=[np.mean(zone[zb]),51],ha="center")
     
-    secaxis.tick_params(axis='both', which='major', labelsize=9)
+    #secaxis.tick_params(axis='both', which='major', labelsize=9)
     axis.set_ylim(ylim)
     if(is_cluster):
         ROI_lines = []
         for R in ROI:
             ROI_lines.append( Line2D([0], [0], color = ROI_cmap[R], lw = 2))
-
-
         axis.legend(ROI_lines, list(ROI.keys()), fontsize = 8, loc = "upper left", bbox_to_anchor=(0.92, 1))
               
     return axis
@@ -123,9 +121,7 @@ def plot_cluster_patch(patch, LatLims, LonLims, cmap, ROI, axis, v_min, v_max, t
                        90-LatLims[0]])
     create_axis(axis, [90 - LatLims[1], 90 - LatLims[0]], LonLims,  cm_num)
 
-    print(axis.get_ylim())
-    print(axis.get_yticks())
-    print([tick.get_text() for tick in axis.get_yticklabels()])
+   
     axis.tick_params(axis='y', labelleft=True)
     axis = label_features(axis, LonLims, LatLims,  ROI, showbands, True)
     
@@ -166,6 +162,7 @@ def plot_patch(patch, LatLims, LonLims, cmap, ROI, axis, v_min, v_max, title, cm
                        aspect="equal")
     
     create_axis(axis, [90 - LatLims[1], 90 - LatLims[0]], LonLims,  cm_num)
+    
     #axis.set_title(title, pad = 15)
 
     im_ratio = patch.shape[0]/patch.shape[1]
@@ -193,6 +190,7 @@ def plot_patch(patch, LatLims, LonLims, cmap, ROI, axis, v_min, v_max, title, cm
         # cbar.ax.yaxis.set_label_coords(-2.1, 0.5)
         if cbar_reverse:
             cbar.ax.invert_yaxis()
+   
 
 def create_cluster_map(axis,  n_comp, pred, input_arr, subset_shape, 
                            latRng, lngRng, cmap, ROI = {}, cm_num = 3, fig = None, cbar = False):

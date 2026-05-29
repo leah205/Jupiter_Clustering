@@ -30,16 +30,17 @@ def create_uncertainty_fig(keywords, probs, indices, subset_shape, latRng, lngRn
      """
      ncols = 3
      nrows = math.ceil(n_comp / ncols)
-     fig, ax = pl.subplots(nrows, ncols)
+     fig, ax = pl.subplots(nrows, ncols, constrained_layout = True)
      ax = np.atleast_1d(ax).flatten()
-
+    
      for i in range(0, n_comp):
         # cmap = LinearSegmentedColormap.from_list("cluster_color", [(1, 1, 1, 0), colors[i]], N = 256)
         cmap = LinearSegmentedColormap.from_list("cluster_color", ["white", "yellow", "orange", "red"], N = 256)
 
         prob_map = MP.create_cluster_arr(indices, subset_shape, probs[:, i])
         cbar = True if i == n_comp - 1 else False
-        annotated = True if i == 0 else False
+        #annotated = True if i == 0 else False
+        annotated = True
         MP.plot_patch(prob_map, latRng, lngRng, cmap, {}, ax[i], 0, 1, "", cm_num, fig, cbar, annotated, "probability")
         ax[i].set_title(f"Cluster {i + 1}")
     
