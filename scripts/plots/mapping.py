@@ -20,6 +20,7 @@ ROI_cmap = {
 }
 
 def label_features(axis, LonLims, LatLims, ROI, showbands, is_cluster = False):
+    secaxis  = axis.secondary_yaxis('right')
     ylim = axis.get_ylim()
     if ROI:
         for R in ROI:
@@ -51,8 +52,8 @@ def label_features(axis, LonLims, LatLims, ROI, showbands, is_cluster = False):
     ticks = [(bounds[i] + bounds[i + 1]) / 2 for i in range(len(bounds) - 1) ]
 
     lat_range_labels = ["SSTB", "STZ", "STB", "STrZ", "SEB", "EZ", "NEB", "NTrZ", "NTB",  "NTZ", "NNTB"]
-    axis.set_yticks(ticks)
-    axis.set_yticklabels(lat_range_labels)
+    secaxis.set_yticks(ticks)
+    secaxis.set_yticklabels(lat_range_labels)
   
     if showbands:
         for zb in belt:
@@ -65,7 +66,7 @@ def label_features(axis, LonLims, LatLims, ROI, showbands, is_cluster = False):
     #for zb in zone:
         #axs1[1].annotate(zb,xy=[np.mean(zone[zb]),51],ha="center")
     
-    axis.tick_params(axis='both', which='major', labelsize=9)
+    secaxis.tick_params(axis='both', which='major', labelsize=9)
     axis.set_ylim(ylim)
     if(is_cluster):
         ROI_lines = []
@@ -84,7 +85,10 @@ def create_axis(axs3, LatLims, LonLims, LonSys, annotated = True):
     axs3.xlim=[360-LonLims[0],360-LonLims[1]]
     #axs3.xlim=[LonLims[0],LonLims[1]]
     axs3.set_xticks(np.linspace(450,0,31), minor=False)
-    axs3.set_yticks(np.linspace(-45,45,7), minor=False)
+    yticks = np.linspace(LatLims[0], LatLims[1], 4)
+   
+    axs3.set_yticks(yticks, minor=False)
+    axs3.set_yticklabels(yticks.astype(int))
     
     if(annotated):
         axs3.set_ylabel("Latitude (deg)",fontsize=10)
@@ -96,7 +100,7 @@ def create_axis(axs3, LatLims, LonLims, LonSys, annotated = True):
     axs3.set_adjustable('box') 
     return axs3
 
-def plot_cluster_patch(patch, LatLims, LonLims, cmap, ROI, axis, v_min, v_max, title, cm_num, fig = None, cbarplot = True, cbar_title = "test", showbands = True):
+def plot_cluster_patch(patch, LatLims, LonLims, cmap, ROI, axis, v_min, v_max, title, cm_num, fig = None, cbarplot = True, cbar_title = "clusters", showbands = True):
     '''
     Purpose:
         to plot a patch of clusters with appropriate longitude/latitude scales
@@ -105,42 +109,42 @@ def plot_cluster_patch(patch, LatLims, LonLims, cmap, ROI, axis, v_min, v_max, t
 
     bounds = np.arange(v_min - 0.5, v_max + 0.5, 1)
     norm = colors.BoundaryNorm(bounds, cmap.N)
-    create_axis(axis, [LatLims[0] - 90, 90 - LatLims[1]], LonLims,  cm_num)
+   
     #np.nan_to_num(patch, copy=False, nan=-1.0, posinf=0.0, neginf=0.0)
     masked_patch = np.ma.masked_invalid(patch)
     cmap.set_bad("black")
     tx=np.linspace(v_max,v_min,n ,endpoint=True)
     
-
     show=axis.imshow(masked_patch,  origin='upper', interpolation = 'nearest', cmap = cmap, norm = norm,  
                extent=[360 - LonLims[0],360 - LonLims[1],90-LatLims[1],
                        90-LatLims[0]],
                        aspect="equal")
-   
+    print([90-LatLims[1],
+                       90-LatLims[0]])
+    create_axis(axis, [90 - LatLims[1], 90 - LatLims[0]], LonLims,  cm_num)
 
-
+    print(axis.get_ylim())
+    print(axis.get_yticks())
+    print([tick.get_text() for tick in axis.get_yticklabels()])
+    axis.tick_params(axis='y', labelleft=True)
     axis = label_features(axis, LonLims, LatLims,  ROI, showbands, True)
     
     #axis.set_title(title, pad = 15)
 
     im_ratio = patch.shape[0]/patch.shape[1]
-    
+
+ 
     if cbarplot:
-        cbar = fig.colorbar(show, ticks=tx, 
-                   orientation='vertical',
-                   ax=axis,fraction=0.046*im_ratio, pad=0.05)
-        cbar.ax.set_yticklabels(np.around(tx,3))
-
-
-        cbar.set_ticks(tx)
-        cbar.set_ticklabels(np.around(tx, 3))
-        cbar.ax.tick_params(labelsize=6,color="k")#if iSession >1:
-        cbar.ax.set_ylabel(cbar_title, size=6)#,labelpad=-20, y=0.5)
+        
+        cbar = fig.colorbar(show, ticks = np.arange(v_max),  orientation='vertical',
+                 ax=axis,fraction=0.046*im_ratio, pad=0.2)
+        cbar.set_ticklabels(np.arange(1, v_max + 1))
+        cbar.ax.set_ylabel(cbar_title, size=12)#,labelpad=-20, y=0.5)
 
 
         cbar.ax.yaxis.set_label_coords(-1.5, 0.5)
         cbar.ax.yaxis.set_label_coords(-2.1, 0.5)
-        #cbar.remove()
+      
 
 
 def plot_patch(patch, LatLims, LonLims, cmap, ROI, axis, v_min, v_max, title, cm_num, fig = None, cbarplot = True, annotated = True, cbar_title = "test", cbar_reverse = False, showbands = True):
@@ -151,7 +155,7 @@ def plot_patch(patch, LatLims, LonLims, cmap, ROI, axis, v_min, v_max, title, cm
     vn = v_min
     vx = v_max
     n = vx - vn
-    create_axis(axis, [LatLims[0] - 90, 90 - LatLims[1]], LonLims,  cm_num, annotated)
+   # create_axis(axis, [LatLims[0] - 90, 90 - LatLims[1]], LonLims,  cm_num, annotated)
     np.nan_to_num(patch, copy=False, nan=-1.0, posinf=0.0, neginf=0.0)
     tx=np.linspace(vn,vx,5 ,endpoint=True)
     
@@ -160,6 +164,8 @@ def plot_patch(patch, LatLims, LonLims, cmap, ROI, axis, v_min, v_max, title, cm
                extent=[360 - LonLims[0],360 - LonLims[1],90-LatLims[1],
                        90-LatLims[0]],
                        aspect="equal")
+    
+    create_axis(axis, [90 - LatLims[1], 90 - LatLims[0]], LonLims,  cm_num)
     #axis.set_title(title, pad = 15)
 
     im_ratio = patch.shape[0]/patch.shape[1]
@@ -173,18 +179,18 @@ def plot_patch(patch, LatLims, LonLims, cmap, ROI, axis, v_min, v_max, title, cm
         
         cbar = fig.colorbar(show, ticks=tx, 
                    orientation='vertical',
-                   ax=axis,fraction=0.046*im_ratio, pad=0.05)
+                   ax=axis,fraction=0.046*im_ratio, pad=0.1)
         cbar.ax.set_yticklabels(np.around(tx,3))
 
 
         cbar.set_ticks(tx)
         cbar.set_ticklabels(np.around(tx, 3))
         cbar.ax.tick_params(labelsize=6,color="k")#if iSession >1:
-        cbar.ax.set_ylabel(cbar_title, size=6)#,labelpad=-20, y=0.5)
+        cbar.ax.set_ylabel(cbar_title, size=9,labelpad=5, y=0.5)
 
 
-        cbar.ax.yaxis.set_label_coords(-1.5, 0.5)
-        cbar.ax.yaxis.set_label_coords(-2.1, 0.5)
+        # cbar.ax.yaxis.set_label_coords(-1.5, 0.5)
+        # cbar.ax.yaxis.set_label_coords(-2.1, 0.5)
         if cbar_reverse:
             cbar.ax.invert_yaxis()
 

@@ -15,6 +15,14 @@ from sklearn.preprocessing import StandardScaler
 
 
 def create_clusters(pix_arr, cov_type, n_components, is_soft_clustering, threshold):
+
+    """
+    Parameters
+    --------
+    pix_arr, 
+    numpy array with axis 0 as pixels within lon/lat range and axis 1 as parameter pixel radiances
+    
+    """
     if(is_soft_clustering):
         print("Clustering with probability threshold " + str(threshold))
     gmm_model = GMM(n_components=n_components, covariance_type=cov_type)
@@ -22,7 +30,8 @@ def create_clusters(pix_arr, cov_type, n_components, is_soft_clustering, thresho
   
   
     pipe.fit(pix_arr)
-    scaled = pipe.named_steps["scaler"].transform(pix_arr)
+    scaler = pipe.named_steps["scaler"]
+    scaled = scaler.transform(pix_arr)
     gm = pipe.named_steps["gmm"]
     #P = gm.eval(pix_arr)[0]
     #print(P)
@@ -42,9 +51,9 @@ def create_clusters(pix_arr, cov_type, n_components, is_soft_clustering, thresho
             predictions.append(index)
         
     
-
+    means = scaler.inverse_transform(gm.means_)
  
-    return [predictions, pixel_probs]
+    return [predictions, pixel_probs, means]
 
 
 

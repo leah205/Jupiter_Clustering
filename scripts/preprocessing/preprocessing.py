@@ -180,8 +180,7 @@ def subset_map(map, LatLims, LonLims,  CM):
     LonRng=LonRng*scale
     CM=CM*scale
     LonLims=np.array(LonLims)*scale
-    print("central meridian")
-    print(CM)
+  
     #print(lon_max,LatLims,LonRng,CM,LonLims)
     if(CM == 0):
         return np.copy(map[LatLims[0]:LatLims[1],LonLims[0]:LonLims[1]])
@@ -194,7 +193,7 @@ def subset_map(map, LatLims, LonLims,  CM):
         )
    
     elif CM<LonRng:
-        print("case 1")
+      
         #crosses longitude boundary to the left of CM
         #print("******************  CM2deg<LonRng")
         #slices of higher longitudes, lower longitudes concatenated
@@ -204,7 +203,7 @@ def subset_map(map, LatLims, LonLims,  CM):
         patch=np.concatenate((np.copy(map[LatLims[0]:LatLims[1],LonLims[0]:lon_max]),
                               np.copy(map[LatLims[0]:LatLims[1],0:LonLims[1]-lon_max])),axis=1)
     elif CM>lon_max-LonRng:
-        print("case 2")
+   
         #crossses longitude boundary to the right of CM
         #print("******************  CM2deg>LonRng")
         #slices of higher longitudes, lower longitudes concatenated
@@ -212,9 +211,7 @@ def subset_map(map, LatLims, LonLims,  CM):
                               np.copy(map[LatLims[0]:LatLims[1],0:LonLims[1]])),axis=1)
         #print("lon_max+LonLims[0]:lon_max,0:LonLims[1]=",lon_max+LonLims[0],lon_max,0,LonLims[1])
     #print("patch shape:" + str(patch.shape))
-    print("patch")
-    print(patch)
-    print(patch.shape)
+
     return patch    
 
 def get_date(keywords):
@@ -278,8 +275,7 @@ def get_input_array(keywords, param_ranges,
     pix_arr = np.column_stack(subpatches)
     pix_arr = get_mapped_pix_arr(pix_arr)
     pix_arr = get_filtered_pix_arr(param_ranges, pix_arr)
-    print("pix arr")
-    print(pix_arr.shape)
+  
   
     return [pix_arr, subset_shape]
     

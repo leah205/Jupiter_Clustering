@@ -36,8 +36,8 @@ def create_bic_plot(pix_arr, n_range = [2, 10], sample_size = 10000):
     plt.errorbar(n_cluster,bics, yerr=bic_errs, label='BIC')
     plt.title("BIC Scores", fontsize=20)
     plt.xticks(n_cluster)
-    plt.xlabel("Number of clusters")
-    plt.ylabel("Score")
+    plt.xlabel("Number of clusters", fontsize = 14)
+    plt.ylabel("Score", fontsize = 14)
     plt.legend()
     return fig
 

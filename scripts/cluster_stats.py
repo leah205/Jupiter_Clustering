@@ -1,7 +1,16 @@
 
 import numpy as np
 import scripts.preprocessing.preprocessing as pre
+import matplotlib.pyplot as plt
+import seaborn as sns
 
+
+keyword_dict = {
+    "NH3": "Ammonia Mole Fraction (ppm)",
+    "PCld": "Cloud Pressure (mb)",
+    "AOI": "Altitude Opacity Index",
+    "CI": "Color Index"
+}
 
 def get_stat(cluster_arr, dim_arr, indices, n_clusters, dim_name):
     '''
@@ -81,16 +90,14 @@ def reassign_clusters(pred, stats, param_ranges):
     
     cluster_means = quantify_clusters(stats, param_ranges)
     res = np.full(pred.shape, -1)
-    print("pred values")
+   
     unique, counts = np.unique(pred, return_counts = True)
-    print(unique)
-    print(counts)
+ 
     mask = ~(pred == -1)
     indices = np.argsort(cluster_means)
     res[mask] = indices[pred[mask]]
     unique, counts = np.unique(res, return_counts = True)
-    print(unique)
-    print(counts)
+   
     return res
 
 def quantify_clusters(stats, param_ranges):
@@ -108,7 +115,35 @@ def quantify_clusters(stats, param_ranges):
     return np.mean(normed_stats, axis = 1)
 
     
+def get_centroids_figure(keywords, cluster_centroids):
+    """
+    Purpose
+    --------------
+    Gets a table of the means of each cluster in each original dimension
 
+    Parameters
+    --------------
+    keywords
+        array of dimension names
+    cluster_centroid
+        2D np array with axis 0 as clusters, axis 1 as dimensions (same order as keywords)
+
+    Returns
+    --------------
+    Centroids table figure for each cluster and dimension
+
+    """
+    fig, ax = plt.subplots(1, 1)
+
+    #check if dimension is wavelength (valid number)
+    if(keywords[0].isdigit()):
+        ax.set_title("Mean Cluster Reflectance per Wavelength")
+    else:
+        ax.set_title("Mean Cluster Value per Parameter")
+    c_num = cluster_centroids.shape[0]
+    cluster_labels = np.linspace(1, c_num, c_num).astype(np.int64)
+    sns.heatmap(cluster_centroids, ax = ax, annot = True, cmap = "coolwarm", xticklabels = keywords, yticklabels = cluster_labels )
+    return fig
 
 
 

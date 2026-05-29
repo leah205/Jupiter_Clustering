@@ -53,8 +53,8 @@ def silhouette_graph(X, n_range, sample_size = 10000):
     plt.errorbar(n_clusters, sils, yerr=sils_err)
     plt.title("Silhouette Scores", fontsize=20)
     plt.xticks(n_clusters)
-    plt.xlabel("N. of clusters")
-    plt.ylabel("Score")
+    plt.xlabel("Number of clusters", fontsize = 14)
+    plt.ylabel("Score", fontsize = 14)
     return fig
     
 

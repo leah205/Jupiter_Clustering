@@ -62,10 +62,10 @@ def create_js_plot(X, n_range, sample_size = 10000):
 
     fig, ax = plt.subplots(1, 1)
     plt.errorbar(n_clusters, results, yerr = res_errs)
-    plt.title("Difference Between GMMS")
+    plt.title("Jensen-Shannon Distance between GMMs")
     plt.xticks(n_clusters)
-    plt.xlabel("Number of Clusters")
-    plt.ylabel("GMM JS Distance")
+    plt.xlabel("Number of Clusters", fontsize = 14)
+    plt.ylabel("Distance", fontsize = 14)
     return fig
 
 
@@ -91,4 +91,4 @@ cluster_rng = [2, 12]
 # run_js_dist("20251016UTc/lon_0-30", ["275", "395", "502", "619", "631", "645", "673", "727", "889"], 
 #                   [[0, 1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1]], lat_range, lon_range, cluster_rng, 1)
 
-run_js_dist("20251016UTc/lon_0-30", ["NH3", "PCld", "AOI", "CI"], [[0, 300], [1000,  3000], [0.1, 0.4], [0.3, 0.8]], lat_range, lon_range, cluster_rng, 1)
+#run_js_dist("20251016UTc/lon_0-30", ["NH3", "PCld", "AOI", "CI"], [[0, 300], [1000,  3000], [0.1, 0.4], [0.3, 0.8]], lat_range, lon_range, cluster_rng, 1)
