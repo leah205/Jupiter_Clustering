@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import scripts.preprocessing.preprocessing as pre
-from config.config import config
+from config.config import cf
 from sklearn.metrics import silhouette_score
 import scripts.clustering.clusters as CL
 import numpy as np
@@ -36,7 +36,7 @@ def create_cluster_plot(ax, keywords, index_x, index_y, input_arr, pred, n_comp,
     y = input_arr[:, index_y]
     pred = np.array(pred)
     for cl in range(-1, n_comp):
-        if(cl == -1 and config["soft_clustering"] == False):
+        if(cl == -1 and cf["soft_clustering"] == False):
             continue
         mask = pred == cl
         x_cl = x[mask]

@@ -5,7 +5,6 @@ import scripts.preprocessing.preprocessing as pre
 import scripts.plots.plots as plots
 import scripts.clustering.clusters as CL 
 from sklearn.metrics import silhouette_score
-from config.config import config
 from matplotlib import colors
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.patches as patches

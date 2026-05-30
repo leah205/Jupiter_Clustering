@@ -1,10 +1,11 @@
-from config.config import config
+
 from os import listdir
 from astropy.io import fits
 #from reproject import reproject_interp
 import numpy as np
 from astropy.wcs import WCS
 import time
+from config.config import cf
 
 def get_radiance_arr(file):
     hdul = fits.open(file)
@@ -87,7 +88,7 @@ def get_parameter_2d_array(keyword_arr):
     ------------
     '''
 
-    dir_path = config["input"]
+    dir_path = cf["input"]
     file_name_arr = []
     for keyword in keyword_arr:
         file = get_file_path(keyword, dir_path)
@@ -108,7 +109,7 @@ def get_parameter_2d_array(keyword_arr):
     return radiances
 
 def get_map_shape(keyword, latLims, longLims):
-      dir_path = config["input"]
+      dir_path = cf["input"]
       file = get_file_path(keyword, dir_path)
       radiance_arr = get_radiance_arr(file)
       return subset_map(radiance_arr, latLims, longLims).shape
@@ -117,7 +118,7 @@ def get_map_shape(keyword, latLims, longLims):
 def get_patch(keyword, latLims, lngLims, cm_num):
     
 
-    file = get_file_path(keyword, config["input"])
+    file = get_file_path(keyword, cf["input"])
     CM = 0 if cm_num == 0 else get_cm(file, cm_num)
     radiance_arr = get_radiance_arr(file)
     return subset_map(radiance_arr, latLims, lngLims, CM)
@@ -216,7 +217,7 @@ def subset_map(map, LatLims, LonLims,  CM):
 
 def get_date(keywords):
     seconds_past = 0
-    first_file = file = get_file_path(keywords[0], config["input"])
+    first_file = file = get_file_path(keywords[0], cf["input"])
     hdr = fits.open(file)[0].header
     first_date_str = hdr["DATE-OBS"][11:19]
     return hdr["DATE-OBS"][0:19]
@@ -260,7 +261,7 @@ def get_input_array(keywords, param_ranges,
     radiances_arr = get_parameter_2d_array(keywords)
 
     subpatches = []
-    first_file = get_file_path(keywords[0], config["input"])
+    first_file = get_file_path(keywords[0], cf["input"])
 
     CM = 0 if cm_num == 0 else get_cm(first_file, cm_num)
     subset_shape = (0,0)

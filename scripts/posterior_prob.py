@@ -1,16 +1,12 @@
-from astropy.io import fits
+
 import numpy as np
 import scripts.preprocessing.preprocessing as pre
 import scripts.plots.plots as PL
 import scripts.clustering.clusters as CL 
 from sklearn.metrics import silhouette_score
-from config.config import config
 import scripts.plots.mapping as MP
-import matplotlib
 from matplotlib.colors import ListedColormap, LinearSegmentedColormap
-from matplotlib import colormaps
 import math
-import scripts.cluster_stats as STAT
 import pylab as pl
 import scripts.plotting_processes as PLP
 # red, green, blue, yellow, orange, pink, purple, gray
@@ -18,7 +14,7 @@ colors =[(1, 0.639, 0.639), (0.647, 1, 0.639), (0.639, 0.894, 1), (1, 0.996, 0.6
 
 # uncertainty maps
 
-def create_uncertainty_fig(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold, description = ""):
+def create_uncertainty_fig(config, probs, indices, subset_shape):
      """
      Purpose
      --------------
@@ -29,27 +25,27 @@ def create_uncertainty_fig(keywords, probs, indices, subset_shape, latRng, lngRn
      
      """
      ncols = 3
-     nrows = math.ceil(n_comp / ncols)
+     nrows = math.ceil(config.n_comp / ncols)
      fig, ax = pl.subplots(nrows, ncols, constrained_layout = True)
      ax = np.atleast_1d(ax).flatten()
     
-     for i in range(0, n_comp):
+     for i in range(0, config.n_comp):
         # cmap = LinearSegmentedColormap.from_list("cluster_color", [(1, 1, 1, 0), colors[i]], N = 256)
         cmap = LinearSegmentedColormap.from_list("cluster_color", ["white", "yellow", "orange", "red"], N = 256)
 
         prob_map = MP.create_cluster_arr(indices, subset_shape, probs[:, i])
-        cbar = True if i == n_comp - 1 else False
+        cbar = True if i == config.n_comp - 1 else False
         #annotated = True if i == 0 else False
         annotated = True
-        MP.plot_patch(prob_map, latRng, lngRng, cmap, {}, ax[i], 0, 1, "", cm_num, fig, cbar, annotated, "probability")
+        MP.plot_patch(prob_map, config.latRng, config.lngRng, cmap, {}, ax[i], 0, 1, "", config.cm_num, fig, cbar, annotated, "probability")
         ax[i].set_title(f"Cluster {i + 1}")
     
-     for a in ax[n_comp:]: 
+     for a in ax[config.n_comp:]: 
          fig.delaxes(a)
-     fig.suptitle(PLP.create_plot_title(keywords, latRng, lngRng, n_comp, threshold, description), fontsize = 10)
+     fig.suptitle(PLP.create_plot_title(config.keywords, config.latRng, config.lngRng, config.n_comp, config.threshold, "posterior probability of clusters"), fontsize = 10)
      return fig
 
-def create_max_prob_map(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold, ROI, description = ""):
+def create_max_prob_map(config, probs, indices, subset_shape):
     """
      Purpose
      --------------
@@ -61,8 +57,8 @@ def create_max_prob_map(keywords, probs, indices, subset_shape, latRng, lngRng, 
     mean = round(np.mean(max_probs), 3)
     cmap = LinearSegmentedColormap.from_list("cluster_color", ["white", "yellow", "orange", "red"], N = 256)
     max_prob_map = MP.create_cluster_arr(indices, subset_shape, max_probs)
-    MP.plot_patch(max_prob_map, latRng, lngRng, cmap, ROI, ax, 0, 1, "", cm_num, fig, True, True, "probability")
-    fig.suptitle(PLP.create_plot_title(keywords, latRng, lngRng, n_comp, threshold, f"maximum probability map {description}"), fontsize = 10)
+    MP.plot_patch(max_prob_map, config.latRng, config.lngRng, cmap, config.ROI, ax, 0, 1, "", config.cm_num, fig, True, True, "probability")
+    fig.suptitle(PLP.create_plot_title(config.keywords, config.latRng, config.lngRng, config.n_comp, config.threshold, f"maximum probability map"), fontsize = 10)
     ax.set_title(f"Mean Probability: {mean}")
     return fig
 
