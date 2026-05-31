@@ -32,7 +32,7 @@ def create_uncertainty_fig(config, probs, indices, subset_shape):
      for i in range(0, config.n_comp):
         # cmap = LinearSegmentedColormap.from_list("cluster_color", [(1, 1, 1, 0), colors[i]], N = 256)
         cmap = LinearSegmentedColormap.from_list("cluster_color", ["white", "yellow", "orange", "red"], N = 256)
-
+        cmap.set_under("black")
         prob_map = MP.create_cluster_arr(indices, subset_shape, probs[:, i])
         cbar = True if i == config.n_comp - 1 else False
         #annotated = True if i == 0 else False
@@ -54,8 +54,11 @@ def create_max_prob_map(config, probs, indices, subset_shape):
      """
     fig, ax = pl.subplots(1, 1)
     max_probs = np.max(probs, axis = 1)
+    
     mean = round(np.mean(max_probs), 3)
     cmap = LinearSegmentedColormap.from_list("cluster_color", ["white", "yellow", "orange", "red"], N = 256)
+    cmap.set_under("black")
+
     max_prob_map = MP.create_cluster_arr(indices, subset_shape, max_probs)
     MP.plot_patch(max_prob_map, config.latRng, config.lngRng, cmap, config.ROI, ax, 0, 1, "", config.cm_num, fig, True, True, "probability")
     fig.suptitle(PLP.create_plot_title(config.keywords, config.latRng, config.lngRng, config.n_comp, config.threshold, f"maximum probability map"), fontsize = 10)
