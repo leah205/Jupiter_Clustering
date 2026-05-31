@@ -137,9 +137,9 @@ exp3Config = pipelineConfig(
     n_comp = 5,
     ROI = ROI,
     isPca = True,
-    threshold = 0.98)
+    threshold = 0.9)
 
 
-run_full_pipeline(exp3Config)
+run_full_pipeline(exp2Config)
 
 

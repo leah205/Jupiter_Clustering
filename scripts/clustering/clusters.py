@@ -45,14 +45,19 @@ def create_clusters(pix_arr, cov_type, n_components, is_soft_clustering, thresho
    
     
     predictions = pipe.predict(pix_arr)
+    if(not is_soft_clustering):
+        means = gm.means_
+     
     if(is_soft_clustering):
-       
-      
         threshold_mask = np.all(pixel_probs < threshold, axis = 1)
         predictions = np.where(threshold_mask, -1, predictions)
-        
-        
-    
+        cl_means = []
+        for cl in range(0, n_components):
+            mask = ~threshold_mask & predictions == cl
+            cl_mean = np.mean(pix_arr[mask], axis = 0)
+            cl_means.append(cl_mean)
+        means = np.array(cl_means)
+      
     means = scaler.inverse_transform(gm.means_)
  
     return [predictions, pixel_probs, means]
