@@ -12,6 +12,8 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 import scripts.cluster_stats as STAT
 import numpy as np
+from scipy.stats import chi2
+from scipy.spatial.distance import mahalanobis
 
 import scripts.pca as PCA
 
@@ -45,11 +47,14 @@ def create_clusters(pix_arr, cov_type, n_components, is_soft_clustering, thresho
    
     
     predictions = pipe.predict(pix_arr)
-    if(not is_soft_clustering):
-        means = gm.means_
+    
+    means = gm.means_
+    cov = gm.covariances_
      
     if(is_soft_clustering):
-        threshold_mask = np.all(pixel_probs < threshold, axis = 1)
+        #threshold_mask = np.all(pixel_probs < threshold, axis = 1)
+        threshold_mask = get_mahalanobis_outliers(predictions, scaled, means, cov, 0.95)
+        print(threshold_mask)
         predictions = np.where(threshold_mask, -1, predictions)
         cl_means = []
         for cl in range(0, n_components):
@@ -61,6 +66,42 @@ def create_clusters(pix_arr, cov_type, n_components, is_soft_clustering, thresho
     means = scaler.inverse_transform(gm.means_)
  
     return [predictions, pixel_probs, means]
+
+def get_mahalanobis_outliers(predictions, pix_arr, means, covariances, prob):
+    threshold_mask = np.zeros(predictions.shape[0])
+    inv_cov = np.linalg.inv(covariances)
+     # number of variables is degrees of freedom
+    d_freedom = means.shape[1]
+    cutoff = chi2.ppf(prob, d_freedom)
+
+    for cl in range(0, means.shape[0]):
+        mask = predictions == cl
+       
+        cl_indices = np.where(mask)[0]
+        cl_mean = means[cl, :]
+        # adjust if not only full
+        cl_invcov = inv_cov[cl, :, :]
+        
+        cl_points = pix_arr[cl_indices, :]
+        
+       
+        # probably not vectorized
+        def mahalanobis(d):
+            return (d-cl_mean).T.dot(cl_invcov).dot(d-cl_mean)
+       
+        
+        m_dists = np.apply_along_axis(mahalanobis, 1, cl_points)
+
+        m_mask = m_dists > cutoff
+        cl_indices = cl_indices[m_mask]
+       
+        threshold_mask[cl_indices] = 1
+   
+    return threshold_mask.astype(bool)
+
+
+
+
 
 
 def run_raw_pipeline(data, cov_type, n_comp, threshold):
