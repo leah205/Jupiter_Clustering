@@ -140,6 +140,6 @@ exp3Config = pipelineConfig(
     threshold = 0.9)
 
 
-run_full_pipeline(exp2Config)
+run_full_pipeline(exp1Config)
 
 

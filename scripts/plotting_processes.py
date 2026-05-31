@@ -62,7 +62,7 @@ def create_map_comp_figure(config, pred, arr, subset_shape, param_ranges, descri
     map1 = pre.get_patch(dim1, config.latRng, config.lngRng, config.cm_num)
     map2 = pre.get_patch(dim2, config.latRng, config.lngRng, config.cm_num)
 
-    MP.create_cluster_map(axis2[0], config.n_comp, pred, arr, subset_shape, config.latRng, config.lngRng, cmap, config.ROI, config.cm_num)
+    MP.create_cluster_map(axis2[0], config.n_comp, pred, arr, subset_shape, config.latRng, config.lngRng, cmap, config.ROI, config.cm_num, fig2)
     MP.plot_patch(map1, config.latRng, config.lngRng, color_dict[dim1], config.ROI, axis2[1], param_ranges[0][0],  param_ranges[0][1],  keyword_dict[dim1], config.cm_num, fig2, True)
     MP.plot_patch(map2, config.latRng, config.lngRng, color_dict[dim2], config.ROI, axis2[2], param_ranges[1][0],  param_ranges[1][1], keyword_dict[dim2], config.cm_num, fig2, True)
     fig2.suptitle(create_plot_title(config.keywords, config.latRng, config.lngRng, config.n_comp, config.threshold, description), fontsize = 10)
@@ -80,7 +80,7 @@ def create_plot_figure(config, pred, arr, subset_shape, description = ""):
         right = 0.9,
         bottom = 0.1
     )
-    MP.create_cluster_map(axis1[0], config.n_comp, pred, arr, subset_shape, config.latRng, config.lngRng, cmap, config.ROI, config.cm_num, fig1, True)
+    MP.create_cluster_map(axis1[0], config.n_comp, pred, arr, subset_shape, config.latRng, config.lngRng, cmap, config.ROI, config.cm_num, fig1)
     PL.create_cluster_plot(axis1[1],  config.keywords, 0, 1, arr, pred,  config.n_comp, config.cov_type, config.latRng, config.lngRng, cmap, config.cm_num)
     fig1.suptitle(create_plot_title(config.keywords, config.latRng, config.lngRng, config.n_comp, config.threshold, description), fontsize = 10)
     #STAT.get_all_stats(pred, keywords, input_arr[:, input_arr.shape[1] - 1], n_comp, latRng, lngRng, cm_num)
@@ -91,7 +91,7 @@ def create_plots_figure(config, pred, input_arr, subset_shape, description = "")
     # creates and saves cluster map and cluster scatter plot
     cmap = ListedColormap(colors[:config.n_comp])
     fig, axis = pl.subplots(3, 1)
-    MP.create_cluster_map(axis[0], config.n_comp, pred, input_arr, subset_shape, config.latRng, config.lngRng, cmap, config.ROI, config.cm_num, fig, True)
+    MP.create_cluster_map(axis[0], config.n_comp, pred, input_arr, subset_shape, config.latRng, config.lngRng, cmap, config.ROI, config.cm_num, fig)
     PL.create_cluster_plot(axis[1],  config.keywords, 0, 1, input_arr, pred,  config.n_comp, config.cov_type, config.latRng, config.lngRng, cmap, config.cm_num)
     PL.create_cluster_plot(axis[2],  config.keywords, 2, 3, input_arr, pred,  config.n_comp, config.cov_type, config.latRng, config.lngRng, cmap, config.cm_num)
 
@@ -101,7 +101,7 @@ def create_plots_figure(config, pred, input_arr, subset_shape, description = "")
 def create_cluster_map(config, pred, input_arr, subset_shape, description = ""):
     cmap = ListedColormap(colors[:config.n_comp])
     fig, axis = pl.subplots(1, 1)
-    MP.create_cluster_map(axis, config.n_comp, pred, input_arr, subset_shape, config.latRng, config.lngRng, cmap, config.ROI, config.cm_num, fig, True)
+    MP.create_cluster_map(axis, config.n_comp, pred, input_arr, subset_shape, config.latRng, config.lngRng, cmap, config.ROI, config.cm_num, fig)
     fig.suptitle(create_plot_title(config.keywords, config.latRng, config.lngRng, config.n_comp, config.threshold, description), fontsize = 10) 
     return fig
 

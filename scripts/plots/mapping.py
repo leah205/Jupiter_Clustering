@@ -132,13 +132,13 @@ def plot_cluster_patch(patch, LatLims, LonLims, cmap, ROI, axis, v_min, v_max, t
     if cbarplot:
         
         cbar = fig.colorbar(show, ticks = np.arange(v_max),  orientation='vertical',
-                 ax=axis,fraction=0.046*im_ratio, pad=0.2)
+                 ax=axis,fraction=0.046*im_ratio, pad=0.1)
         cbar.set_ticklabels(np.arange(1, v_max + 1))
-        cbar.ax.set_ylabel(cbar_title, size=12)#,labelpad=-20, y=0.5)
+        cbar.ax.set_ylabel(cbar_title, size=9, labelpad= 5, y = 0.5)#,labelpad=-20, y=0.5)
 
 
-        cbar.ax.yaxis.set_label_coords(-1.5, 0.5)
-        cbar.ax.yaxis.set_label_coords(-2.1, 0.5)
+        # cbar.ax.yaxis.set_label_coords(-1.5, 0.5)
+        # cbar.ax.yaxis.set_label_coords(-2.1, 0.5)
       
 
 
@@ -185,14 +185,14 @@ def plot_patch(patch, LatLims, LonLims, cmap, ROI, axis, v_min, v_max, title, cm
         cbar.ax.set_ylabel(cbar_title, size=9,labelpad=5, y=0.5)
 
 
-        # cbar.ax.yaxis.set_label_coords(-1.5, 0.5)
-        # cbar.ax.yaxis.set_label_coords(-2.1, 0.5)
+        #cbar.ax.yaxis.set_label_coords(-1.5, 0.5)
+        #cbar.ax.yaxis.set_label_coords(-2.1, 0.5)
         if cbar_reverse:
             cbar.ax.invert_yaxis()
    
 
 def create_cluster_map(axis,  n_comp, pred, input_arr, subset_shape, 
-                           latRng, lngRng, cmap, ROI = {}, cm_num = 3, fig = None, cbar = False):
+                           latRng, lngRng, cmap, ROI = {}, cm_num = 3, fig = None, cbar = True):
     indices = input_arr[:, input_arr.shape[1] - 1]
     cluster_map = create_cluster_arr(indices, subset_shape, pred)
     
