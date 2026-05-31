@@ -136,8 +136,8 @@ exp3Config = pipelineConfig(
     keywords = ["275", "395", "502", "619", "631", "645", "673", "727", "889"],
     n_comp = 5,
     ROI = ROI,
-    isPca = True
-)
+    isPca = True,
+    threshold = 0.98)
 
 
 run_full_pipeline(exp3Config)

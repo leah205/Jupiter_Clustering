@@ -11,6 +11,7 @@ from config.config import cf
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 import scripts.cluster_stats as STAT
+import numpy as np
 
 import scripts.pca as PCA
 
@@ -39,17 +40,17 @@ def create_clusters(pix_arr, cov_type, n_components, is_soft_clustering, thresho
     #p = posterior(gm, pix_ar)
     #bic = pipe.named_steps["gmm"].bic(scaled)
     
-    pixel_probs = pipe.predict_proba(pix_arr)
+    pixel_probs = np.array(pipe.predict_proba(pix_arr))
 
-    predictions = []
-    if(not is_soft_clustering):
-        predictions = pipe.predict(pix_arr)
+   
+    
+    predictions = pipe.predict(pix_arr)
     if(is_soft_clustering):
+       
+      
+        threshold_mask = np.all(pixel_probs < threshold, axis = 1)
+        predictions = np.where(threshold_mask, -1, predictions)
         
-        print("soft clustering.....")
-        for pixel in pixel_probs:
-            index = next((i for i, x in enumerate(pixel) if x > threshold), - 1)
-            predictions.append(index)
         
     
     means = scaler.inverse_transform(gm.means_)
