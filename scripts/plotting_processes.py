@@ -110,8 +110,9 @@ def create_file_prefix(keywords, latRng, lngRng, n_comp, cm_num, threshold, isPc
     lat_lon_str = f'{90 - latRng[1]}-{90 - latRng[0]}_{360 - lngRng[1]}-{ 360 - lngRng[0]}'
     keyword_str = '_'.join(keywords)
     prob_str = ("_p" + str(threshold)) if cf["soft_clustering"] else ""
-    pca_str = ("PCA/") if isPca else ""
-    save_path = Path(f'{cf["output"]}/{keyword_str}/{pca_str}{n_comp}_cl/{date}_{keyword_str}_{lat_lon_str}_{n_comp}_sys_{cm_num}{prob_str}_')
+    pca_dir = ("PCA/") if isPca else ""
+    thresh_dir = (f"{threshold}/") if cf["soft_clustering"] else ""
+    save_path = Path(f'{cf["output"]}/{keyword_str}/{pca_dir}{n_comp}_cl/{thresh_dir}{date}_{keyword_str}_{lat_lon_str}_{n_comp}_sys_{cm_num}{prob_str}_')
     save_path.parent.mkdir(parents = True, exist_ok = True)
     return save_path
 
