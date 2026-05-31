@@ -43,7 +43,7 @@ def run_full_pipeline(config):
         map_comp_fig = PLP.create_map_comp_figure(config, pred, arr, subset_shape, param_ranges)
         map_comp_fig.savefig(f"{prefix}map_comp.png")
     if(len(config.keywords) == 4):
-        plot_fig = PLP.create_plot_figure(config, pred, arr, subset_shape)
+        plot_fig = PLP.create_plots_figure(config, pred, arr, subset_shape)
         plot_fig.savefig(f"{prefix}plots.png")
     centroids_fig = STAT.get_centroids_figure(config.keywords, means)
     centroids_fig.savefig(f"{prefix}centroids.png")
