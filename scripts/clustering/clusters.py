@@ -18,7 +18,7 @@ from scipy.spatial.distance import mahalanobis
 import scripts.pca as PCA
 
 
-def create_clusters(pix_arr, cov_type, n_components, is_soft_clustering, threshold):
+def create_clusters(pix_arr, cov_type, n_components, is_soft_clustering, threshold, threshold_type):
 
     """
     Parameters
@@ -37,23 +37,21 @@ def create_clusters(pix_arr, cov_type, n_components, is_soft_clustering, thresho
     scaler = pipe.named_steps["scaler"]
     scaled = scaler.transform(pix_arr)
     gm = pipe.named_steps["gmm"]
-    #P = gm.eval(pix_arr)[0]
-    #print(P)
-    #p = posterior(gm, pix_ar)
-    #bic = pipe.named_steps["gmm"].bic(scaled)
+  
     
     pixel_probs = np.array(pipe.predict_proba(pix_arr))
 
-   
-    
     predictions = pipe.predict(pix_arr)
     
     means = gm.means_
     cov = gm.covariances_
      
     if(is_soft_clustering):
-        #threshold_mask = np.all(pixel_probs < threshold, axis = 1)
-        threshold_mask = get_mahalanobis_outliers(predictions, scaled, means, cov, 0.95)
+        if(threshold_type == "posterior"):
+            threshold_mask = get_posterior_threshold(pixel_probs, threshold)
+        else:
+            threshold_mask = get_mahalanobis_threshold(predictions, scaled, means, cov, threshold)
+     
         print(threshold_mask)
         predictions = np.where(threshold_mask, -1, predictions)
         cl_means = []
@@ -67,7 +65,10 @@ def create_clusters(pix_arr, cov_type, n_components, is_soft_clustering, thresho
  
     return [predictions, pixel_probs, means]
 
-def get_mahalanobis_outliers(predictions, pix_arr, means, covariances, prob):
+def get_posterior_threshold(probs, threshold):
+    return np.all(probs < threshold, axis = 1)
+
+def get_mahalanobis_threshold(predictions, pix_arr, means, covariances, prob):
     threshold_mask = np.zeros(predictions.shape[0])
     inv_cov = np.linalg.inv(covariances)
      # number of variables is degrees of freedom
@@ -84,8 +85,6 @@ def get_mahalanobis_outliers(predictions, pix_arr, means, covariances, prob):
         
         cl_points = pix_arr[cl_indices, :]
         
-       
-        # probably not vectorized
         def mahalanobis(d):
             return (d-cl_mean).T.dot(cl_invcov).dot(d-cl_mean)
        
@@ -104,8 +103,8 @@ def get_mahalanobis_outliers(predictions, pix_arr, means, covariances, prob):
 
 
 
-def run_raw_pipeline(data, cov_type, n_comp, threshold):
-    pred,probs, means = create_clusters(data, cov_type, n_comp, cf["soft_clustering"], threshold)
+def run_raw_pipeline(data, cov_type, n_comp, threshold, threshold_type):
+    pred,probs, means = create_clusters(data, cov_type, n_comp, cf["soft_clustering"], threshold, threshold_type)
     #stats = STAT.get_all_stats(pred, keywords, input_arr[:, len(keywords)], n_comp, latRng, lngRng, cm_num)
     #pred = STAT.reassign_clusters(np.array(pred), np.swapaxes(stats[:, :, 0], 0, 1), np.array(param_ranges))
 
@@ -118,9 +117,9 @@ def run_raw_pipeline(data, cov_type, n_comp, threshold):
     }
     
 
-def run_pca_pipeline(data, cov_type, n_comp, threshold):
+def run_pca_pipeline(data, cov_type, n_comp, threshold, threshold_type):
     [pca_reduced, pca_obj, scaler] = PCA.get_pca_comp(data)
-    pred, probs, means = create_clusters(pca_reduced, cov_type, n_comp, cf["soft_clustering"], threshold)
+    pred, probs, means = create_clusters(pca_reduced, cov_type, n_comp, cf["soft_clustering"], threshold, threshold_type)
     means = pca_obj.inverse_transform(means)
     means = scaler.inverse_transform(means)
     return {

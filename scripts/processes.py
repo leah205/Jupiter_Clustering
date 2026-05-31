@@ -8,6 +8,7 @@ import scripts.cluster_stats as STAT
 import scripts.pca as PCA
 from dataclasses import dataclass, field
 import config.config as cf
+from typing import Literal
 
 
 
@@ -32,10 +33,10 @@ def run_full_pipeline(config):
 
     indices = arr[:, arr.shape[1] - 1]
     data = arr[:, 0:len(config.keywords)]
-    cluster_obj = transform(data, config.cov_type, config.n_comp, config.threshold)
+    cluster_obj = transform(data, config.cov_type, config.n_comp, config.threshold, config.threshold_type)
     pred, probs, means = cluster_obj["pred"], cluster_obj["probs"], cluster_obj["means"]
 
-    prefix = PLP.create_file_prefix(config.keywords, config.latRng, config.lngRng, config.n_comp, config.cm_num, config.threshold, config.isPca)
+    prefix = PLP.create_file_prefix(config)
     
     if(len(config.keywords) == 2):
         plot_fig = PLP.create_plot_figure(config, pred, arr, subset_shape)
@@ -101,6 +102,9 @@ lat_range = [90 - lat_range[1], 90 - lat_range[0]]
         threshold, OPTIONAL, default = 0.75
             - if soft clustering is enabled, specifies probability threshold for clustering
 """
+
+ThresholdType = Literal["mahalanobis", "posterior"]
+
 @dataclass
 class pipelineConfig:
     keywords: list[str]
@@ -110,7 +114,8 @@ class pipelineConfig:
     ROI: dict = field(default_factory=dict)
     cov_type: str = "full"
     cm_num: int = 1
-    threshold: float = 0.75
+    threshold: float = 0.95
+    threshold_type: str = "mahalanobis"
     isPca: bool = False
 
 
@@ -118,7 +123,9 @@ exp1Config = pipelineConfig(
     latRng = lat_range,
     lngRng = lon_range, 
     keywords = ["NH3", "PCld"],
-    n_comp = 6
+    n_comp = 6,
+    threshold = 0.75,
+    threshold_type = "posterior"
 )
 
 exp2Config = pipelineConfig(
@@ -127,6 +134,7 @@ exp2Config = pipelineConfig(
     keywords = ["NH3", "PCld", "AOI", "CI"],
     n_comp = 6,
     ROI = ROI,
+    threshold_type = "posterior",
     threshold = 0.75
 )
 
@@ -136,8 +144,7 @@ exp3Config = pipelineConfig(
     keywords = ["275", "395", "502", "619", "631", "645", "673", "727", "889"],
     n_comp = 5,
     ROI = ROI,
-    isPca = True,
-    threshold = 0.9)
+    isPca = True)
 
 
 run_full_pipeline(exp1Config)

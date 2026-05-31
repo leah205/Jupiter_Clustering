@@ -105,14 +105,14 @@ def create_cluster_map(config, pred, input_arr, subset_shape, description = ""):
     fig.suptitle(create_plot_title(config.keywords, config.latRng, config.lngRng, config.n_comp, config.threshold, description), fontsize = 10) 
     return fig
 
-def create_file_prefix(keywords, latRng, lngRng, n_comp, cm_num, threshold, isPca = False):
-    date = pre.get_date(keywords)
-    lat_lon_str = f'{90 - latRng[1]}-{90 - latRng[0]}_{360 - lngRng[1]}-{ 360 - lngRng[0]}'
-    keyword_str = '_'.join(keywords)
-    prob_str = ("_p" + str(threshold)) if cf["soft_clustering"] else ""
-    pca_dir = ("PCA/") if isPca else ""
-    thresh_dir = (f"{threshold}/") if cf["soft_clustering"] else ""
-    save_path = Path(f'{cf["output"]}/{keyword_str}/{pca_dir}{n_comp}_cl/{thresh_dir}{date}_{keyword_str}_{lat_lon_str}_{n_comp}_sys_{cm_num}{prob_str}_')
+def create_file_prefix(config):
+    date = pre.get_date(config.keywords)
+    lat_lon_str = f'{90 - config.latRng[1]}-{90 - config.latRng[0]}_{360 - config.lngRng[1]}-{ 360 - config.lngRng[0]}'
+    keyword_str = '_'.join(config.keywords)
+    #prob_str = ("_p" + str(config.threshold)) if cf["soft_clustering"] else ""
+    pca_dir = ("PCA/") if config.isPca else ""
+    thresh_dir = (f"{config.threshold_type}_{config.threshold}/") if cf["soft_clustering"] else ""
+    save_path = Path(f'{cf["output"]}/{keyword_str}/{pca_dir}{config.n_comp}_cl/{thresh_dir}{date}_{keyword_str}_{lat_lon_str}_{config.n_comp}_sys_{config.cm_num}_')
     save_path.parent.mkdir(parents = True, exist_ok = True)
     return save_path
 
