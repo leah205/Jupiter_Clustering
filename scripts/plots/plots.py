@@ -6,6 +6,9 @@ import scripts.clustering.clusters as CL
 import numpy as np
 from scipy.stats import gaussian_kde
 import scripts.dicts as D
+from scipy import linalg
+import matplotlib as mpl
+from scipy.stats import chi2
 
 
 def create_cluster_plot(ax, keywords, index_x, index_y, input_arr, pred, n_comp,
@@ -36,11 +39,9 @@ def create_cluster_plot(ax, keywords, index_x, index_y, input_arr, pred, n_comp,
         x_cl = x[mask]
         y_cl = y[mask]
       
-        
         cluster_label = f"{cl + 1}" if cl >= 0 else "NA"
         ax.scatter(x[mask], y[mask], s = 1, alpha = 0.02, color = cmap(cl), label = cluster_label)
       
-        
         #ax.text(x_mean, y_mean, str(cl), fontsize = 10, zorder = 10)
         ax.set_xlabel(D.keyword_dict[keywords[index_x]])
         ax.set_ylabel(D.keyword_dict[keywords[index_y]])
@@ -63,16 +64,31 @@ def create_cluster_plot(ax, keywords, index_x, index_y, input_arr, pred, n_comp,
                 )
             print(f"{cluster_label}: mean=({x_mean:.2f}, {y_mean:.2f}), std=({x_std:.2f}, {y_std:.2f})")
  
-        
-
     if(index_x == 0):
         l = ax.legend(markerscale = 10, loc = "upper left", bbox_to_anchor=(0.88, 1))
         for h in l.legendHandles:
             h.set_alpha(1)
             h.set_sizes([50])
 
-
-    
-    
     return 0
+
+def plot_gmm_ellipsoids(ax, cluster_obj, cmap):
+    n_comp = cluster_obj["means"].shape[0]
+  
+    darker_colors = list(map(lambda c: (c[0] - 0.2, c[1] - 0.2, c[2] - 0.2), cmap.colors))
+  
+    for i, (mean, covar, color) in enumerate(zip(cluster_obj["means"], cluster_obj["covariances"], darker_colors[:n_comp])):
+        v, w = linalg.eigh(covar)
+        #captures 95% total probability
+        k = np.sqrt(chi2.ppf(0.95, df=2))
+        v = k * np.sqrt(v)
+        u = w[0] / linalg.norm(w[0])
+       
+
+        angle = np.arctan(u[1] / u[0])
+        angle = 180.0 * angle / np.pi  
+        ell = mpl.patches.Ellipse(mean, v[0], v[1], angle=180.0 + angle, edgecolor=color, facecolor = "none", linewidth = 2)
+        ell.set_clip_box(ax.bbox)
+        ell.set_alpha(1)
+        ax.add_patch(ell)
 

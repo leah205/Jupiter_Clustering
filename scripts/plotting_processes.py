@@ -58,7 +58,7 @@ def create_map_comp_figure(config: T.mappingConfig, reshaped_pred, title):
     return fig2
 
 
-def create_plot_figure(config: T.mappingConfig, pred, arr, reshaped_pred, title):
+def create_plot_figure(config: T.mappingConfig, pred, arr, reshaped_pred, title, cluster_obj):
     # creates and saves cluster map and cluster scatter plot
     n_comp = np.unique(pred).shape[0] - 1
     cmap = ListedColormap(colors[:n_comp])
@@ -72,6 +72,7 @@ def create_plot_figure(config: T.mappingConfig, pred, arr, reshaped_pred, title)
     )
     MP.plot_cluster_patch(config, reshaped_pred,  cmap, axis1[0],  n_comp, fig1)
     PL.create_cluster_plot(axis1[1],  config.keywords, 0, 1, arr, pred, n_comp, cmap)
+    PL.plot_gmm_ellipsoids(axis1[1], cluster_obj, cmap)
     fig1.suptitle(f"{title}", fontsize = 10) 
     #STAT.get_all_stats(pred, keywords, input_arr[:, input_arr.shape[1] - 1], n_comp, latRng, lngRng, cm_num)
     return fig1
