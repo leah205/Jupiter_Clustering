@@ -9,12 +9,13 @@ from matplotlib.colors import ListedColormap, LinearSegmentedColormap
 import math
 import pylab as pl
 import scripts.plotting_processes as PLP
+import scripts.types as T
 # red, green, blue, yellow, orange, pink, purple, gray
 colors =[(1, 0.639, 0.639), (0.647, 1, 0.639), (0.639, 0.894, 1), (1, 0.996, 0.639), (1, 0.82, 0.639), (1, 0.639, 0.839), (0.937, 0.639, 1), (0.678, 0.678, 0.678)]
 
 # uncertainty maps
 
-def create_uncertainty_fig(config, probs, indices, subset_shape):
+def create_uncertainty_fig(config: T.mappingConfig, probs, indices, subset_shape, title):
      """
      Purpose
      --------------
@@ -24,28 +25,29 @@ def create_uncertainty_fig(config, probs, indices, subset_shape):
      Parameters
      
      """
+     n_comp = probs.shape[1]
      ncols = 3
-     nrows = math.ceil(config.n_comp / ncols)
+     nrows = math.ceil(n_comp / ncols)
      fig, ax = pl.subplots(nrows, ncols, constrained_layout = True)
      ax = np.atleast_1d(ax).flatten()
     
-     for i in range(0, config.n_comp):
+     for i in range(0, n_comp):
         # cmap = LinearSegmentedColormap.from_list("cluster_color", [(1, 1, 1, 0), colors[i]], N = 256)
         cmap = LinearSegmentedColormap.from_list("cluster_color", ["white", "yellow", "orange", "red"], N = 256)
         cmap.set_under("black")
         prob_map = MP.create_cluster_arr(indices, subset_shape, probs[:, i])
-        cbar = True if i == config.n_comp - 1 else False
+        cbar = True if i == n_comp - 1 else False
         #annotated = True if i == 0 else False
         annotated = True
         MP.plot_patch(prob_map, config.latRng, config.lngRng, cmap, {}, ax[i], 0, 1, "", config.cm_num, fig, cbar, annotated, "probability")
         ax[i].set_title(f"Cluster {i + 1}")
     
-     for a in ax[config.n_comp:]: 
+     for a in ax[n_comp:]: 
          fig.delaxes(a)
-     fig.suptitle(PLP.create_plot_title(config.keywords, config.latRng, config.lngRng, config.n_comp, config.threshold, "posterior probability of clusters"), fontsize = 10)
+     fig.suptitle(f"{title} posterior probability of clusters", fontsize = 10)
      return fig
 
-def create_max_prob_map(config, probs, indices, subset_shape):
+def create_max_prob_map(config, probs, indices, subset_shape, title):
     """
      Purpose
      --------------
@@ -61,7 +63,7 @@ def create_max_prob_map(config, probs, indices, subset_shape):
 
     max_prob_map = MP.create_cluster_arr(indices, subset_shape, max_probs)
     MP.plot_patch(max_prob_map, config.latRng, config.lngRng, cmap, config.ROI, ax, 0, 1, "", config.cm_num, fig, True, True, "probability")
-    fig.suptitle(PLP.create_plot_title(config.keywords, config.latRng, config.lngRng, config.n_comp, config.threshold, f"maximum probability map"), fontsize = 10)
+    fig.suptitle(f"{title}maximum probability map", fontsize = 10)
     ax.set_title(f"Mean Probability: {mean}")
     return fig
 

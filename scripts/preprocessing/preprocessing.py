@@ -233,8 +233,8 @@ def get_date(keywords):
 
 
 
-def get_input_array(keywords, param_ranges,
-                        latRng, lngRng, cm_num):
+def get_input_array(config, param_ranges,
+                        ):
     '''
     Main preprocessing routine that returns array to be passed into clustering
 
@@ -258,16 +258,16 @@ def get_input_array(keywords, param_ranges,
     numpy array with axis 0 as pixels within lon/lat range and axis 1 as parameter pixel radiances and index,
     filtered with rangeArr
     '''
-    radiances_arr = get_parameter_2d_array(keywords)
+    radiances_arr = get_parameter_2d_array(config.keywords)
 
     subpatches = []
-    first_file = get_file_path(keywords[0], cf["input"])
+    first_file = get_file_path(config.keywords[0], cf["input"])
 
-    CM = 0 if cm_num == 0 else get_cm(first_file, cm_num)
+    CM = 0 if config.cm_num == 0 else get_cm(first_file, config.cm_num)
     subset_shape = (0,0)
     
     for radiance_arr in radiances_arr:
-        subset = subset_map(radiance_arr, latRng, lngRng, CM)
+        subset = subset_map(radiance_arr, config.latRng, config.lngRng, CM)
         subset[subset == 0] = np.nan
         subset_shape = subset.shape
         subpatches.append(subset.flatten())

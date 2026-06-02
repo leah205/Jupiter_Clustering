@@ -14,11 +14,12 @@ import scripts.cluster_stats as STAT
 import numpy as np
 from scipy.stats import chi2
 from scipy.spatial.distance import mahalanobis
+import scripts.types as T
 
 import scripts.pca as PCA
 
 
-def create_clusters(pix_arr, cov_type, n_components, is_soft_clustering, threshold, threshold_type):
+def create_clusters(pix_arr, config: T.clusterConfig):
 
     """
     Parameters
@@ -27,9 +28,11 @@ def create_clusters(pix_arr, cov_type, n_components, is_soft_clustering, thresho
     numpy array with axis 0 as pixels within lon/lat range and axis 1 as parameter pixel radiances
     
     """
-    if(is_soft_clustering):
-        print("Clustering with probability threshold " + str(threshold))
-    gmm_model = GMM(n_components=n_components, covariance_type=cov_type)
+
+    is_soft_clustering = cf["soft_clustering"]
+    # if(is_soft_clustering):
+    #     print("Clustering with probability threshold " + str(threshold))
+    gmm_model = GMM(n_components=config.n_comp, covariance_type=config.cov_type)
     pipe = Pipeline([('scaler', StandardScaler()), ('gmm', gmm_model)])
   
   
@@ -47,15 +50,15 @@ def create_clusters(pix_arr, cov_type, n_components, is_soft_clustering, thresho
     cov = gm.covariances_
      
     if(is_soft_clustering):
-        if(threshold_type == "posterior"):
-            threshold_mask = get_posterior_threshold(pixel_probs, threshold)
+        if(config.threshold_type == "posterior"):
+            threshold_mask = get_posterior_threshold(pixel_probs, config.threshold)
         else:
-            threshold_mask = get_mahalanobis_threshold(predictions, scaled, means, cov, threshold)
+            threshold_mask = get_mahalanobis_threshold(predictions, scaled, means, cov, config.threshold)
      
         print(threshold_mask)
         predictions = np.where(threshold_mask, -1, predictions)
         cl_means = []
-        for cl in range(0, n_components):
+        for cl in range(0, config.n_comp):
             mask = ~threshold_mask & predictions == cl
             cl_mean = np.mean(pix_arr[mask], axis = 0)
             cl_means.append(cl_mean)
@@ -103,8 +106,8 @@ def get_mahalanobis_threshold(predictions, pix_arr, means, covariances, prob):
 
 
 
-def run_raw_pipeline(data, cov_type, n_comp, threshold, threshold_type):
-    pred,probs, means = create_clusters(data, cov_type, n_comp, cf["soft_clustering"], threshold, threshold_type)
+def run_raw_pipeline(data, config: T.clusterConfig):
+    pred,probs, means = create_clusters(data,  config)
     #stats = STAT.get_all_stats(pred, keywords, input_arr[:, len(keywords)], n_comp, latRng, lngRng, cm_num)
     #pred = STAT.reassign_clusters(np.array(pred), np.swapaxes(stats[:, :, 0], 0, 1), np.array(param_ranges))
 
@@ -117,9 +120,9 @@ def run_raw_pipeline(data, cov_type, n_comp, threshold, threshold_type):
     }
     
 
-def run_pca_pipeline(data, cov_type, n_comp, threshold, threshold_type):
+def run_pca_pipeline(data, config):
     [pca_reduced, pca_obj, scaler] = PCA.get_pca_comp(data)
-    pred, probs, means = create_clusters(pca_reduced, cov_type, n_comp, cf["soft_clustering"], threshold, threshold_type)
+    pred, probs, means = create_clusters(pca_reduced, config)
     means = pca_obj.inverse_transform(means)
     means = scaler.inverse_transform(means)
     return {

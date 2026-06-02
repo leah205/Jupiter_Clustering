@@ -9,6 +9,7 @@ import scripts.pca as PCA
 from dataclasses import dataclass, field
 import config.config as cf
 from typing import Literal
+import scripts.types as TY
 
 
 
@@ -23,40 +24,42 @@ functions to run various clustering --> visualization pipelines
         
 """
 
-def run_full_pipeline(config):
-    param_ranges = [ranges_dict.get(keyword, [0, 1]) for keyword in config.keywords]
-   
+def run_full_pipeline(config: TY.pipelineConfig):
+    keywords = config.map.keywords
+    param_ranges = [ranges_dict.get(keyword, [0, 1]) for keyword in keywords]
     
-    transform = CL.run_pca_pipeline if config.isPca else CL.run_raw_pipeline
+    
+    transform = CL.run_pca_pipeline if config.cluster.isPca else CL.run_raw_pipeline
 
-    [arr, subset_shape] = pre.get_input_array(config.keywords, param_ranges, config.latRng, config.lngRng, config.cm_num)
+    [arr, subset_shape] = pre.get_input_array(config.map, param_ranges)
 
     indices = arr[:, arr.shape[1] - 1]
-    data = arr[:, 0:len(config.keywords)]
-    cluster_obj = transform(data, config.cov_type, config.n_comp, config.threshold, config.threshold_type)
+    data = arr[:, 0:len(keywords)]
+    cluster_obj = transform(data, config.cluster)
     pred, probs, means = cluster_obj["pred"], cluster_obj["probs"], cluster_obj["means"]
 
-    prefix = PLP.create_file_prefix(config)
+    prefix = PLP.create_file_prefix(config.cluster, config.map)
+    title = PLP.create_plot_title(config.cluster, config.map)
     
-    if(len(config.keywords) == 2):
-        plot_fig = PLP.create_plot_figure(config, pred, arr, subset_shape)
+    if(len(keywords) == 2):
+        plot_fig = PLP.create_plot_figure(config.map, pred, arr, subset_shape, title)
         plot_fig.savefig(f"{prefix}plot.png")
-        map_comp_fig = PLP.create_map_comp_figure(config, pred, arr, subset_shape, param_ranges)
+        map_comp_fig = PLP.create_map_comp_figure(config.map, pred, arr, subset_shape, param_ranges, title)
         map_comp_fig.savefig(f"{prefix}map_comp.png")
-    if(len(config.keywords) == 4):
-        plot_fig = PLP.create_plots_figure(config, pred, arr, subset_shape)
+    if(len(keywords) == 4):
+        plot_fig = PLP.create_plots_figure(config.map, pred, arr, subset_shape, title)
         plot_fig.savefig(f"{prefix}plots.png")
-    centroids_fig = STAT.get_centroids_figure(config.keywords, means)
+    centroids_fig = STAT.get_centroids_figure(keywords, means, title)
     centroids_fig.savefig(f"{prefix}centroids.png")
-    map_fig = PLP.create_cluster_map(config, pred, arr, subset_shape)
+    map_fig = PLP.create_cluster_map(config.map, pred, arr, subset_shape, title)
     map_fig.savefig(f"{prefix}cluster_map.png")
-    uncertainty_fig = PP.create_uncertainty_fig(config, probs, indices, subset_shape)
+    uncertainty_fig = PP.create_uncertainty_fig(config.map, probs, indices, subset_shape, title)
     uncertainty_fig.savefig(f"{prefix}uncertainty_map.png")
-    max_prob_fig = PP.create_max_prob_map(config, probs, indices, subset_shape)
+    max_prob_fig = PP.create_max_prob_map(config.map, probs, indices, subset_shape, title)
     max_prob_fig.savefig(f"{prefix}max_prob_fig.png")
 
-    if(config.isPca):
-        heat_map_fig = PCA.get_loadings_heatmap(cluster_obj["pca_obj"], config.keywords)
+    if(config.cluster.isPca):
+        heat_map_fig = PCA.get_loadings_heatmap(cluster_obj["pca_obj"], keywords, title)
         heat_map_fig.savefig(f"{prefix}loadings.png")
 
         
@@ -105,46 +108,37 @@ lat_range = [90 - lat_range[1], 90 - lat_range[0]]
 
 ThresholdType = Literal["mahalanobis", "posterior"]
 
-@dataclass
-class pipelineConfig:
-    keywords: list[str]
-    latRng: list[int]
-    lngRng: list[int]
-    n_comp: int
-    ROI: dict = field(default_factory=dict)
-    cov_type: str = "full"
-    cm_num: int = 1
-    threshold: float = 0.95
-    threshold_type: str = "mahalanobis"
-    isPca: bool = False
 
 
-exp1Config = pipelineConfig(
-    latRng = lat_range,
-    lngRng = lon_range, 
-    keywords = ["NH3", "PCld"],
-    n_comp = 6,
-    threshold = 0.75,
-    threshold_type = "posterior"
+
+# @dataclass
+# class pipelineConfig:
+#     keywords: list[str]
+#     latRng: list[int]
+#     lngRng: list[int]
+#     n_comp: int
+#     ROI: dict = field(default_factory=dict)
+#     cov_type: str = "full"
+#     cm_num: int = 1
+#     threshold: float = 0.95
+#     threshold_type: str = "mahalanobis"
+#     isPca: bool = False
+
+
+exp1Config = TY.pipelineConfig(
+    map = TY.mappingConfig(
+        keywords = ["NH3", "PCld"],
+        ROI = ROI,
+        latRng = lat_range,
+        lngRng = lon_range
+        ),
+    cluster = TY.clusterConfig(
+        n_comp = 6
+    )
+
 )
 
-exp2Config = pipelineConfig(
-    latRng = lat_range,
-    lngRng = lon_range, 
-    keywords = ["NH3", "PCld", "AOI", "CI"],
-    n_comp = 6,
-    ROI = ROI,
-    threshold_type = "posterior",
-    threshold = 0.75
-)
 
-exp3Config = pipelineConfig(
-    latRng = lat_range,
-    lngRng = lon_range, 
-    keywords = ["275", "395", "502", "619", "631", "645", "673", "727", "889"],
-    n_comp = 5,
-    ROI = ROI,
-    isPca = True)
 
 
 run_full_pipeline(exp1Config)

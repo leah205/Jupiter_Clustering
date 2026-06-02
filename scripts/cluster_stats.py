@@ -115,7 +115,7 @@ def quantify_clusters(stats, param_ranges):
     return np.mean(normed_stats, axis = 1)
 
     
-def get_centroids_figure(keywords, cluster_centroids):
+def get_centroids_figure(keywords, cluster_centroids, title):
     """
     Purpose
     --------------
@@ -143,6 +143,7 @@ def get_centroids_figure(keywords, cluster_centroids):
     c_num = cluster_centroids.shape[0]
     cluster_labels = np.linspace(1, c_num, c_num).astype(np.int64)
     sns.heatmap(cluster_centroids, ax = ax, annot = True, cmap = "coolwarm", xticklabels = keywords, yticklabels = cluster_labels )
+    fig.suptitle(title, fontsize = 10)
     return fig
 
 

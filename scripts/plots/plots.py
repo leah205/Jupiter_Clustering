@@ -14,8 +14,8 @@ keyword_dict = {
     "CI": "Color Index"
 }
 
-def create_cluster_plot(ax, keywords, index_x, index_y, input_arr, pred, n_comp, cov_type, 
-                        latRng, lngRng, cmap, cm_num = 3
+def create_cluster_plot(ax, keywords, index_x, index_y, input_arr, pred, n_comp,
+                        cmap
                         ):
     """
     Purpose - Creates scatter plot of clusterings in two dimensions
