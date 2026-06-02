@@ -81,13 +81,14 @@ def plot_gmm_ellipsoids(ax, cluster_obj, cmap):
         v, w = linalg.eigh(covar)
         #captures 95% total probability
         k = np.sqrt(chi2.ppf(0.95, df=2))
-        v = k * np.sqrt(v)
-        u = w[0] / linalg.norm(w[0])
-       
 
-        angle = np.arctan(u[1] / u[0])
-        angle = 180.0 * angle / np.pi  
-        ell = mpl.patches.Ellipse(mean, v[0], v[1], angle=180.0 + angle, edgecolor=color, facecolor = "none", linewidth = 2)
+        order = v.argsort()[::-1]
+        v = v[order]
+        w = w[:, order]
+        v = k * np.sqrt(v)
+
+        angle = np.degrees(np.arctan2(w[1, 0], w[0, 0]))
+        ell = mpl.patches.Ellipse(mean, 2 * v[0], 2 * v[1], angle=angle, edgecolor=color, facecolor = "none", linewidth = 2)
         ell.set_clip_box(ax.bbox)
         ell.set_alpha(1)
         ax.add_patch(ell)
