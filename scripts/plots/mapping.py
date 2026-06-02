@@ -128,11 +128,13 @@ def plot_cluster_patch(config, patch, cmap, axis, n_comp, fig = None, cbarplot =
         cbar.ax.set_ylabel(cbar_title, size=9, labelpad= 5, y = 0.5)#,labelpad=-20, y=0.5)
 
 
-def plot_patch(config, patch, dim, axis, fig = None, cbarplot = True, cbar_title = "test", cbar_reverse = False, annotated = True, showbands = True):
+def plot_patch(config, patch, dim, axis, fig = None, cbarplot = True, cbar_title = "", annotated = True, showbands = True):
     LatLims, LonLims = config.latRng, config.lngRng
     cmap = D.color_dict[dim]
     title = D.keyword_dict[dim]
-  
+    cbar_reverse = False
+    if(dim == "PCld"):
+        cbar_reverse = True
     v_min, v_max = D.ranges_dict[dim][0], D.ranges_dict[dim][1]
     
     '''
