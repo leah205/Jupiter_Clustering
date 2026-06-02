@@ -65,8 +65,21 @@ def create_clusters(pix_arr, config: T.clusterConfig):
         means = np.array(cl_means)
       
     means = scaler.inverse_transform(gm.means_)
- 
-    return [predictions, pixel_probs, means]
+    scales = scaler.scale_
+    D = np.diag(scales)
+    cov_orig = np.array([
+    D @ cov @ D for cov in gm.covariances_
+    ])
+   
+    
+   
+    return {
+        "pred": predictions,
+        "probs": pixel_probs,
+        "means": means,
+        "covariances": cov_orig
+       
+    }
 
 def get_posterior_threshold(probs, threshold):
     return np.all(probs < threshold, axis = 1)
@@ -107,29 +120,27 @@ def get_mahalanobis_threshold(predictions, pix_arr, means, covariances, prob):
 
 
 def run_raw_pipeline(data, config: T.clusterConfig):
-    pred,probs, means = create_clusters(data,  config)
+    return create_clusters(data,  config)
     #stats = STAT.get_all_stats(pred, keywords, input_arr[:, len(keywords)], n_comp, latRng, lngRng, cm_num)
     #pred = STAT.reassign_clusters(np.array(pred), np.swapaxes(stats[:, :, 0], 0, 1), np.array(param_ranges))
 
     #means = np.swapaxes(stats[:,:, 0], 0, 1)
-    return {
-        "pred": pred,
-        "probs": probs,
-        "means": means,
-       
-    }
+   
     
 
 def run_pca_pipeline(data, config):
     [pca_reduced, pca_obj, scaler] = PCA.get_pca_comp(data)
-    pred, probs, means = create_clusters(pca_reduced, config)
-    means = pca_obj.inverse_transform(means)
-    means = scaler.inverse_transform(means)
+    res = create_clusters(pca_reduced, config)
+    means = pca_obj.inverse_transform(res.means)
+    means = scaler.inverse_transform(res.means)
+    pca_cov = scaler.inverse_transform(res.covariances_)
+
     return {
-        "pred": pred,
-        "probs": probs,
+        "pred": res.pred,
+        "probs": res.probs,
         "means": means,
-        "pca_obj": pca_obj
+        "pca_obj": pca_obj,
+        "covariances": pca_cov
     }
    
 

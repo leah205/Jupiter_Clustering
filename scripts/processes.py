@@ -44,7 +44,7 @@ def run_full_pipeline(config: TY.pipelineConfig):
     title = PLP.create_plot_title(config.cluster, config.map)
     
     if(len(keywords) == 2):
-        plot_fig = PLP.create_plot_figure(config.map, pred, arr, reshaped_pred, title)
+        plot_fig = PLP.create_plot_figure(config.map, pred, arr, reshaped_pred, title, cluster_obj)
         plot_fig.savefig(f"{prefix}plot.png")
         map_comp_fig = PLP.create_map_comp_figure(config.map, reshaped_pred, title)
         map_comp_fig.savefig(f"{prefix}map_comp.png")
