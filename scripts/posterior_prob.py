@@ -35,7 +35,7 @@ def create_uncertainty_fig(config: T.mappingConfig, probs, indices, subset_shape
         # cmap = LinearSegmentedColormap.from_list("cluster_color", [(1, 1, 1, 0), colors[i]], N = 256)
         cmap = LinearSegmentedColormap.from_list("cluster_color", ["white", "yellow", "orange", "red"], N = 256)
         cmap.set_under("black")
-        prob_map = MP.create_cluster_arr(indices, subset_shape, probs[:, i])
+        prob_map = MP.reshape_clustered(indices, subset_shape, probs[:, i])
         cbar = True if i == n_comp - 1 else False
         #annotated = True if i == 0 else False
         annotated = True
@@ -61,7 +61,7 @@ def create_max_prob_map(config, probs, indices, subset_shape, title):
     cmap = LinearSegmentedColormap.from_list("cluster_color", ["white", "yellow", "orange", "red"], N = 256)
     cmap.set_under("black")
 
-    max_prob_map = MP.create_cluster_arr(indices, subset_shape, max_probs)
+    max_prob_map = MP.reshape_clustered(indices, subset_shape, max_probs)
     MP.plot_patch(max_prob_map, config.latRng, config.lngRng, cmap, config.ROI, ax, 0, 1, "", config.cm_num, fig, True, True, "probability")
     fig.suptitle(f"{title}maximum probability map", fontsize = 10)
     ax.set_title(f"Mean Probability: {mean}")

@@ -54,15 +54,17 @@ Parameters
 
 """
 
-def create_map_comp_figure(config: T.mappingConfig, pred, arr, subset_shape, param_ranges, title):
-    n_comp = np.unique(pred).shape[0] - 1
+def create_map_comp_figure(config: T.mappingConfig, reshaped_pred, param_ranges, title):
+    n_comp = np.unique(reshaped_pred).shape[0] - 1
     dim1, dim2 = config.keywords[0], config.keywords[1]
     cmap = ListedColormap(colors[:n_comp])
     fig2, axis2 = pl.subplots(3, 1, constrained_layout = True)
     map1 = pre.get_patch(dim1, config.latRng, config.lngRng, config.cm_num)
     map2 = pre.get_patch(dim2, config.latRng, config.lngRng, config.cm_num)
 
-    MP.create_cluster_map(axis2[0], n_comp, pred, arr, subset_shape, config.latRng, config.lngRng, cmap, config.ROI, config.cm_num, fig2)
+    #MP.create_cluster_map(axis2[0], n_comp, pred, arr, subset_shape, config.latRng, config.lngRng, cmap, config.ROI, config.cm_num, fig2)
+    MP.plot_cluster_patch(reshaped_pred, config.latRng, config.lngRng,  cmap, config.ROI, axis2[0],  0, n_comp, "cluster map", config.cm_num, fig2)
+    
     MP.plot_patch(map1, config.latRng, config.lngRng, color_dict[dim1], config.ROI, axis2[1], param_ranges[0][0],  param_ranges[0][1],  keyword_dict[dim1], config.cm_num, fig2, True)
     MP.plot_patch(map2, config.latRng, config.lngRng, color_dict[dim2], config.ROI, axis2[2], param_ranges[1][0],  param_ranges[1][1], keyword_dict[dim2], config.cm_num, fig2, True)
     fig2.suptitle(f"{title}", fontsize = 10) 
@@ -70,7 +72,7 @@ def create_map_comp_figure(config: T.mappingConfig, pred, arr, subset_shape, par
     return fig2
 
 
-def create_plot_figure(config: T.mappingConfig, pred, arr, subset_shape, title):
+def create_plot_figure(config: T.mappingConfig, pred, arr, reshaped_pred, title):
     # creates and saves cluster map and cluster scatter plot
     n_comp = np.unique(pred).shape[0] - 1
     cmap = ListedColormap(colors[:n_comp])
@@ -82,30 +84,30 @@ def create_plot_figure(config: T.mappingConfig, pred, arr, subset_shape, title):
         right = 0.9,
         bottom = 0.1
     )
-    MP.create_cluster_map(axis1[0], n_comp, pred, arr, subset_shape, config.latRng, config.lngRng, cmap, config.ROI, config.cm_num, fig1)
+    MP.plot_cluster_patch(reshaped_pred, config.latRng, config.lngRng,  cmap, config.ROI, axis1[0],  0, n_comp, "cluster map", config.cm_num, fig1)
     PL.create_cluster_plot(axis1[1],  config.keywords, 0, 1, arr, pred, n_comp, cmap)
     fig1.suptitle(f"{title}", fontsize = 10) 
     #STAT.get_all_stats(pred, keywords, input_arr[:, input_arr.shape[1] - 1], n_comp, latRng, lngRng, cm_num)
     return fig1
 
 
-def create_plots_figure(config: T.mappingConfig, pred, input_arr, subset_shape, title):
+def create_plots_figure(config: T.mappingConfig, pred, input_arr, reshaped_pred, title):
     # creates and saves cluster map and cluster scatter plot
     n_comp = np.unique(pred).shape[0] - 1
     cmap = ListedColormap(colors[:n_comp])
     fig, axis = pl.subplots(3, 1)
-    MP.create_cluster_map(axis[0], n_comp, pred, input_arr, subset_shape, config.latRng, config.lngRng, cmap, config.ROI, config.cm_num, fig)
+    MP.plot_cluster_patch(reshaped_pred, config.latRng, config.lngRng,  cmap, config.ROI, axis[0],  0, n_comp, "cluster map", config.cm_num, fig)
     PL.create_cluster_plot(axis[1],  config.keywords, 0, 1, input_arr, pred,  n_comp, config.cov_type, config.latRng, config.lngRng, cmap, config.cm_num)
     PL.create_cluster_plot(axis[2],  config.keywords, 2, 3, input_arr, pred,  n_comp, cmap)
     fig.suptitle(f"{title}", fontsize = 10) 
 
     return fig
 
-def create_cluster_map(config: T.mappingConfig, pred, input_arr, subset_shape, title):
-    n_comp = np.unique(pred).shape[0] - 1
+def create_cluster_map(config: T.mappingConfig, reshaped_pred, title):
+    n_comp = np.unique(reshaped_pred).shape[0] - 1
     cmap = ListedColormap(colors[:n_comp])
     fig, axis = pl.subplots(1, 1)
-    MP.create_cluster_map(axis, n_comp, pred, input_arr, subset_shape, config.latRng, config.lngRng, cmap, config.ROI, config.cm_num, fig)
+    MP.plot_cluster_patch(reshaped_pred, config.latRng, config.lngRng,  cmap, config.ROI, axis,  0, n_comp, "cluster map", config.cm_num, fig)
     fig.suptitle(f"{title} cluster map", fontsize = 10) 
     return fig
 

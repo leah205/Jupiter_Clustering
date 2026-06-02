@@ -184,26 +184,15 @@ def plot_patch(patch, LatLims, LonLims, cmap, ROI, axis, v_min, v_max, title, cm
         cbar.ax.tick_params(labelsize=6,color="k")#if iSession >1:
         cbar.ax.set_ylabel(cbar_title, size=9,labelpad=5, y=0.5)
 
-
-        #cbar.ax.yaxis.set_label_coords(-1.5, 0.5)
-        #cbar.ax.yaxis.set_label_coords(-2.1, 0.5)
         if cbar_reverse:
             cbar.ax.invert_yaxis()
    
 
-def create_cluster_map(axis,  n_comp, pred, input_arr, subset_shape, 
-                           latRng, lngRng, cmap, ROI = {}, cm_num = 3, fig = None, cbar = True):
-    indices = input_arr[:, input_arr.shape[1] - 1]
-    cluster_map = create_cluster_arr(indices, subset_shape, pred)
-    
-    cmap.set_under("black")
-    plot_cluster_patch(cluster_map, latRng, lngRng,  cmap, ROI, axis,  0, n_comp, "cluster map", cm_num, fig, cbar)
 
 
 
 
-
-def create_cluster_arr(indices, subset_shape, pred):
+def reshape_clustered(indices, subset_shape, pred):
     # takes index array and prediction array and reshapes into original shape with pixels at original indices
     
     subset_length = subset_shape[0] * subset_shape[1]

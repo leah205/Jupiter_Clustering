@@ -10,6 +10,7 @@ from dataclasses import dataclass, field
 import config.config as cf
 from typing import Literal
 import scripts.types as TY
+import scripts.plots.mapping as MP
 
 
 
@@ -37,22 +38,25 @@ def run_full_pipeline(config: TY.pipelineConfig):
     data = arr[:, 0:len(keywords)]
     cluster_obj = transform(data, config.cluster)
     pred, probs, means = cluster_obj["pred"], cluster_obj["probs"], cluster_obj["means"]
+    reshaped_pred = MP.reshape_clustered(indices, subset_shape, pred)
 
     prefix = PLP.create_file_prefix(config.cluster, config.map)
     title = PLP.create_plot_title(config.cluster, config.map)
     
     if(len(keywords) == 2):
-        plot_fig = PLP.create_plot_figure(config.map, pred, arr, subset_shape, title)
+        plot_fig = PLP.create_plot_figure(config.map, pred, arr, reshaped_pred, title)
         plot_fig.savefig(f"{prefix}plot.png")
-        map_comp_fig = PLP.create_map_comp_figure(config.map, pred, arr, subset_shape, param_ranges, title)
+        map_comp_fig = PLP.create_map_comp_figure(config.map, reshaped_pred, param_ranges, title)
         map_comp_fig.savefig(f"{prefix}map_comp.png")
     if(len(keywords) == 4):
-        plot_fig = PLP.create_plots_figure(config.map, pred, arr, subset_shape, title)
+        plot_fig = PLP.create_plots_figure(config.map, pred, arr, reshaped_pred, title)
         plot_fig.savefig(f"{prefix}plots.png")
     centroids_fig = STAT.get_centroids_figure(keywords, means, title)
     centroids_fig.savefig(f"{prefix}centroids.png")
-    map_fig = PLP.create_cluster_map(config.map, pred, arr, subset_shape, title)
+    map_fig = PLP.create_cluster_map(config.map, reshaped_pred, title)
     map_fig.savefig(f"{prefix}cluster_map.png")
+
+   
     uncertainty_fig = PP.create_uncertainty_fig(config.map, probs, indices, subset_shape, title)
     uncertainty_fig.savefig(f"{prefix}uncertainty_map.png")
     max_prob_fig = PP.create_max_prob_map(config.map, probs, indices, subset_shape, title)
