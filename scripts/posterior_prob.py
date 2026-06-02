@@ -5,7 +5,6 @@ import scripts.plots.plots as PL
 import scripts.clustering.clusters as CL 
 from sklearn.metrics import silhouette_score
 import scripts.plots.mapping as MP
-from matplotlib.colors import ListedColormap, LinearSegmentedColormap
 import math
 import pylab as pl
 import scripts.plotting_processes as PLP
@@ -32,14 +31,13 @@ def create_uncertainty_fig(config: T.mappingConfig, probs, indices, subset_shape
      ax = np.atleast_1d(ax).flatten()
     
      for i in range(0, n_comp):
-        # cmap = LinearSegmentedColormap.from_list("cluster_color", [(1, 1, 1, 0), colors[i]], N = 256)
-        cmap = LinearSegmentedColormap.from_list("cluster_color", ["white", "yellow", "orange", "red"], N = 256)
-        cmap.set_under("black")
+       
+       
         prob_map = MP.reshape_clustered(indices, subset_shape, probs[:, i])
-        cbar = True if i == n_comp - 1 else False
-        #annotated = True if i == 0 else False
-        annotated = True
-        MP.plot_patch(prob_map, config.latRng, config.lngRng, cmap, {}, ax[i], 0, 1, "", config.cm_num, fig, cbar, annotated, "probability")
+        add_cbar = True if i == n_comp - 1 else False
+       
+       
+        MP.plot_patch(config, prob_map, "Prob", ax[i], fig, add_cbar, "probability")
         ax[i].set_title(f"Cluster {i + 1}")
     
      for a in ax[n_comp:]: 
@@ -58,11 +56,12 @@ def create_max_prob_map(config, probs, indices, subset_shape, title):
     max_probs = np.max(probs, axis = 1)
     
     mean = round(np.mean(max_probs), 3)
-    cmap = LinearSegmentedColormap.from_list("cluster_color", ["white", "yellow", "orange", "red"], N = 256)
-    cmap.set_under("black")
+
+    #cmap.set_under("black")?
 
     max_prob_map = MP.reshape_clustered(indices, subset_shape, max_probs)
-    MP.plot_patch(max_prob_map, config.latRng, config.lngRng, cmap, config.ROI, ax, 0, 1, "", config.cm_num, fig, True, True, "probability")
+    add_cbar = True
+    MP.plot_patch(config, max_prob_map, "Prob", ax, fig, add_cbar, "probability")
     fig.suptitle(f"{title}maximum probability map", fontsize = 10)
     ax.set_title(f"Mean Probability: {mean}")
     return fig

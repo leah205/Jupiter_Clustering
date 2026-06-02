@@ -8,9 +8,9 @@ import scripts.cluster_stats as STAT
 import scripts.pca as PCA
 from dataclasses import dataclass, field
 import config.config as cf
-from typing import Literal
 import scripts.types as TY
 import scripts.plots.mapping as MP
+import scripts.dicts as D
 
 
 
@@ -27,7 +27,7 @@ functions to run various clustering --> visualization pipelines
 
 def run_full_pipeline(config: TY.pipelineConfig):
     keywords = config.map.keywords
-    param_ranges = [ranges_dict.get(keyword, [0, 1]) for keyword in keywords]
+    param_ranges = [D.ranges_dict.get(keyword, [0, 1]) for keyword in keywords]
     
     
     transform = CL.run_pca_pipeline if config.cluster.isPca else CL.run_raw_pipeline
@@ -46,7 +46,7 @@ def run_full_pipeline(config: TY.pipelineConfig):
     if(len(keywords) == 2):
         plot_fig = PLP.create_plot_figure(config.map, pred, arr, reshaped_pred, title)
         plot_fig.savefig(f"{prefix}plot.png")
-        map_comp_fig = PLP.create_map_comp_figure(config.map, reshaped_pred, param_ranges, title)
+        map_comp_fig = PLP.create_map_comp_figure(config.map, reshaped_pred, title)
         map_comp_fig.savefig(f"{prefix}map_comp.png")
     if(len(keywords) == 4):
         plot_fig = PLP.create_plots_figure(config.map, pred, arr, reshaped_pred, title)
@@ -71,12 +71,7 @@ def run_full_pipeline(config: TY.pipelineConfig):
 
 # Run processes for longitude 0 - 30, latitude 90 - 105
 
-ranges_dict = {
-    "NH3": [0, 300],
-    "PCld": [1000, 3100],
-    "AOI": [0.1, 0.4],
-    "CI": [0.3, 0.8],
-}
+
 
 
 ROI={"Hot Spot":[82,83,14.0,2.0],
@@ -110,7 +105,6 @@ lat_range = [90 - lat_range[1], 90 - lat_range[0]]
             - if soft clustering is enabled, specifies probability threshold for clustering
 """
 
-ThresholdType = Literal["mahalanobis", "posterior"]
 
 
 
