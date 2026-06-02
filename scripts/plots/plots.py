@@ -1,21 +1,15 @@
 import matplotlib.pyplot as plt
 import scripts.preprocessing.preprocessing as pre
-from config.config import config
+from config.config import cf
 from sklearn.metrics import silhouette_score
 import scripts.clustering.clusters as CL
 import numpy as np
 from scipy.stats import gaussian_kde
+import scripts.dicts as D
 
 
-keyword_dict = {
-    "NH3": "Ammonia Mole Fraction (ppm)",
-    "PCld": "Cloud Pressure (mb)",
-    "AOI": "Altitude Opacity Index",
-    "CI": "Color Index"
-}
-
-def create_cluster_plot(ax, keywords, index_x, index_y, input_arr, pred, n_comp, cov_type, 
-                        latRng, lngRng, cmap, cm_num = 3
+def create_cluster_plot(ax, keywords, index_x, index_y, input_arr, pred, n_comp,
+                        cmap
                         ):
     """
     Purpose - Creates scatter plot of clusterings in two dimensions
@@ -36,7 +30,7 @@ def create_cluster_plot(ax, keywords, index_x, index_y, input_arr, pred, n_comp,
     y = input_arr[:, index_y]
     pred = np.array(pred)
     for cl in range(-1, n_comp):
-        if(cl == -1 and config["soft_clustering"] == False):
+        if(cl == -1 and cf["soft_clustering"] == False):
             continue
         mask = pred == cl
         x_cl = x[mask]
@@ -48,8 +42,8 @@ def create_cluster_plot(ax, keywords, index_x, index_y, input_arr, pred, n_comp,
       
         
         #ax.text(x_mean, y_mean, str(cl), fontsize = 10, zorder = 10)
-        ax.set_xlabel(keyword_dict[keywords[index_x]])
-        ax.set_ylabel(keyword_dict[keywords[index_y]])
+        ax.set_xlabel(D.keyword_dict[keywords[index_x]])
+        ax.set_ylabel(D.keyword_dict[keywords[index_y]])
         if(cl >= 0):
             x_mean = np.mean(x_cl)
             y_mean = np.mean(y_cl)

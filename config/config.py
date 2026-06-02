@@ -1,9 +1,9 @@
-config = {
+cf = {
   
     'input': "data/HST/20251016UTc/Sys1",
     #'input': "data/L4/20251214UT",
     "output": "visualizations/HST/20251016UTc/lon_0-30",
-    "soft_clustering": False,
+    "soft_clustering": True,
     
 
 }

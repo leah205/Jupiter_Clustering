@@ -41,7 +41,7 @@ def get_pca_comp(X, var_threshold = 0.98):
     print(pca.explained_variance_ratio_)
     return [X_transformed, pca, scaler]
 
-def get_loadings_heatmap(pca_obj, keywords):
+def get_loadings_heatmap(pca_obj, keywords, title):
     """
     Purpose
     ----------------
@@ -59,6 +59,7 @@ def get_loadings_heatmap(pca_obj, keywords):
     fig, ax = plt.subplots(1, 1)
     ax.set_title("PCA Loadings Heat Map")
     sns.heatmap(loadings, ax = ax, annot = True, cmap = "coolwarm", yticklabels = keywords)
+    fig.suptitle(title, fontsize = 10)
     return fig
 
 

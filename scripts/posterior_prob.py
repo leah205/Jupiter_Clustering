@@ -1,24 +1,20 @@
-from astropy.io import fits
+
 import numpy as np
 import scripts.preprocessing.preprocessing as pre
 import scripts.plots.plots as PL
 import scripts.clustering.clusters as CL 
 from sklearn.metrics import silhouette_score
-from config.config import config
 import scripts.plots.mapping as MP
-import matplotlib
-from matplotlib.colors import ListedColormap, LinearSegmentedColormap
-from matplotlib import colormaps
 import math
-import scripts.cluster_stats as STAT
 import pylab as pl
 import scripts.plotting_processes as PLP
+import scripts.types as T
 # red, green, blue, yellow, orange, pink, purple, gray
 colors =[(1, 0.639, 0.639), (0.647, 1, 0.639), (0.639, 0.894, 1), (1, 0.996, 0.639), (1, 0.82, 0.639), (1, 0.639, 0.839), (0.937, 0.639, 1), (0.678, 0.678, 0.678)]
 
 # uncertainty maps
 
-def create_uncertainty_fig(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold, description = "", suffix = ""):
+def create_uncertainty_fig(config: T.mappingConfig, probs, indices, subset_shape, title):
      """
      Purpose
      --------------
@@ -28,29 +24,28 @@ def create_uncertainty_fig(keywords, probs, indices, subset_shape, latRng, lngRn
      Parameters
      
      """
+     n_comp = probs.shape[1]
      ncols = 3
      nrows = math.ceil(n_comp / ncols)
      fig, ax = pl.subplots(nrows, ncols, constrained_layout = True)
      ax = np.atleast_1d(ax).flatten()
     
      for i in range(0, n_comp):
-        # cmap = LinearSegmentedColormap.from_list("cluster_color", [(1, 1, 1, 0), colors[i]], N = 256)
-        cmap = LinearSegmentedColormap.from_list("cluster_color", ["white", "yellow", "orange", "red"], N = 256)
-
-        prob_map = MP.create_cluster_arr(indices, subset_shape, probs[:, i])
-        cbar = True if i == n_comp - 1 else False
-        #annotated = True if i == 0 else False
-        annotated = True
-        MP.plot_patch(prob_map, latRng, lngRng, cmap, {}, ax[i], 0, 1, "", cm_num, fig, cbar, annotated, "probability")
+       
+       
+        prob_map = MP.reshape_clustered(indices, subset_shape, probs[:, i])
+        add_cbar = True if i == n_comp - 1 else False
+       
+       
+        MP.plot_patch(config, prob_map, "Prob", ax[i], fig, add_cbar, "probability")
         ax[i].set_title(f"Cluster {i + 1}")
     
      for a in ax[n_comp:]: 
          fig.delaxes(a)
-     fig.suptitle(PLP.create_plot_title(keywords, latRng, lngRng, n_comp, threshold, description), fontsize = 10)
-     output_file_name = PLP.create_file_name(keywords, latRng, lngRng, n_comp, f"posterior_probs_{suffix}", cm_num, threshold)
-     fig.savefig(output_file_name)
+     fig.suptitle(f"{title} posterior probability of clusters", fontsize = 10)
+     return fig
 
-def create_max_prob_map(keywords, probs, indices, subset_shape, latRng, lngRng, cm_num, n_comp, threshold, ROI, description = "", suffix = ""):
+def create_max_prob_map(config, probs, indices, subset_shape, title):
     """
      Purpose
      --------------
@@ -59,14 +54,17 @@ def create_max_prob_map(keywords, probs, indices, subset_shape, latRng, lngRng, 
      """
     fig, ax = pl.subplots(1, 1)
     max_probs = np.max(probs, axis = 1)
+    
     mean = round(np.mean(max_probs), 3)
-    cmap = LinearSegmentedColormap.from_list("cluster_color", ["white", "yellow", "orange", "red"], N = 256)
-    max_prob_map = MP.create_cluster_arr(indices, subset_shape, max_probs)
-    MP.plot_patch(max_prob_map, latRng, lngRng, cmap, ROI, ax, 0, 1, "", cm_num, fig, True, True, "probability")
-    fig.suptitle(PLP.create_plot_title(keywords, latRng, lngRng, n_comp, threshold, f"maximum probability map {description}"), fontsize = 10)
+
+    #cmap.set_under("black")?
+
+    max_prob_map = MP.reshape_clustered(indices, subset_shape, max_probs)
+    add_cbar = True
+    MP.plot_patch(config, max_prob_map, "Prob", ax, fig, add_cbar, "probability")
+    fig.suptitle(f"{title}maximum probability map", fontsize = 10)
     ax.set_title(f"Mean Probability: {mean}")
-    output_file_name = PLP.create_file_name(keywords, latRng, lngRng, n_comp, f"max_prob_map_{suffix}", cm_num, threshold)
-    fig.savefig(output_file_name)
+    return fig
 
 
    
