@@ -107,13 +107,15 @@ lat_range = [90 - region["lat_range"][1], 90 - region["lat_range"][0]]
 
 exp1Config = TY.pipelineConfig(
     map = TY.mappingConfig(
-        keywords = ["NH3", "PCld"],
+        keywords = ["AOI", "CI"],
         ROI = ROI,
         latRng = lat_range,
         lngRng = lon_range
         ),
     cluster = TY.clusterConfig(
-        n_comp = 6
+        n_comp = 4,
+      
+
     )
 )
 

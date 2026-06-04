@@ -12,7 +12,7 @@ from pathlib import Path
 def raw_evaluation_pipeline(subdir, mapConfig, 
                            cluster_rng = [2, 10],
                             ):
-    print(mapConfig)
+  
     keywords = mapConfig.keywords
     param_ranges = [D.ranges_dict.get(keyword, [0, 1]) for keyword in keywords]
     [input_arr, subset_shape] = pre.get_input_array(mapConfig, param_ranges)
@@ -33,35 +33,41 @@ def raw_evaluation_pipeline(subdir, mapConfig,
     fig_js = JS.create_js_plot(pix_arr, cluster_rng)
     fig_js.savefig(f"{filepath_str}/js_plot_{keyword_str}")
 
-def pca_evaluation_pipeline(subdir, keywords, param_ranges, 
-                           latRng = [85, 95], lngRng = [230, 330], 
+def pca_evaluation_pipeline(subdir, mapConfig, 
                            cluster_rng = [2, 10],
-                            cm_num = 1):
-    
-    [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
+                            ):
+    keywords = mapConfig.keywords
+    param_ranges = [D.ranges_dict.get(keyword, [0, 1]) for keyword in keywords]
+    [input_arr, subset_shape] = pre.get_input_array(mapConfig, param_ranges)
     pix_arr = input_arr[:, 0: len(keywords)] 
-    [pca_reduced, pca_obj] = PCA.get_pca_comp(input_arr[:, 0:len(keywords)])
+    reduced, obj, scaler = PCA.get_pca_comp(input_arr[:, 0:len(keywords)])
+    
     keyword_str = "_".join(keywords)
+    filepath_str = f"cluster_evaluations/{subdir}/{keyword_str}"
+    filepath = Path(filepath_str)
+    filepath.mkdir(parents=True, exist_ok=True)
+
+
 
     print("doing bic:")
-    fig_bic  = BIC.create_bic_plot(pca_reduced, cluster_rng)
-    fig_bic.savefig(f"cluster_evaluations/{subdir}/BIC_plot_{keyword_str}_pca")
+    fig_bic  = BIC.create_bic_plot(reduced, cluster_rng)
+    fig_bic.savefig(f"{filepath_str}/BIC_plot_{keyword_str}")
     print("doing sil:")
-    fig_sil = SIL.silhouette_graph(pca_reduced, cluster_rng)
-    fig_sil.savefig(f"cluster_evaluations/{subdir}/sil_plot_{keyword_str}_pca")
+    fig_sil = SIL.silhouette_graph(reduced, cluster_rng)
+    fig_sil.savefig(f"{filepath_str}/sil_plot_{keyword_str}")
     print("doing js:")
-    fig_js = JS.create_js_plot(pca_reduced, cluster_rng)
-    fig_js.savefig(f"cluster_evaluations/{subdir}/js_plot_{keyword_str}_pca")
+    fig_js = JS.create_js_plot(reduced, cluster_rng)
+    fig_js.savefig(f"{filepath_str}/js_plot_{keyword_str}")
 
 
 
 
 
-    
+region = R.ROI_2
 
-lon_range = R.ROI_3["lon_range"]
-lat_range = R.ROI_3["lat_range"]
-ROI = R.ROI_3["ROI"]
+lon_range = region["lon_range"]
+lat_range = region["lat_range"]
+ROI = region["ROI"]
 
 lon_str = f"lon_{lon_range[0]}-{lon_range[1]}"
 
@@ -75,7 +81,7 @@ cluster_rng = [2, 12]
 
 
 exp1Config = TY.mappingConfig(
-        keywords = ["NH3", "PCld"],
+        keywords = ["AOI", "CI"],
         ROI = ROI,
         latRng = lat_range,
         lngRng = lon_range

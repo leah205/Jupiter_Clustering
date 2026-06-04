@@ -84,7 +84,7 @@ def create_plots_figure(config: T.mappingConfig, pred, input_arr, reshaped_pred,
     cmap = ListedColormap(colors[:n_comp])
     fig, axis = pl.subplots(3, 1)
     MP.plot_cluster_patch(config, reshaped_pred, cmap, axis[0], n_comp,  fig)
-    PL.create_cluster_plot(axis[1],  config.keywords, 0, 1, input_arr, pred,  n_comp, config.latRng, config.lngRng, cmap, config.cm_num)
+    PL.create_cluster_plot(axis[1],  config.keywords, 0, 1, input_arr, pred,  n_comp, cmap)
     PL.create_cluster_plot(axis[2],  config.keywords, 2, 3, input_arr, pred,  n_comp, cmap)
     fig.suptitle(f"{title}", fontsize = 10) 
 
@@ -105,7 +105,7 @@ def create_file_prefix(c: T.clusterConfig, m: T.mappingConfig):
     #prob_str = ("_p" + str(config.threshold)) if cf["soft_clustering"] else ""
     pca_dir = ("PCA/") if c.isPca else ""
     thresh_dir = (f"{c.threshold_type}_{c.threshold}/") if cf["soft_clustering"] else ""
-    lon_str = f"lon_{360 - m.lngRng[0]}-{360 - m.lngRng[1]}"
+    lon_str = f"lon_{360 - m.lngRng[1]}-{360 - m.lngRng[0]}"
     save_path = Path(f'{cf["output"]}/{lon_str}/{keyword_str}/{pca_dir}{c.n_comp}_cl/{thresh_dir}{date}_{keyword_str}_{lat_lon_str}_{c.n_comp}_sys_{m.cm_num}_')
     save_path.parent.mkdir(parents = True, exist_ok = True)
     return save_path
