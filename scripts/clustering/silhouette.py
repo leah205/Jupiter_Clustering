@@ -18,7 +18,7 @@ def SelBest(arr:list, X:int)->list:
     return arr[dx]
 
 
-def silhouette_graph(X, n_range, sample_size = 10000):
+def silhouette_graph(X, n_range, sample_size = 5000):
     n_clusters=np.arange(n_range[0], n_range[1])
     sils=[]
     sils_err=[]

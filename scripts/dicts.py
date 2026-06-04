@@ -1,5 +1,13 @@
 from matplotlib.colors import ListedColormap, LinearSegmentedColormap
 
+# regions of interest
+
+
+
+
+
+
+
 keyword_dict = {
     "NH3": "Ammonia Mole Fraction (ppm)",
     "PCld": "Cloud Pressure (mb)",

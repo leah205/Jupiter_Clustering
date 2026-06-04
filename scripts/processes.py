@@ -11,6 +11,7 @@ import config.config as cf
 import scripts.types as TY
 import scripts.plots.mapping as MP
 import scripts.dicts as D
+import scripts.regions as R
 
 
 
@@ -74,15 +75,6 @@ def run_full_pipeline(config: TY.pipelineConfig):
 
 
 
-ROI={"Hot Spot":[82,83,14.0,2.0],
-                     "Gyre":[84,86,15.0,3.0],
-                     "Cloud Plume":[82,84,5.0,3.0],
-                     "Reference":[76,78,15,4.0]} 
-lon_range = [0, 30]
-lat_range = [0, 15]
-
-lon_range = [360 - lon_range[1], 360 - lon_range[0]]
-lat_range = [90 - lat_range[1], 90 - lat_range[0]]
 
 
 
@@ -107,21 +99,11 @@ lat_range = [90 - lat_range[1], 90 - lat_range[0]]
 
 
 
+region = R.ROI_2
 
-
-# @dataclass
-# class pipelineConfig:
-#     keywords: list[str]
-#     latRng: list[int]
-#     lngRng: list[int]
-#     n_comp: int
-#     ROI: dict = field(default_factory=dict)
-#     cov_type: str = "full"
-#     cm_num: int = 1
-#     threshold: float = 0.95
-#     threshold_type: str = "mahalanobis"
-#     isPca: bool = False
-
+ROI = region["ROI"]
+lon_range = [360 - region["lon_range"][1], 360 - region["lon_range"][0]]
+lat_range = [90 - region["lat_range"][1], 90 - region["lat_range"][0]]
 
 exp1Config = TY.pipelineConfig(
     map = TY.mappingConfig(
@@ -133,10 +115,7 @@ exp1Config = TY.pipelineConfig(
     cluster = TY.clusterConfig(
         n_comp = 6
     )
-
 )
-
-
 
 
 run_full_pipeline(exp1Config)

@@ -3,27 +3,35 @@ import scripts.clustering.silhouette as SIL
 import scripts.clustering.gmm_distance as JS
 import scripts.preprocessing.preprocessing as pre
 import scripts.pca as PCA
+import scripts.regions as R
+import scripts.types as TY
+import scripts.dicts as D
+from pathlib import Path
 
 
-def raw_evaluation_pipeline(subdir, keywords, param_ranges, 
-                           latRng = [85, 95], lngRng = [230, 330], 
+def raw_evaluation_pipeline(subdir, mapConfig, 
                            cluster_rng = [2, 10],
-                            cm_num = 1):
-    
-    [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
+                            ):
+    print(mapConfig)
+    keywords = mapConfig.keywords
+    param_ranges = [D.ranges_dict.get(keyword, [0, 1]) for keyword in keywords]
+    [input_arr, subset_shape] = pre.get_input_array(mapConfig, param_ranges)
     pix_arr = input_arr[:, 0: len(keywords)] 
+    
+    keyword_str = "_".join(keywords)
+    filepath_str = f"cluster_evaluations/{subdir}/{keyword_str}"
+    filepath = Path(filepath_str)
+    filepath.mkdir(parents=True, exist_ok=True)
   
     print("doing bic:")
     fig_bic  = BIC.create_bic_plot(pix_arr, cluster_rng)
+    fig_bic.savefig(f"{filepath_str}/BIC_plot_{keyword_str}")
     print("doing sil:")
     fig_sil = SIL.silhouette_graph(pix_arr, cluster_rng)
+    fig_sil.savefig(f"{filepath_str}/sil_plot_{keyword_str}")
     print("doing js:")
     fig_js = JS.create_js_plot(pix_arr, cluster_rng)
-    keyword_str = "_".join(keywords)
-
-    fig_bic.savefig(f"cluster_evaluations/{subdir}/BIC_plot_{keyword_str}")
-    fig_sil.savefig(f"cluster_evaluations/{subdir}/sil_plot_{keyword_str}")
-    fig_js.savefig(f"cluster_evaluations/{subdir}/js_plot_{keyword_str}")
+    fig_js.savefig(f"{filepath_str}/js_plot_{keyword_str}")
 
 def pca_evaluation_pipeline(subdir, keywords, param_ranges, 
                            latRng = [85, 95], lngRng = [230, 330], 
@@ -51,15 +59,30 @@ def pca_evaluation_pipeline(subdir, keywords, param_ranges,
 
     
 
-lon_range = [0, 30]
-lat_range = [0, 15]
+lon_range = R.ROI_3["lon_range"]
+lat_range = R.ROI_3["lat_range"]
+ROI = R.ROI_3["ROI"]
+
+lon_str = f"lon_{lon_range[0]}-{lon_range[1]}"
+
+
+
 
 lon_range = [360 - lon_range[1], 360 - lon_range[0]]
 lat_range = [90 - lat_range[1], 90 - lat_range[0]]
 
 cluster_rng = [2, 12]
 
-#raw_evaluation_pipeline("20251016UTc/lon_0-30", ["NH3", "PCld"], [[0, 300], [1000,  3200]], lat_range, lon_range, cluster_rng, 1)
+
+exp1Config = TY.mappingConfig(
+        keywords = ["NH3", "PCld"],
+        ROI = ROI,
+        latRng = lat_range,
+        lngRng = lon_range
+        )
+
+
+raw_evaluation_pipeline(f"20251016UTc/{lon_str}", exp1Config, cluster_rng)
 # raw_evaluation_pipeline("20251016UTc/lon_0-30", ["AOI", "CI"], [[0.1, 0.4], [0.4, 0.8]], lat_range, lon_range, cluster_rng, 1)
 # pca_evaluation_pipeline("20251016UTc/lon_0-30", ["275", "395", "502", "619", "631", "645", "673", "727", "889"], 
 #                  [[0, 1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1]], lat_range, lon_range, cluster_rng, 1)
@@ -69,5 +92,5 @@ cluster_rng = [2, 12]
 
 #pca_evaluation_pipeline("20251016UTc/lon_0-30", ["NH3", "PCld", "AOI", "CI"], [[0, 300], [1000,  3000], [0.1, 0.4], [0.4, 0.8]], lat_range, lon_range, cluster_rng, 1)
 
-raw_evaluation_pipeline("20251016UTc/lon_0-30", [ "619", "631", "645"], 
-                 [[0, 1], [0,  1], [0,  1]], lat_range, lon_range, cluster_rng, 1)
+# raw_evaluation_pipeline("20251016UTc/lon_0-30", [ "619", "631", "645"], 
+#                  [[0, 1], [0,  1], [0,  1]], lat_range, lon_range, cluster_rng, 1)
