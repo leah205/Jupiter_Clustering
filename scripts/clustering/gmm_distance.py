@@ -1,8 +1,6 @@
 import numpy as np
 from sklearn.mixture import GaussianMixture as GMM
-from sklearn.model_selection import GridSearchCV
 import scripts.preprocessing.preprocessing as pre
-import scripts.clustering.clusters as CL 
 import pylab as plt
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split

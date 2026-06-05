@@ -1,17 +1,16 @@
 
 import numpy as np
 import scripts.preprocessing.preprocessing as pre
-import scripts.plotting_processes as PLP
+import scripts.plots.plotting_processes as PLP
 import scripts.clustering.clusters as CL 
 import scripts.posterior_prob as PP
 import scripts.cluster_stats as STAT
 import scripts.pca as PCA
 from dataclasses import dataclass, field
 import config.config as cf
-import scripts.types as TY
+import config.types as TY
 import scripts.plots.mapping as MP
-import scripts.dicts as D
-import scripts.regions as R
+import config.dicts as D
 
 
 
@@ -99,15 +98,15 @@ def run_full_pipeline(config: TY.pipelineConfig):
 
 
 
-region = R.ROI_2
+# region = R.ROI_2
 
-ROI = region["ROI"]
-lon_range = [360 - region["lon_range"][1], 360 - region["lon_range"][0]]
-lat_range = [90 - region["lat_range"][1], 90 - region["lat_range"][0]]
+# ROI = region["ROI"]
+# lon_range = [360 - region["lon_range"][1], 360 - region["lon_range"][0]]
+# lat_range = [90 - region["lat_range"][1], 90 - region["lat_range"][0]]
 
 exp1Config = TY.pipelineConfig(
     map = TY.mappingConfig(
-        keywords = ["AOI", "CI"],
+        keywords = ["275", "395", "502", "619", "631", "645", "673", "727", "889"],
         ROI = ROI,
         latRng = lat_range,
         lngRng = lon_range

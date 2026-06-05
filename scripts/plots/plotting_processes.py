@@ -1,20 +1,12 @@
-from astropy.io import fits
+
 import numpy as np
 import scripts.preprocessing.preprocessing as pre
 import scripts.plots.plots as PL
-import scripts.clustering.clusters as CL 
-import scripts.posterior_prob as PP
-from sklearn.metrics import silhouette_score
 from config.config import cf
 import scripts.plots.mapping as MP
-import matplotlib
-from matplotlib.colors import ListedColormap, LinearSegmentedColormap
-from matplotlib import colormaps
-import math
-import scripts.cluster_stats as STAT
 import pylab as pl
 from pathlib import Path
-import scripts.types as T
+import config.types as T
 # red, green, blue, yellow, orange, pink, purple, gray
 colors =[(1, 0.639, 0.639), (0.647, 1, 0.639), (0.639, 0.894, 1), (1, 0.996, 0.639), (1, 0.82, 0.639), (1, 0.639, 0.839), (0.937, 0.639, 1), (0.678, 0.678, 0.678)]
 

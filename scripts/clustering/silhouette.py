@@ -6,7 +6,6 @@ import scripts.preprocessing.preprocessing as pre
 import pylab as plt
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
-#full, tied, diagonal, spherical
 
 
 #silhouette graph

@@ -1,11 +1,7 @@
-import matplotlib.pyplot as plt
-import scripts.preprocessing.preprocessing as pre
+
 from config.config import cf
-from sklearn.metrics import silhouette_score
-import scripts.clustering.clusters as CL
 import numpy as np
-from scipy.stats import gaussian_kde
-import scripts.dicts as D
+import config.dicts as D
 from scipy import linalg
 import matplotlib as mpl
 from scipy.stats import chi2

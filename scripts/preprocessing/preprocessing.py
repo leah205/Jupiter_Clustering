@@ -1,7 +1,6 @@
 
 from os import listdir
 from astropy.io import fits
-#from reproject import reproject_interp
 import numpy as np
 from astropy.wcs import WCS
 import time

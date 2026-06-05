@@ -1,20 +1,13 @@
 from sklearn.mixture import GaussianMixture as GMM
 import matplotlib
-import matplotlib.pyplot as plt
-from astropy.io import fits
-#from scripts.preprocessing.preprocessing import get_filtered_pix_arr, subset_map, get_parameter_2d_array, get_map_shape
-import scripts.preprocessing.preprocessing as pre
-#import scripts.preprocessing.mapping as mp
 matplotlib.use('Agg')
-from sklearn.metrics import silhouette_score
 from config.config import cf
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
-import scripts.cluster_stats as STAT
 import numpy as np
 from scipy.stats import chi2
 from scipy.spatial.distance import mahalanobis
-import scripts.types as T
+import config.types as T
 
 import scripts.pca as PCA
 

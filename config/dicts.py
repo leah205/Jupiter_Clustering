@@ -5,7 +5,24 @@ from matplotlib.colors import ListedColormap, LinearSegmentedColormap
 
 
 
-
+clusterings = [
+    {
+        "dims": ["NH3", "PCld"],
+        "PCA": False
+    },
+    {
+        "dims": ["NH3", "PCld", "AOI", "CI"],
+        "PCA": False
+    },
+    {
+        "dims": ["AOI", "CI"],
+        "PCA": False
+    },
+    {
+        "dims": ["275", "395", "502", "619", "631", "645", "673", "727", "889"],
+        "PCA": True
+    },
+]
 
 
 keyword_dict = {

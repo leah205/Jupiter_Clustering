@@ -1,15 +1,10 @@
 
 import numpy as np
 from sklearn.mixture import GaussianMixture as GMM
-from sklearn import metrics
 from sklearn.model_selection import GridSearchCV
 import pandas as pd
 import scripts.preprocessing.preprocessing as pre
-import scripts.clustering.clusters as CL 
-import pylab as plt
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import StandardScaler
-#full, tied, diagonal, spherical
+
 
 def gmm_bic_score(estimator, X):
     return estimator.bic(X)

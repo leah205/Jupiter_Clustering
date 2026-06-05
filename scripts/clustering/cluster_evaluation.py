@@ -3,9 +3,8 @@ import scripts.clustering.silhouette as SIL
 import scripts.clustering.gmm_distance as JS
 import scripts.preprocessing.preprocessing as pre
 import scripts.pca as PCA
-import scripts.regions as R
-import scripts.types as TY
-import scripts.dicts as D
+import config.types as TY
+import config.dicts as D
 from pathlib import Path
 
 
@@ -63,7 +62,7 @@ def pca_evaluation_pipeline(subdir, mapConfig,
 
 
 
-region = R.ROI_2
+region = R.ROI_3
 
 lon_range = region["lon_range"]
 lat_range = region["lat_range"]
@@ -81,14 +80,14 @@ cluster_rng = [2, 12]
 
 
 exp1Config = TY.mappingConfig(
-        keywords = ["AOI", "CI"],
+        keywords = ["275", "395", "502", "619", "631", "645", "673", "727", "889"],
         ROI = ROI,
         latRng = lat_range,
         lngRng = lon_range
         )
 
 
-raw_evaluation_pipeline(f"20251016UTc/{lon_str}", exp1Config, cluster_rng)
+pca_evaluation_pipeline(f"20251016UTc/{lon_str}", exp1Config, cluster_rng)
 # raw_evaluation_pipeline("20251016UTc/lon_0-30", ["AOI", "CI"], [[0.1, 0.4], [0.4, 0.8]], lat_range, lon_range, cluster_rng, 1)
 # pca_evaluation_pipeline("20251016UTc/lon_0-30", ["275", "395", "502", "619", "631", "645", "673", "727", "889"], 
 #                  [[0, 1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1]], lat_range, lon_range, cluster_rng, 1)

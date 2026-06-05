@@ -1,15 +1,8 @@
-from astropy.io import fits
+
 import numpy as np
-import pylab as pl
-import scripts.preprocessing.preprocessing as pre
-import scripts.plots.plots as plots
-import scripts.clustering.clusters as CL 
-from sklearn.metrics import silhouette_score
 from matplotlib import colors
-from mpl_toolkits.axes_grid1 import make_axes_locatable
-import matplotlib.patches as patches
 from matplotlib.lines import Line2D
-import scripts.dicts as D
+import config.dicts as D
 
 
 

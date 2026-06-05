@@ -1,14 +1,11 @@
 
 import numpy as np
-import scripts.preprocessing.preprocessing as pre
-import scripts.plots.plots as PL
-import scripts.clustering.clusters as CL 
-from sklearn.metrics import silhouette_score
 import scripts.plots.mapping as MP
 import math
 import pylab as pl
-import scripts.plotting_processes as PLP
-import scripts.types as T
+import config.types as T
+
+
 # red, green, blue, yellow, orange, pink, purple, gray
 colors =[(1, 0.639, 0.639), (0.647, 1, 0.639), (0.639, 0.894, 1), (1, 0.996, 0.639), (1, 0.82, 0.639), (1, 0.639, 0.839), (0.937, 0.639, 1), (0.678, 0.678, 0.678)]
 
