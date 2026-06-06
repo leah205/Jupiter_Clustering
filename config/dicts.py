@@ -5,7 +5,7 @@ from matplotlib.colors import ListedColormap, LinearSegmentedColormap
 
 
 
-clusterings = [
+eval_runs = [
     {
         "dims": ["NH3", "PCld"],
         "PCA": False
@@ -23,6 +23,30 @@ clusterings = [
         "PCA": True
     },
 ]
+
+cluster_runs = [
+    {
+        "dims": ["NH3", "PCld"],
+        "PCA": False,
+        "comps":  [4, 5, 6]
+    },
+    {
+        "dims": ["NH3", "PCld", "AOI", "CI"],
+        "PCA": False,
+        "comps": [4, 5, 6]
+    },
+    {
+        "dims": ["AOI", "CI"],
+        "PCA": False,
+        "comps": [4, 5, 6]
+    },
+    {
+        "dims": ["275", "395", "502", "619", "631", "645", "673", "727", "889"],
+        "PCA": True,
+        "comps": [4, 5, 6]
+    },
+]
+
 
 
 keyword_dict = {
@@ -43,7 +67,7 @@ color_dict = {
 }
 
 ranges_dict = {
-    "NH3": [0, 300],
+    "NH3": [0, 400],
     "PCld": [1000, 3100],
     "AOI": [0.1, 0.4],
     "CI": [0.3, 0.8],

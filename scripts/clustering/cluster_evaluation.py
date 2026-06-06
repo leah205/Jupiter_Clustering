@@ -8,7 +8,7 @@ import config.dicts as D
 from pathlib import Path
 
 
-def raw_evaluation_pipeline(subdir, mapConfig, 
+def raw_evaluation_pipeline(mapConfig, 
                            cluster_rng = [2, 10],
                             ):
   
@@ -16,9 +16,10 @@ def raw_evaluation_pipeline(subdir, mapConfig,
     param_ranges = [D.ranges_dict.get(keyword, [0, 1]) for keyword in keywords]
     [input_arr, subset_shape] = pre.get_input_array(mapConfig, param_ranges)
     pix_arr = input_arr[:, 0: len(keywords)] 
+  
     
     keyword_str = "_".join(keywords)
-    filepath_str = f"cluster_evaluations/{subdir}/{keyword_str}"
+    filepath_str = f"cluster_evaluations/{mapConfig.source}/{mapConfig.name}/{keyword_str}"
     filepath = Path(filepath_str)
     filepath.mkdir(parents=True, exist_ok=True)
   
@@ -32,7 +33,7 @@ def raw_evaluation_pipeline(subdir, mapConfig,
     fig_js = JS.create_js_plot(pix_arr, cluster_rng)
     fig_js.savefig(f"{filepath_str}/js_plot_{keyword_str}")
 
-def pca_evaluation_pipeline(subdir, mapConfig, 
+def pca_evaluation_pipeline(mapConfig, 
                            cluster_rng = [2, 10],
                             ):
     keywords = mapConfig.keywords
@@ -42,7 +43,7 @@ def pca_evaluation_pipeline(subdir, mapConfig,
     reduced, obj, scaler = PCA.get_pca_comp(input_arr[:, 0:len(keywords)])
     
     keyword_str = "_".join(keywords)
-    filepath_str = f"cluster_evaluations/{subdir}/{keyword_str}"
+    filepath_str = f"cluster_evaluations/{mapConfig.source}/{mapConfig.name}/{keyword_str}"
     filepath = Path(filepath_str)
     filepath.mkdir(parents=True, exist_ok=True)
 
@@ -62,32 +63,32 @@ def pca_evaluation_pipeline(subdir, mapConfig,
 
 
 
-region = R.ROI_3
+# region = R.ROI_3
 
-lon_range = region["lon_range"]
-lat_range = region["lat_range"]
-ROI = region["ROI"]
+# lon_range = region["lon_range"]
+# lat_range = region["lat_range"]
+# ROI = region["ROI"]
 
-lon_str = f"lon_{lon_range[0]}-{lon_range[1]}"
-
-
+# lon_str = f"lon_{lon_range[0]}-{lon_range[1]}"
 
 
-lon_range = [360 - lon_range[1], 360 - lon_range[0]]
-lat_range = [90 - lat_range[1], 90 - lat_range[0]]
-
-cluster_rng = [2, 12]
 
 
-exp1Config = TY.mappingConfig(
-        keywords = ["275", "395", "502", "619", "631", "645", "673", "727", "889"],
-        ROI = ROI,
-        latRng = lat_range,
-        lngRng = lon_range
-        )
+# lon_range = [360 - lon_range[1], 360 - lon_range[0]]
+# lat_range = [90 - lat_range[1], 90 - lat_range[0]]
+
+# cluster_rng = [2, 12]
 
 
-pca_evaluation_pipeline(f"20251016UTc/{lon_str}", exp1Config, cluster_rng)
+# exp1Config = TY.mappingConfig(
+#         keywords = ["275", "395", "502", "619", "631", "645", "673", "727", "889"],
+#         ROI = ROI,
+#         latRng = lat_range,
+#         lngRng = lon_range
+#         )
+
+
+# pca_evaluation_pipeline(f"20251016UTc/{lon_str}", exp1Config, cluster_rng)
 # raw_evaluation_pipeline("20251016UTc/lon_0-30", ["AOI", "CI"], [[0.1, 0.4], [0.4, 0.8]], lat_range, lon_range, cluster_rng, 1)
 # pca_evaluation_pipeline("20251016UTc/lon_0-30", ["275", "395", "502", "619", "631", "645", "673", "727", "889"], 
 #                  [[0, 1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1]], lat_range, lon_range, cluster_rng, 1)

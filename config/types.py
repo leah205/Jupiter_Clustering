@@ -13,8 +13,11 @@ class mappingConfig:
     keywords: list[str]
     latRng: list[int]
     lngRng: list[int]
+    name: str
+    source: str
     ROI: dict = field(default_factory=dict)
     cm_num: int = 1
+    
 
 
 @dataclass

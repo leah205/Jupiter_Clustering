@@ -104,21 +104,21 @@ def run_full_pipeline(config: TY.pipelineConfig):
 # lon_range = [360 - region["lon_range"][1], 360 - region["lon_range"][0]]
 # lat_range = [90 - region["lat_range"][1], 90 - region["lat_range"][0]]
 
-exp1Config = TY.pipelineConfig(
-    map = TY.mappingConfig(
-        keywords = ["275", "395", "502", "619", "631", "645", "673", "727", "889"],
-        ROI = ROI,
-        latRng = lat_range,
-        lngRng = lon_range
-        ),
-    cluster = TY.clusterConfig(
-        n_comp = 4,
+# exp1Config = TY.pipelineConfig(
+#     map = TY.mappingConfig(
+#         keywords = ["NH3", "PCld"],
+#         ROI = {},
+#         latRng = lat_range,
+#         lngRng = lon_range
+#         ),
+#     cluster = TY.clusterConfig(
+#         n_comp = 4,
       
 
-    )
-)
+#     )
+# )
 
 
-run_full_pipeline(exp1Config)
+# run_full_pipeline(exp1Config)
 
 

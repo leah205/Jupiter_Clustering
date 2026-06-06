@@ -8,6 +8,7 @@ from config.config import cf
 
 def get_radiance_arr(file):
     hdul = fits.open(file)
+    
     return hdul[0].data
 
 def get_wcs(file):
@@ -66,7 +67,7 @@ def get_file_path(keyword, dir):
         if keyword in f:
             return dir + "/" + f
            
-def get_parameter_2d_array(keyword_arr):
+def get_parameter_2d_array(keyword_arr, dir_path):
     '''
     Builds parameter array within lon/lat range of pixel radiances for specified keywords
 
@@ -87,10 +88,11 @@ def get_parameter_2d_array(keyword_arr):
     ------------
     '''
 
-    dir_path = cf["input"]
+  
     file_name_arr = []
     for keyword in keyword_arr:
         file = get_file_path(keyword, dir_path)
+       
         file_name_arr.append(file)
 
     ''' radiances_arr = []
@@ -104,20 +106,20 @@ def get_parameter_2d_array(keyword_arr):
 
     return radiances_arr'''
     radiances = get_radiances(file_name_arr)
-    
+   
     return radiances
 
-def get_map_shape(keyword, latLims, longLims):
-      dir_path = cf["input"]
-      file = get_file_path(keyword, dir_path)
-      radiance_arr = get_radiance_arr(file)
-      return subset_map(radiance_arr, latLims, longLims).shape
+# def get_map_shape(keyword, latLims, longLims, dir_path):
+      
+#       file = get_file_path(keyword, dir_path)
+#       radiance_arr = get_radiance_arr(file)
+#       return subset_map(radiance_arr, latLims, longLims).shape
 
 
-def get_patch(keyword, latLims, lngLims, cm_num):
+def get_patch(keyword, latLims, lngLims, cm_num, dir_path):
     
 
-    file = get_file_path(keyword, cf["input"])
+    file = get_file_path(keyword, dir_path)
     CM = 0 if cm_num == 0 else get_cm(file, cm_num)
     radiance_arr = get_radiance_arr(file)
     return subset_map(radiance_arr, latLims, lngLims, CM)
@@ -214,9 +216,9 @@ def subset_map(map, LatLims, LonLims,  CM):
 
     return patch    
 
-def get_date(keywords):
+def get_date(keywords, dir_name):
     seconds_past = 0
-    first_file = file = get_file_path(keywords[0], cf["input"])
+    first_file = file = get_file_path(keywords[0], dir_name)
     hdr = fits.open(file)[0].header
     first_date_str = hdr["DATE-OBS"][11:19]
     return hdr["DATE-OBS"][0:19]
@@ -257,10 +259,13 @@ def get_input_array(config, param_ranges,
     numpy array with axis 0 as pixels within lon/lat range and axis 1 as parameter pixel radiances and index,
     filtered with rangeArr
     '''
-    radiances_arr = get_parameter_2d_array(config.keywords)
+    dir_path =  f"{cf["input"]}/{config.source}"
+    radiances_arr = get_parameter_2d_array(config.keywords, dir_path)
+  
 
     subpatches = []
-    first_file = get_file_path(config.keywords[0], cf["input"])
+    first_file = get_file_path(config.keywords[0], dir_path)
+    
 
     CM = 0 if config.cm_num == 0 else get_cm(first_file, config.cm_num)
     subset_shape = (0,0)
@@ -275,7 +280,7 @@ def get_input_array(config, param_ranges,
     pix_arr = np.column_stack(subpatches)
     pix_arr = get_mapped_pix_arr(pix_arr)
     pix_arr = get_filtered_pix_arr(param_ranges, pix_arr)
-  
+    
   
     return [pix_arr, subset_shape]
     

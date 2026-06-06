@@ -125,21 +125,21 @@ def run_pca_pipeline(data, config):
     [pca_reduced, pca_obj, scaler] = PCA.get_pca_comp(data)
     res = create_clusters(pca_reduced, config)
     means = pca_obj.inverse_transform(res["means"])
-    means = scaler.inverse_transform(res["means"])
+    means = scaler.inverse_transform(means)
 
     scales = scaler.scale_
-    D = np.diag(scales)
-    pca_cov = np.array([
-    D @ cov @ D for cov in res["covariances"]
-    ])
+    # D = np.diag(scales)
+    # pca_cov = np.array([
+    # D @ cov @ D for cov in res["covariances"]
+    # ])
     
 
     return {
-        "pred": res.pred,
-        "probs": res.probs,
+        "pred": res["pred"],
+        "probs": res["probs"],
         "means": means,
         "pca_obj": pca_obj,
-        "covariances": pca_cov
+        "covariances": res["covariances"]
     }
    
 
