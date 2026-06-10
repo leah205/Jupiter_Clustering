@@ -3,6 +3,8 @@ import numpy as np
 import scripts.preprocessing.preprocessing as pre
 import matplotlib.pyplot as plt
 import seaborn as sns
+from config.config import cf
+import csv
 
 
 keyword_dict = {
@@ -31,7 +33,7 @@ def get_stat(cluster_arr, dim_arr, indices, n_clusters, dim_name):
         List of mean and standard deviation pairs of each cluster in the dimension
     '''
     # skip -1
-    res = []
+    res = {}
     for i in range(n_clusters):
         cluster_mask = cluster_arr == i
        
@@ -43,10 +45,14 @@ def get_stat(cluster_arr, dim_arr, indices, n_clusters, dim_name):
         mean = np.mean(clustered_dim)
         std = np.std(clustered_dim)
         print(f"{dim_name}: Cluster {i} mean: {mean:.2f}, std: {std:.2f} ")
-        res.append([mean, std ])
+        res[f"{i + 1}"] = {
+            "mean": str(mean),
+            "standard deviation": str(std)
+        }
+       
     return res
 
-def get_all_stats(pred, keywords, indices, n_comp, latRng, lngRng, cm_num):
+def get_all_stats(pred, indices, n_comp, m):
     '''
     Purpose: Preprocesses data and passes it into a function to generate list of means and standard deviations for the clusters
 
@@ -64,17 +70,20 @@ def get_all_stats(pred, keywords, indices, n_comp, latRng, lngRng, cm_num):
 
     
     '''
+    dir_path = f"{cf["input"]}/{m.source}"
+
     cluster_arr = np.array(pred)
     indices = indices.astype(np.int64)
     if(not (cluster_arr.shape == indices.shape) and cluster_arr.ndim == 1):
         raise TypeError("Index array length must match cluster array length")
     
-    res = []
-    for key in keywords:
-        map =  pre.get_patch(key, latRng, lngRng, cm_num)
+    res = {}
+    for key in m.keywords:
+        map =  pre.get_patch(key, m.latRng, m.lngRng, m.cm_num, dir_path)
         dim_arr = map.flatten()
-        res.append(get_stat(cluster_arr, dim_arr, indices, n_comp, key))
-    return np.array(res)
+        res[key] = get_stat(cluster_arr, dim_arr, indices, n_comp, key)
+    print(res)
+    return res
     
 def reassign_clusters(pred, stats, param_ranges):
     """

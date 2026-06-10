@@ -22,6 +22,7 @@ def get_lat_range(rng):
 def run_all_eval_ROI(r):
     if(r["GMM"]):
         return
+  
     lat_range = get_lat_range(r["PG Lat Rng"])
     lng_range = list(map(int, r['Sys 1 Long Rng'].split("-")))
     lng_range = [360 - lng_range[1], 360 - lng_range[0]]
@@ -29,12 +30,9 @@ def run_all_eval_ROI(r):
     ROI = ast.literal_eval(r['ROI Dict'].split("=")[1])
     source = r["Data Source"]
 
-    if(not "f-NEZ-West" in r["Name"]):
-        return
+    
 
     for cl_info in D.cluster_runs:
-
-        
         mapConfig =  T.mappingConfig(
         keywords = cl_info["dims"],
         ROI = ROI,
@@ -61,6 +59,5 @@ def run_all_eval_ROI(r):
        
     
 regions_data = pd.read_csv("regions.csv")
-print(regions_data.columns)
 
 regions_data.apply(run_all_eval_ROI, axis = 1)

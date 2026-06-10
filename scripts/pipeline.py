@@ -7,10 +7,12 @@ import scripts.posterior_prob as PP
 import scripts.cluster_stats as STAT
 import scripts.pca as PCA
 from dataclasses import dataclass, field
-import config.config as cf
+from config.config import cf
 import config.types as TY
 import scripts.plots.mapping as MP
 import config.dicts as D
+import json
+
 
 
 
@@ -55,6 +57,19 @@ def run_full_pipeline(config: TY.pipelineConfig):
     centroids_fig.savefig(f"{prefix}centroids.png")
     map_fig = PLP.create_cluster_map(config.map, reshaped_pred, title)
     map_fig.savefig(f"{prefix}cluster_map.png")
+    keyword_str = '_'.join(keywords)
+    
+    stats =  STAT.get_all_stats(pred, indices, config.cluster.n_comp, config.map)
+    with open(f"{cf["json"]}") as f:
+        data = json.load(f)
+        dim_obj = (data
+            .setdefault(config.map.name, {})
+            .setdefault(keyword_str, {}))
+        dim_obj[str(config.cluster.n_comp)] = stats
+
+    with open(f"{cf["json"]}", "w") as f:
+        json.dump(data, f, indent=2)
+    
 
    
     uncertainty_fig = PP.create_uncertainty_fig(config.map, probs, indices, subset_shape, title)
