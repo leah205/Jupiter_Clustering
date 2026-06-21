@@ -4,6 +4,7 @@ import scripts.preprocessing.preprocessing as pre
 import matplotlib.pyplot as plt
 import seaborn as sns
 from config.config import cf
+from sklearn.linear_model import LinearRegression
 import csv
 
 
@@ -48,9 +49,41 @@ def get_stat(cluster_arr, dim_arr, indices, n_clusters, dim_name):
         res[f"{i + 1}"] = {
             "mean": str(mean),
             "standard deviation": str(std)
-        }
+        } 
        
     return res
+
+def get_cluster_regressions(data, probs, n_clusters):
+   
+    res = {}
+    for i in range(n_clusters):
+        print(i)
+        res = res | run_cluster_regression(data, probs, i)
+    print(res)
+    return res
+
+def run_cluster_regression(data, probs,  i):
+    # covariances, and linear regression for NH3/pcld
+    # get correlation
+    # assumes nh3 is index 0, pcld at index 1
+    # only runs if two dimensional
+    print("cluster")
+    print(i)
+    res = {}
+    x, y = data[:, 0].reshape(-1, 1), data[:, 1]
+  
+    m = LinearRegression()
+    m.fit(
+            x, y, sample_weight=probs[:, i]
+    )
+   
+    #coeff_list = list(np.round(m.coef_, 3))
+    # coeoff_strs = [f"{:.3f}".format(coeff) for coeff in coeff_list]
+    return {f"coeff_{i + 1}": f"{m.coef_[0]:.3f}", f"b_{i + 1}": f"{m.intercept_:.3f}" }
+      
+
+    return res
+
 
 def get_all_stats(pred, indices, n_comp, m):
     '''
@@ -82,7 +115,8 @@ def get_all_stats(pred, indices, n_comp, m):
         map =  pre.get_patch(key, m.latRng, m.lngRng, m.cm_num, dir_path)
         dim_arr = map.flatten()
         res[key] = get_stat(cluster_arr, dim_arr, indices, n_comp, key)
-    print(res)
+
+    
     return res
     
 def reassign_clusters(pred, stats, param_ranges):

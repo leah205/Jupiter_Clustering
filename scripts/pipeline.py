@@ -17,6 +17,7 @@ import json
 
 
 
+
 """
 functions to run various clustering --> visualization pipelines
 
@@ -39,7 +40,7 @@ def run_full_pipeline(config: TY.pipelineConfig):
     indices = arr[:, arr.shape[1] - 1]
     data = arr[:, 0:len(keywords)]
     cluster_obj = transform(data, config.cluster)
-    pred, probs, means = cluster_obj["pred"], cluster_obj["probs"], cluster_obj["means"]
+    pred, probs, means, covariances = cluster_obj["pred"], cluster_obj["probs"], cluster_obj["means"], cluster_obj["covariances"]
     reshaped_pred = MP.reshape_clustered(indices, subset_shape, pred)
 
     prefix = PLP.create_file_prefix(config.cluster, config.map)
@@ -59,15 +60,27 @@ def run_full_pipeline(config: TY.pipelineConfig):
     map_fig.savefig(f"{prefix}cluster_map.png")
     keyword_str = '_'.join(keywords)
     
-    stats =  STAT.get_all_stats(pred, indices, config.cluster.n_comp, config.map)
+    stats =  STAT.get_all_stats(pred, indices, config.cluster.n_comp, config.map) 
+    
+    # first keyword is predictor, second is predictee
+    if(len(config.map.keywords) == 2):
+        stats = stats | STAT.get_cluster_regressions(data, probs, config.cluster.n_comp)
+    
+    stats["covariances"] = f"{covariances.tolist()}"
+    print(stats)
+   
+
+
     with open(f"{cf["json"]}") as f:
         data = json.load(f)
         dim_obj = (data
             .setdefault(config.map.name, {})
             .setdefault(keyword_str, {}))
+        
         dim_obj[str(config.cluster.n_comp)] = stats
 
     with open(f"{cf["json"]}", "w") as f:
+        
         json.dump(data, f, indent=2)
     
 
