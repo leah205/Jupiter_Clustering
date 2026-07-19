@@ -126,27 +126,38 @@ def run_full_pipeline(config: TY.pipelineConfig):
 
 
 
-# region = R.ROI_2
+# if __name__ == "__main__":
 
-# ROI = region["ROI"]
-# lon_range = [360 - region["lon_range"][1], 360 - region["lon_range"][0]]
-# lat_range = [90 - region["lat_range"][1], 90 - region["lat_range"][0]]
+#     region = R.ROI_2
+#     ROI = region["ROI"]
 
-# exp1Config = TY.pipelineConfig(
-#     map = TY.mappingConfig(
-#         keywords = ["NH3", "PCld"],
-#         ROI = {},
-#         latRng = lat_range,
-#         lngRng = lon_range
-#         ),
-#     cluster = TY.clusterConfig(
-#         n_comp = 4,
-      
 
+#     lon_range = [360 - region["lon_range"][1], 360 - region["lon_range"][0]]
+#     lat_range = [90 - region["lat_range"][1], 90 - region["lat_range"][0]]
+
+#     exp1Config = TY.pipelineConfig(
+#         map = TY.mappingConfig(
+#             keywords = ["NH3", "PCld"],
+#             ROI = {},
+#             latRng = lat_range,
+#             lngRng = lon_range
+#             source="2025"
+#             ),
+#         cluster = TY.clusterConfig(
+#             n_comp = 4,
+#         )
 #     )
-# )
 
 
-# run_full_pipeline(exp1Config)
+#     run_full_pipeline(exp1Config)
+
+
+
+
+
+
+
+
+
 
 

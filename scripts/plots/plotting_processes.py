@@ -34,13 +34,17 @@ Parameters
 
 """
 
+def get_dir_path(config):
+    return f"{cf["input"]}/{config.source}/{cf["sys"]}"
+
+
 def create_map_comp_figure(config: T.mappingConfig, reshaped_pred, title):
     n_comp = np.unique(reshaped_pred).shape[0] - 1
     dim1, dim2 = config.keywords[0], config.keywords[1]
     cmap = ListedColormap(colors[:n_comp])
     fig2, axis2 = pl.subplots(3, 1, constrained_layout = True)
 
-    dir_path = f"{cf["input"]}/{config.source}"
+    dir_path = get_dir_path(config)
     map1 = pre.get_patch(dim1, config.latRng, config.lngRng, config.cm_num, dir_path)
     map2 = pre.get_patch(dim2, config.latRng, config.lngRng, config.cm_num, dir_path)
 
@@ -94,7 +98,7 @@ def create_cluster_map(config: T.mappingConfig, reshaped_pred, title):
     return fig
 
 def create_file_prefix(c: T.clusterConfig, m: T.mappingConfig):
-    dir_name = f"{cf["input"]}/{m.source}"
+    dir_name = f"{cf["input"]}/{m.source}/{cf["sys"]}"
     date = pre.get_date(m.keywords, dir_name)
     lat_lon_str = f'{90 - m.latRng[1]}-{90 - m.latRng[0]}_{360 - m.lngRng[1]}-{ 360 - m.lngRng[0]}'
     keyword_str = '_'.join(m.keywords)

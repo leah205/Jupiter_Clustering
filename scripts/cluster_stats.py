@@ -103,7 +103,7 @@ def get_all_stats(pred, indices, n_comp, m):
 
     
     '''
-    dir_path = f"{cf["input"]}/{m.source}"
+    dir_path = f"{cf["input"]}/{m.source}/{cf["sys"]}"
 
     cluster_arr = np.array(pred)
     indices = indices.astype(np.int64)

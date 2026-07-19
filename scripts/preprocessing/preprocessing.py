@@ -63,8 +63,11 @@ def get_radiances(file_arr):
 
 
 def get_file_path(keyword, dir):
+    print(keyword)
+    print(dir)
     for f in listdir(dir):
-        if keyword in f:
+        if keyword in f: print(f)
+        if keyword in f and ".fits" in f:
             return dir + "/" + f
            
 def get_parameter_2d_array(keyword_arr, dir_path):
@@ -95,16 +98,16 @@ def get_parameter_2d_array(keyword_arr, dir_path):
        
         file_name_arr.append(file)
 
-    ''' radiances_arr = []
-    if(is_files_aligned(np.array(file_name_arr)) == False):
-        get_align_files(np.array(file_name_arr)
-        raise TypeError("files are not mapped to the same coordinates")
+    # ''' radiances_arr = []
+    # if(is_files_aligned(np.array(file_name_arr)) == False):
+    #     get_align_files(np.array(file_name_arr)
+    #     raise TypeError("files are not mapped to the same coordinates")
 
-    for file_name in file_name_arr:
-        radiance_arr = get_radiance_arr(file_name)
-        radiances_arr.append(radiance_arr)
+    # for file_name in file_name_arr:
+    #     radiance_arr = get_radiance_arr(file_name)
+    #     radiances_arr.append(radiance_arr)
 
-    return radiances_arr'''
+    # return radiances_arr'''
     radiances = get_radiances(file_name_arr)
    
     return radiances
@@ -259,7 +262,7 @@ def get_input_array(config, param_ranges,
     numpy array with axis 0 as pixels within lon/lat range and axis 1 as parameter pixel radiances and index,
     filtered with rangeArr
     '''
-    dir_path =  f"{cf["input"]}/{config.source}"
+    dir_path =  f"{cf["input"]}/{config.source}/{cf["sys"]}"
     radiances_arr = get_parameter_2d_array(config.keywords, dir_path)
   
 
