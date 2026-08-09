@@ -10,9 +10,9 @@ import pylab as plt
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 #full, tied, diagonal, spherical
-print("yo")
+
+
 def create_bic_plot(pix_arr, n_range = [2, 10], sample_size = 10000):
-  
     n_cluster = np.arange(n_range[0], n_range[1])
     bics = []
     bic_errs = []
@@ -58,10 +58,12 @@ lon_range = [360 - lon_range[1], 360 - lon_range[0]]
 lat_range = [90 - lat_range[1], 90 - lat_range[0]]
 cluster_rng = [2,16]
 
-#run_bic("20251016UTc/lon_0-30", ["NH3", "PCld"], [[0, 300], [1000,  3000]], lat_range, lon_range)
-#run_bic("20251016UTc/lon_0-30", ["AOI", "CI"], [[0.1, 0.4], [0.4, 0.8]], lat_range, lon_range, cluster_rng, 1)
-# run_bic("20251016UTc/lon_0-30", ["275", "395", "502", "619", "631", "645", "673", "727", "889"], 
-#                  [[0, 1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1]], lat_range, lon_range, cluster_rng, 1)
 
- 
+if __name__ == "__main__":
+    run_bic("20251016UTc/lon_0-30", ["NH3", "PCld"], [[0, 300], [1000,  3000]], lat_range, lon_range)
+    run_bic("20251016UTc/lon_0-30", ["AOI", "CI"], [[0.1, 0.4], [0.4, 0.8]], lat_range, lon_range, cluster_rng, 1)
+    run_bic("20251016UTc/lon_0-30", ["275", "395", "502", "619", "631", "645", "673", "727", "889"], 
+                    [[0, 1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1]], lat_range, lon_range, cluster_rng, 1)
+
+    
 

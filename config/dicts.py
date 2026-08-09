@@ -30,16 +30,16 @@ cluster_runs = [
         "PCA": False,
         "comps":  [4, 5, 6]
     },
-    {
-        "dims": ["NH3", "PCld", "AOI", "CI"],
-        "PCA": False,
-        "comps": [4, 5, 6]
-    },
-    {
-        "dims": ["AOI", "CI"],
-        "PCA": False,
-        "comps": [4, 5, 6]
-    },
+    # {
+    #     "dims": ["NH3", "PCld", "AOI", "CI"],
+    #     "PCA": False,
+    #     "comps": [4, 5, 6]
+    # },
+    # {
+    #     "dims": ["AOI", "CI"],
+    #     "PCA": False,
+    #     "comps": [4, 5, 6]
+    # },
     {
         "dims": ["275", "395", "502", "619", "631", "645", "673", "727", "889"],
         "PCA": True,

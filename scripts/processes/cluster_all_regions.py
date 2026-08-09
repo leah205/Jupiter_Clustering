@@ -56,8 +56,7 @@ def run_all_eval_ROI(r):
         
         
 
-       
-    
-regions_data = pd.read_csv("regions.csv")
+if __name__ == "__main__":
+    regions_data = pd.read_csv("regions.csv")
 
-regions_data.apply(run_all_eval_ROI, axis = 1)
+    regions_data.apply(run_all_eval_ROI, axis = 1)

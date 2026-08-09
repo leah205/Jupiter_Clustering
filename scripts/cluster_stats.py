@@ -190,10 +190,3 @@ def get_centroids_figure(keywords, cluster_centroids, title):
     return fig
 
 
-
-
-#def get_all_cluster_stats(cluster_arr, NH3arr, pcldArr, CIarr, AOIarr, index_arr):
-
-#def get_indice_cluster_stats(cluster_arr, ):
-    
-#def get_ammonia_cloud_cluster_stats()

@@ -50,9 +50,10 @@ def run_all_eval_ROI(r):
             EV.pca_evaluation_pipeline(mapConfig)
         else:
             EV.raw_evaluation_pipeline(mapConfig)
-    
-regions_data = pd.read_csv("regions.csv")
-print(regions_data.columns)
 
-regions_data.apply(run_all_eval_ROI, axis = 1)
+if __name__ == "__main__":
+    regions_data = pd.read_csv("regions.csv")
+    print(regions_data.columns)
+
+    regions_data.apply(run_all_eval_ROI, axis = 1)
 
