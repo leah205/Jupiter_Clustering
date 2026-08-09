@@ -30,33 +30,58 @@ functions to run various clustering --> visualization pipelines
 """
 
 def run_full_pipeline(config: TY.pipelineConfig):
+    """
+    Runs clustering according to parameters in config.cluster 
+    and saves maps generated according to config.amp
+
+    Parameters
+    --------------
+    config: instance of pipeline config class
+
+    returns
+    ------------
+    void
+
+    """
     keywords = config.map.keywords
     param_ranges = [D.ranges_dict.get(keyword, [0, 1]) for keyword in keywords]
     
-    
+    # function to cluster
     transform = CL.run_pca_pipeline if config.cluster.isPca else CL.run_raw_pipeline
 
+    # get input numpy array and shape filtered by coordinates and radiance values
     [arr, subset_shape] = pre.get_input_array(config.map, param_ranges)
 
     indices = arr[:, arr.shape[1] - 1]
     data = arr[:, 0:len(keywords)]
+
+    # run clustering function on processed data
     cluster_obj = transform(data, config.cluster)
     pred, probs, means, covariances = cluster_obj["pred"], cluster_obj["probs"], cluster_obj["means"], cluster_obj["covariances"]
+
+    # map cluster outputs to original map shape (within coordinate range)
     reshaped_pred = MP.reshape_clustered(indices, subset_shape, pred)
 
     prefix = PLP.create_file_prefix(config.cluster, config.map)
     title = PLP.create_plot_title(config.cluster, config.map)
     
     if(len(keywords) == 2):
+        # two-d radiance scatter plot
         plot_fig = PLP.create_plot_figure(config.map, pred, arr, reshaped_pred, title, cluster_obj)
         plot_fig.savefig(f"{prefix}plot.png")
+        # comparison of radiances in different filters mapped spatially
         map_comp_fig = PLP.create_map_comp_figure(config.map, reshaped_pred, title)
         map_comp_fig.savefig(f"{prefix}map_comp.png")
     if(len(keywords) == 4):
+        # two 2d radiance scatter plots
         plot_fig = PLP.create_plots_figure(config.map, pred, arr, reshaped_pred, title)
         plot_fig.savefig(f"{prefix}plots.png")
+
+    # heat map for mean value for each cluster for each parameter
     centroids_fig = STAT.get_centroids_figure(keywords, means, title)
     centroids_fig.savefig(f"{prefix}centroids.png")
+
+    # spatial map of clusters
     map_fig = PLP.create_cluster_map(config.map, reshaped_pred, title)
     map_fig.savefig(f"{prefix}cluster_map.png")
     keyword_str = '_'.join(keywords)
@@ -71,7 +96,7 @@ def run_full_pipeline(config: TY.pipelineConfig):
     print(stats)
    
 
-
+    # dump means and standard deviations per cluster per parameter into json
     with open(f"{cf["json"]}") as f:
         data = json.load(f)
         dim_obj = (data
@@ -85,13 +110,16 @@ def run_full_pipeline(config: TY.pipelineConfig):
         json.dump(data, f, indent=2)
     
 
-   
+   # spatial maps for each cluster indicating probability the pixel belongs to that cluster
     uncertainty_fig = PP.create_uncertainty_fig(config.map, probs, indices, subset_shape, title)
     uncertainty_fig.savefig(f"{prefix}uncertainty_map.png")
+
+    # spatial map indicating maximum posterior probability for each pixel
     max_prob_fig = PP.create_max_prob_map(config.map, probs, indices, subset_shape, title)
     max_prob_fig.savefig(f"{prefix}max_prob_fig.png")
 
     if(config.cluster.isPca):
+        # gets the loadings of each cluster on each pca
         heat_map_fig = PCA.get_loadings_heatmap(cluster_obj["pca_obj"], keywords, title)
         heat_map_fig.savefig(f"{prefix}loadings.png")
 

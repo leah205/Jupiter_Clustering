@@ -8,6 +8,8 @@ class clusterConfig:
     threshold: float = 0.95
     threshold_type: ThresholdType = "mahalanobis"
     isPca: bool = False
+
+    
 @dataclass
 class mappingConfig:
     keywords: list[str]

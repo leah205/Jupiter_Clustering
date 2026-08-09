@@ -6,6 +6,15 @@ import config.dicts as D
 import scripts.pipeline as PIPE
 
 def get_lat_range(rng):
+    """
+    Parameters
+    -----------
+    rng: string
+        - two numbers followed by S(south) or N(north) separated by -
+    Returns
+    ------------
+    two element list of min and max latitude between -90 and 90
+    """
     lat1, lat2 = rng.split("-")
     dir1, dir2 = lat1[-1], lat2[-1]
     if(not dir1.isnumeric()):
@@ -20,6 +29,18 @@ def get_lat_range(rng):
 
 
 def run_all_eval_ROI(r):
+    """
+    Runs clustering pipeline on region of interest for each clustering run specified in config
+
+    Parameters
+    ----------------
+    r: row in pd data frame
+
+
+    Returns
+    ------------
+    void
+    """
     if(r["GMM"]):
         return
   
