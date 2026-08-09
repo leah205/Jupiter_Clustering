@@ -7,6 +7,15 @@ import time
 from config.config import cf
 
 def get_radiance_arr(file):
+    """
+    Parameters
+    -----------
+    file: string
+        - file path
+    Returns
+    -----------
+    numpy array with radiance values for pixels
+    """
     hdul = fits.open(file)
     
     return hdul[0].data
@@ -17,21 +26,51 @@ def get_wcs(file):
     return WCS(hdr)
 
 def get_header_key(file, key):
+    """
+    Parameters
+    ---------
+    file: string
+        - path to fits file
+    key: string
+        - key in fits header
+    Returns
+    ---------
+    Value of key in header
+    
+    """
     hdul = fits.open(file)
     hdr = hdul[0].header
     return hdr[key]
 
 
 def get_cm(first_file, cm_num):
-    ctype_key = {
-         1:'CM1',
-         2:'CM2',
-         3:'CM3',
-    }
+    """
+    first_file: string
+        - path to first file in observation
+    cm_num: 1 | 2 | 3
+        - number specifying coordinate system 
+    Returns
+    --------
+    central meridian coordiantes
+
+    
+    """
     return get_header_key(first_file, cm_num)
 
 
 def is_files_aligned(file_arr):
+    """
+    Checks that every file in observation is aligned according to world coordinate system
+
+    Parameters
+    ------------
+    file_arr: string[]
+        - list of file paths for files in observation
+    Returns
+    ------------
+    Boolean indicating alignment
+    
+    """
     ref_wcs = get_wcs(file_arr[0])
     
     for file in file_arr:
@@ -39,22 +78,18 @@ def is_files_aligned(file_arr):
         if(ref_wcs.wcs.compare(get_wcs(file).wcs) == False):
             return False
     return True
-'''
-def get_radiances(file_arr):
-    #ref_file = fits.open(file_arr[0])
-    ref_wcs = get_wcs(file_arr[0])
-    ref_hdr = fits.open(file_arr[0])[0].header
-    new_arr = []
-    for file in file_arr:
-        
-        if(ref_wcs.wcs.compare(get_wcs(file).wcs) == False):
-            hdul = fits.open(file)
-            radiance_arr = reproject_interp(hdul, ref_hdr)[0]
-        else:
-            radiance_arr = get_radiance_arr(file)
-'''
+
 
 def get_radiances(file_arr):
+    """
+    Parameters
+    ----------
+    file_arr: string[]
+            - list of file paths for files in observation
+    Returns
+    ----------
+    List of numpy arrays for radiances of each filter image
+    """
     radiances = []
     for file in file_arr:
        radiances.append(get_radiance_arr(file))
@@ -63,10 +98,18 @@ def get_radiances(file_arr):
 
 
 def get_file_path(keyword, dir):
-    print(keyword)
-    print(dir)
+    """
+    Parameters
+    -----------
+    keyword: string
+        - keyword to select file by
+    dir: string
+        - path to directory to search for file in
+    Returns
+    ----------
+    string of path to file
+    """
     for f in listdir(dir):
-        if keyword in f: print(f)
         if keyword in f and ".fits" in f:
             return dir + "/" + f
            
@@ -78,50 +121,39 @@ def get_parameter_2d_array(keyword_arr, dir_path):
     -----------
     keyword_arr, MANDATORY
         Description: array of keywords to select files
-    latLims, MANDATORY
-        Description: Two element array specifying min and max latitudes
-    lonRng, MANDATORY
-        Description: Two element array specifying min and max longitudes
-    
+    dir_path: string
+        - path to directory to get radiances from
+
     Returns
     ----------
-    2D numpy array with parameters on axis 0 and pixels on axis 1 
-
-    Parameters
-    ------------
+    List of radiance numpy arrays for each keyword
     '''
-
-  
     file_name_arr = []
     for keyword in keyword_arr:
-        file = get_file_path(keyword, dir_path)
-       
+        file = get_file_path(keyword, dir_path) 
         file_name_arr.append(file)
-
-    # ''' radiances_arr = []
-    # if(is_files_aligned(np.array(file_name_arr)) == False):
-    #     get_align_files(np.array(file_name_arr)
-    #     raise TypeError("files are not mapped to the same coordinates")
-
-    # for file_name in file_name_arr:
-    #     radiance_arr = get_radiance_arr(file_name)
-    #     radiances_arr.append(radiance_arr)
-
-    # return radiances_arr'''
     radiances = get_radiances(file_name_arr)
-   
     return radiances
 
-# def get_map_shape(keyword, latLims, longLims, dir_path):
-      
-#       file = get_file_path(keyword, dir_path)
-#       radiance_arr = get_radiance_arr(file)
-#       return subset_map(radiance_arr, latLims, longLims).shape
+
 
 
 def get_patch(keyword, latLims, lngLims, cm_num, dir_path):
-    
+    """
+    keyword: string
+    latLims: [min, max]
+        - latitude range
+    lngLims: [min, max]
+        - longitude range
+    cm_num: int
+        - coordinate system
+    dir_path:
+        - path to directory with target files
 
+    Returns
+    -------------
+    np array with pixels filtered by longitude/latitude range
+    """
     file = get_file_path(keyword, dir_path)
     CM = 0 if cm_num == 0 else get_cm(file, cm_num)
     radiance_arr = get_radiance_arr(file)
@@ -173,6 +205,20 @@ def get_mapped_pix_arr(pix_arr):
  
     
 def subset_map(map, LatLims, LonLims,  CM):
+    """
+    map: np array
+        - array to filter coordinates
+    latLims: [min, max]
+            - latitude range
+    lngLims: [min, max]
+            - longitude range
+    cm_num: int
+            - coordinate system
+    Returns
+    ------------
+    np array
+
+    """
     import numpy as np
     import copy
 
@@ -220,6 +266,21 @@ def subset_map(map, LatLims, LonLims,  CM):
     return patch    
 
 def get_date(keywords, dir_name):
+    """
+    dates an observation by the date of the first image taken
+
+    Parameters
+    -----------
+    keywords: string
+        - list of keywords in observation
+    dir_name: string
+        - path to directory
+
+    Returns
+    ----------
+    Date firstimage in observation was taken
+    
+    """
     seconds_past = 0
     first_file = file = get_file_path(keywords[0], dir_name)
     hdr = fits.open(file)[0].header
@@ -244,18 +305,10 @@ def get_input_array(config, param_ranges,
 
     Parameters 
     ----------
-    range_arr: Optional
-        Description: 2D array of parameter ranges
-        Default: Empty Array
-    keywords: Optional
-        Description: Array of keywords specifying file for pixel radiance
-        Default: ["PCld", "NH3"]
-    latLims: Optional
-        Description: Two element array specifying min and max latitudes
-        Default: [45, 135]
-    lonLims: Optional
-        Description: Two element array specifying min and max longitudes
-        Default: [0, 360]
+    param_ranges: list
+        - list of lists specifying minimum and maximum values to be included in the analysis for each keyword
+    config: 
+        - object containing mapping information for the input array
     
     Returns 
     --------
