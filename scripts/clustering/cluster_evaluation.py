@@ -11,6 +11,16 @@ from pathlib import Path
 def raw_evaluation_pipeline(mapConfig, 
                            cluster_rng = [2, 10],
                             ):
+    """
+    Parameters
+    ---------------
+    mapConfig
+    cluster_rng: int[]
+        - range of clustersto evaluate
+
+
+    Saves into cluster_evaluations directory graphs of BIC, silhouette score, and JS distance
+    """
   
     keywords = mapConfig.keywords
     param_ranges = [D.ranges_dict.get(keyword, [0, 1]) for keyword in keywords]
@@ -36,6 +46,17 @@ def raw_evaluation_pipeline(mapConfig,
 def pca_evaluation_pipeline(mapConfig, 
                            cluster_rng = [2, 10],
                             ):
+    """
+        Parameters
+        ---------------
+        mapConfig
+        cluster_rng: int[]
+            - range of clustersto evaluate
+    
+    
+        Saves into cluster_evaluations directory graphs of BIC, silhouette score, and JS distance for PCA-reduced analysis
+        """
+      
     keywords = mapConfig.keywords
     param_ranges = [D.ranges_dict.get(keyword, [0, 1]) for keyword in keywords]
     [input_arr, subset_shape] = pre.get_input_array(mapConfig, param_ranges)
