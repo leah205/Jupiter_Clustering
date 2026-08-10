@@ -2,7 +2,7 @@ import json
 
 def remove_keys(obj, keys_to_remove):
     """
-    Recursively removes all occurrences of any key in keys_to_remove.
+    Helper function that recursively removes all occurrences of any key in keys_to_remove.
     """
     keys_to_remove = set(keys_to_remove)
 
@@ -22,6 +22,19 @@ def remove_keys(obj, keys_to_remove):
 
 
 def remove_keys_from_json(input_file, output_file, keys_to_remove):
+    """
+    Takes an input json file and copies it into output excluding specified keys
+
+    Parameters
+    --------------------------
+    input_file: string
+        - path to input json
+    output_file: string
+        - path to output json
+    keys_to_remove: string[]
+        - list of keys in input to exclude in output
+    
+    """
     with open(input_file, "r", encoding="utf-8") as f:
         data = json.load(f)
 

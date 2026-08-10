@@ -37,7 +37,6 @@ def get_stat(cluster_arr, dim_arr, indices, n_clusters, dim_name):
     res = {}
     for i in range(n_clusters):
         cluster_mask = cluster_arr == i
-       
         # contains indices of selected cluster
         cluster_indices = indices[cluster_mask]
 
@@ -54,21 +53,55 @@ def get_stat(cluster_arr, dim_arr, indices, n_clusters, dim_name):
     return res
 
 def get_cluster_regressions(data, probs, n_clusters):
+    """
+   Gets object containing  cluster regressions for all clusters
    
+    Parameters
+    ----------------
+    data: np array
+        - radiance data for pixels
+    probs: np array
+        - two d array of probabilities that each pixel belongs to each cluster (pixels on axis 0)
+    n_cluster: int
+        - number of clusters
+
+    Returns 
+    ----------------
+    dictionary containing entries of form coeff_n and b_n, characterizing linear regressions for each cluster n
+
+
+   """
     res = {}
     for i in range(n_clusters):
-        print(i)
         res = res | run_cluster_regression(data, probs, i)
-    print(res)
     return res
 
 def run_cluster_regression(data, probs,  i):
+    """
+
+    Runs linear regression on specific cluster
+
+    Parameters
+        ----------------
+        data: np array
+            - radiance data for pixels
+        probs: np array
+            - two d array of probabilities that each pixel belongs to each cluster (pixels on axis 0)
+        i: int
+            - cluster to run regression
+    Returns
+    ------------------
+
+    dict with keys coeff_i and b_i for linear regression outputs
+
+  
+    """
+
     # covariances, and linear regression for NH3/pcld
     # get correlation
     # assumes nh3 is index 0, pcld at index 1
     # only runs if two dimensional
-    print("cluster")
-    print(i)
+  
     res = {}
     x, y = data[:, 0].reshape(-1, 1), data[:, 1]
   
