@@ -17,7 +17,18 @@ def create_cluster_plot(ax, keywords, index_x, index_y, input_arr, pred, n_comp,
     ----------
     ax, REQUIRED
         axis object of plot
-    keywords, 
+    keywords: string[]
+        - array of keywords for parameters in clustering
+    index_x: int
+        - index into keywords of independent variable
+    index_y: int
+        - index into keywords of dependent variable
+    input_arr: np array
+        - pixel radiances in parameters
+    pred: np array
+        - pixel cluster assignments
+    n_comp: int
+        - number of clusters
     
     -----------
     """
@@ -69,6 +80,18 @@ def create_cluster_plot(ax, keywords, index_x, index_y, input_arr, pred, n_comp,
     return 0
 
 def plot_gmm_ellipsoids(ax, cluster_obj, cmap):
+    """
+    overlays ellipsoids capturing 95% total probability for each cluster over scatter plot
+
+    Parameters
+    -----------------------
+    ax: matplotlib axis object
+    cluster_obj: dict
+        - return object of clustering algorthm including keys for cluster means and covariances
+    cmap: color map of clusters
+
+    
+    """
     n_comp = cluster_obj["means"].shape[0]
   
     darker_colors = list(map(lambda c: (c[0] - 0.2, c[1] - 0.2, c[2] - 0.2), cmap.colors))

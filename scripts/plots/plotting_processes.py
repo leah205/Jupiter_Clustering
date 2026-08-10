@@ -39,6 +39,9 @@ def get_dir_path(config):
 
 
 def create_map_comp_figure(config: T.mappingConfig, reshaped_pred, title):
+    """
+    Creates spatial map comparing radiances in different filters with cluster outputs
+    """
     n_comp = np.unique(reshaped_pred).shape[0] - 1
     dim1, dim2 = config.keywords[0], config.keywords[1]
     cmap = ListedColormap(colors[:n_comp])
@@ -58,6 +61,9 @@ def create_map_comp_figure(config: T.mappingConfig, reshaped_pred, title):
 
 
 def create_plot_figure(config: T.mappingConfig, pred, arr, reshaped_pred, title, cluster_obj):
+    """
+    Creates scatter plot of clusters in two parameters and spatial cluster map
+    """
     # creates and saves cluster map and cluster scatter plot
     n_comp = np.unique(pred).shape[0] - 1
     cmap = ListedColormap(colors[:n_comp])
@@ -78,6 +84,9 @@ def create_plot_figure(config: T.mappingConfig, pred, arr, reshaped_pred, title,
 
 
 def create_plots_figure(config: T.mappingConfig, pred, input_arr, reshaped_pred, title):
+    """
+    Creates two scatter plots each showing clusters with two parameters and a spatial cluster map
+    """
     # creates and saves cluster map and cluster scatter plot
     n_comp = np.unique(pred).shape[0] - 1
     cmap = ListedColormap(colors[:n_comp])
@@ -90,6 +99,9 @@ def create_plots_figure(config: T.mappingConfig, pred, input_arr, reshaped_pred,
     return fig
 
 def create_cluster_map(config: T.mappingConfig, reshaped_pred, title):
+    """
+    Plots clusters spatially on region
+    """
     n_comp = np.unique(reshaped_pred).shape[0] - 1
     cmap = ListedColormap(colors[:n_comp])
     fig, axis = pl.subplots(1, 1)
@@ -98,11 +110,13 @@ def create_cluster_map(config: T.mappingConfig, reshaped_pred, title):
     return fig
 
 def create_file_prefix(c: T.clusterConfig, m: T.mappingConfig):
+    """
+    Creates file path name and prefix for plotting output
+    """
     dir_name = f"{cf["input"]}/{m.source}/{cf["sys"]}"
     date = pre.get_date(m.keywords, dir_name)
     lat_lon_str = f'{90 - m.latRng[1]}-{90 - m.latRng[0]}_{360 - m.lngRng[1]}-{ 360 - m.lngRng[0]}'
     keyword_str = '_'.join(m.keywords)
-    #prob_str = ("_p" + str(config.threshold)) if cf["soft_clustering"] else ""
     pca_dir = ("PCA/") if c.isPca else ""
     thresh_dir = (f"{c.threshold_type}_{c.threshold}/") if cf["soft_clustering"] else ""
     lon_str = f"lon_{360 - m.lngRng[1]}-{360 - m.lngRng[0]}"
@@ -113,6 +127,9 @@ def create_file_prefix(c: T.clusterConfig, m: T.mappingConfig):
 
 
 def create_plot_title(c: T.clusterConfig, m: T.mappingConfig, description = ""):
+    """
+    Creates descriptive plot title for output plots
+    """
     #date = pre.get_date(m.keywords)
     prob_str = f'Threshold {c.threshold}' if cf["soft_clustering"] else ""
     keyword_str = '_'.join(m.keywords)

@@ -7,8 +7,23 @@ import config.dicts as D
 
 
 
-def label_features(axis, LonLims, LatLims, ROI, showbands, is_cluster = False):
-    #secaxis  = axis.secondary_yaxis('right')
+def label_features(axis, LonLims, ROI, showbands, roi_legend = False):
+    """
+    adds various annotations depending on flags:
+        - shading for belts and bands
+        - boxes around regions of interest to spatial map with legend
+    axis: matplotlib axis object
+    LonLims: float[]
+        - specifies min and max longitude within the region
+    ROI: dict
+        - dict of regions with keys as name of region and values as coordinates of box around region
+    showbands: boolean 
+        - flag indicating whether to shade belts and zones
+    is_cluster: boolean (default = false)
+        - flag indicating whether to append legend for ROIs to axis
+
+    """
+
     ylim = axis.get_ylim()
     if ROI:
         for R in ROI:
@@ -17,36 +32,19 @@ def label_features(axis, LonLims, LatLims, ROI, showbands, is_cluster = False):
                               ROI[R][2]+ROI[R][3]]),
                               90.-np.array([ROI[R][0],ROI[R][0],ROI[R][1],
                               ROI[R][1],ROI[R][0]]), color = D.ROI_cmap[R])
-                
-    # box = axis.get_position()
+
     
     belt = D.belt
-    zone = D.zone
-    # refactor
-    bounds = [
-        -39.6, -36.2, -32.4, -27.1, -19.7, -7.2, 6.9, 17.4, 24.2, 31.4, 35.4, 39.6
-    ]
-
-    ticks = [(bounds[i] + bounds[i + 1]) / 2 for i in range(len(bounds) - 1) ]
-
-    lat_range_labels = ["SSTB", "STZ", "STB", "STrZ", "SEB", "EZ", "NEB", "NTrZ", "NTB",  "NTZ", "NNTB"]
-    #secaxis.set_yticks(ticks)
-    #secaxis.set_yticklabels(lat_range_labels)
-  
     if showbands:
         for zb in belt:
-            #print(zb,belt[zb])
+           
             axis.fill_between([360-LonLims[0],360-LonLims[1]],[belt[zb][0],belt[zb][0]],[belt[zb][1],belt[zb][1]],
                                     color="0.5",alpha=0.25)
             axis.fill_between([360-LonLims[0],360-LonLims[1]],[belt[zb][0],belt[zb][0]],[belt[zb][1],belt[zb][1]],
                                     color="0.8",alpha=0.1)
-        #axs1[1].annotate(zb,xy=[np.mean(belt[zb]),51],ha="center")
-    #for zb in zone:
-        #axs1[1].annotate(zb,xy=[np.mean(zone[zb]),51],ha="center")
-    
-    #secaxis.tick_params(axis='both', which='major', labelsize=9)
+
     axis.set_ylim(ylim)
-    if(is_cluster):
+    if(roi_legend):
         ROI_lines = []
         for R in ROI:
             ROI_lines.append( Line2D([0], [0], color = D.ROI_cmap[R], lw = 2))
@@ -55,11 +53,9 @@ def label_features(axis, LonLims, LatLims, ROI, showbands, is_cluster = False):
     return axis
 
 def create_axis(axs3, LatLims, LonLims, LonSys, annotated = True):
-    #fig3,axs3=pl.subplots(dpi=150, facecolor="white")
     axs3.grid(linewidth=0.2)
     axs3.ylim=[LatLims[0] ,LatLims[1]]
     axs3.xlim=[360-LonLims[0],360-LonLims[1]]
-    #axs3.xlim=[LonLims[0],LonLims[1]]
     axs3.set_xticks(np.linspace(450,0,31), minor=False)
     yticks = np.linspace(LatLims[0], LatLims[1], 4)
    
@@ -91,7 +87,6 @@ def plot_cluster_patch(config, patch, cmap, axis, n_comp, fig = None, cbarplot =
     bounds = np.arange(v_min - 0.5, v_max + 0.5, 1)
     norm = colors.BoundaryNorm(bounds, cmap.N)
    
-    #np.nan_to_num(patch, copy=False, nan=-1.0, posinf=0.0, neginf=0.0)
     masked_patch = np.ma.masked_invalid(patch)
     cmap.set_bad("black")
     tx=np.linspace(v_max,v_min,n ,endpoint=True)
@@ -106,9 +101,8 @@ def plot_cluster_patch(config, patch, cmap, axis, n_comp, fig = None, cbarplot =
 
    
     axis.tick_params(axis='y', labelleft=True)
-    axis = label_features(axis, LonLims, LatLims, config.ROI, showbands, True)
+    axis = label_features(axis, LonLims, config.ROI, showbands, True)
     
-    #axis.set_title(title, pad = 15)
 
     im_ratio = patch.shape[0]/patch.shape[1]
 
@@ -137,7 +131,6 @@ def plot_patch(config, patch, dim, axis, fig = None, cbarplot = True, cbar_title
     vn = v_min
     vx = v_max
     n = vx - vn
-   # create_axis(axis, [LatLims[0] - 90, 90 - LatLims[1]], LonLims,  cm_num, annotated)
     np.nan_to_num(patch, copy=False, nan=-1.0, posinf=0.0, neginf=0.0)
     tx=np.linspace(vn,vx,5 ,endpoint=True)
     
@@ -149,14 +142,10 @@ def plot_patch(config, patch, dim, axis, fig = None, cbarplot = True, cbar_title
     
     create_axis(axis, [90 - LatLims[1], 90 - LatLims[0]], LonLims,  config.cm_num)
     
-    #axis.set_title(title, pad = 15)
-
     im_ratio = patch.shape[0]/patch.shape[1]
-    #axis.set_title(title, pad = 15)
-
     im_ratio = patch.shape[0]/patch.shape[1]
     if(annotated):
-        axis = label_features(axis,  LonLims, LatLims, config.ROI, showbands)
+        axis = label_features(axis,  LonLims, config.ROI, showbands)
 
     if cbarplot:
         
