@@ -28,7 +28,7 @@ cluster_runs = [
     {
         "dims": ["NH3", "PCld"],
         "PCA": False,
-        "comps":  [4, 5, 6]
+        "comps":  [3]
     },
     # {
     #     "dims": ["NH3", "PCld", "AOI", "CI"],
@@ -43,7 +43,7 @@ cluster_runs = [
     {
         "dims": ["275", "395", "502", "619", "631", "645", "673", "727", "889"],
         "PCA": True,
-        "comps": [4, 5, 6]
+        "comps": [3]
     },
 ]
 
