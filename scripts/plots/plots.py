@@ -111,4 +111,3 @@ def plot_gmm_ellipsoids(ax, cluster_obj, cmap):
         ell.set_clip_box(ax.bbox)
         ell.set_alpha(1)
         ax.add_patch(ell)
-
