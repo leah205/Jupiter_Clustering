@@ -6,7 +6,7 @@ This repository contains tools to run unsupervised atmospheric clustering on set
 
 ## Scientific Motivation
 
-This project is in support of research by @smhill001 to characterize and analyze the physical properties of Jupiter's atmosphere near the equatorial zone. We aim to compare these clusters to human-identified regions of interests to validate the methods of traditional perception and identification of Jovian features. This comparison will inform us on how well a Gaussian Mixture Model fits Jovian atmospheric structure and possibly find new atmospheric structure that can tell us about the underlying physics.
+This project is in support of research by @smhill001 to characterize and analyze the physical properties of Jupiter's atmosphere near the equatorial zone. We aim to compare these clusters to human-identified regions of interests to validate the methods of traditional perception and identification of Jovian features. This comparison will inform us on how well a Gaussian Mixture Model fits Jovian atmospheric structure and possibly discern new sets of atmospheric structures.
 
 ## Repository Structure
 
@@ -18,7 +18,9 @@ data/
         └── Sys3/                 # Data in longitudinal mapping system 3
 
 scripts/
-├── processes/                    # Functions for the clustering and visualization pipeline
+├── processes/                  # Functions for the clustering and visualization pipeline
+    ├── cluster_all_regions                
+    └── evaluate_all_regions
 ├── cluster_stats/
 ├── preprocessing/
 │   └── preprocessing/
@@ -34,11 +36,13 @@ scripts/
     └── mapping/
 ```
 
+Data is arranged according to observation and mapping system in the data/ directory. All python scripts for the python are located in /scripts, which consists of the scripts to run the full clustering and evaluation pipelines in the processes/ directory, and other helper functions for clustering, plotting, and analyzing the output.
+
 ## Methodology
 
 ### Data
 
-The input data consists of flattened and normalized radiance arrays in several wavelengths, as well as for Cloud Pressure(mb) , Ammonia Content (ppm), and AOI/CI indices.
+The input data consists of flattened and normalized radiance arrays in several wavelengths, as well as for Cloud Pressure(mb) , Ammonia Content (ppm), and AOI/CI indices. The datasets consist of collections of these radiance arrays (observations) that have keys of the form YYYYMMDDUTa-z. Each observation may have data associated with different mapping coordinates (eg. Sys1/Sys3)
 
 ### Clustering
 
@@ -46,11 +50,11 @@ Scikit-learn was used to fit a GMM model to the data. Data was first normalized 
 
 ### Model selection and evaluation
 
-Models were selected by generating BIC, silhouette, and JS distance plots for various numbers of clustering components.
+MGenerated BIC, silhouette, and JS distance plots for various numbers of clustering components were used to aid the cluster collection process.
 
 ## Full Clustering pipeline
 
-Clustering was run for each region of interest in `regions.csv`:
+The scripts in the processes/ directory were designed to process a csv with the following format: 
 
 ### Input Fields
 
@@ -69,8 +73,7 @@ Clustering was run for each region of interest in `regions.csv`:
 
 ### Output
 
-For each region within `regions.csv`, several clusterings can be run at once through the pipeline. Within the `config` directory, `dicts.py` specifies a cluster_runs list
-for all of the cluster analyses to run within the regions. It allows specification of keywords within the filenames to select radiances to analyze, a PCA flag, and the number of components to cluster on.
+For each region within `regions.csv`, several clusterings can be run at once through the pipeline. Within the `config` directory, `dicts.py` specifies a cluster_runs list for all of the cluster analyses to run within the regions. It allows specification of keywords within the filenames that select radiances to analyze, a PCA flag indicating whether to perform PCA dimensionality reduction before the clustering, and a set of numbers of components to cluster on.
 
 #### Example
 
@@ -86,7 +89,7 @@ will run ammonia abundance and cloud pressure clustering without PCA dimension r
 
 
 Running the pipeline populates a nested directory structure for each region of interest and unique clustering run. The output visualizations
-are stored in the deepest nested subdirectory and are of the form
+are stored in the deepest nested subdirectory. The output file names have the form:
 {yyyy}-{mm}-{dd}-{parameters}_{min_lat}-{max_lat}_{min_lon}-{max_lon}_sys_{sysnum}_{visualiztion type}.png
 
 ```text
@@ -116,11 +119,10 @@ Alternatively, to run the pipeline on a specific region for a specific set of cl
 
 ## Full Evaluation Pipeline
 
-Cluster Evaluation was run for each region of interest in `regions.csv`:
 
 ### Output
 
-For each region within `regions.csv`, the evaluation pipleine was run for between 2 and 10 clusterings. Within the `config` directory, `dicts.py` specifies an eval_runs list which details a collection of cluster evaluation configurations to run through the pipeline. An example configuration is:
+For each region within the input csv, the evaluation pipleine was run for between 2 and 10 clusterings. Within the `config` directory, `dicts.py` specifies an eval_runs list which details a collection of cluster evaluation configurations that the pipeline will run. An example configuration is:
 
 ```text
 
@@ -131,10 +133,12 @@ For each region within `regions.csv`, the evaluation pipleine was run for betwee
 
 ```
 
-This specifies running cluster evaluation with ammonia abundance and cloud pressure parameters without preliminary PCA dimension reduction.
+This specifies running cluster evaluation for ammonia abundance and cloud pressure parameters without preliminary PCA dimension reduction.
 
 The output files are of the form
 {plot type}_plot_{parameters}.png
+
+The output directory structure is shown below: 
 
 ```text
 cluster_evaluations/
