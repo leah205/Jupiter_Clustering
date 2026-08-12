@@ -3,9 +3,7 @@ import ast
 import scripts.clustering.cluster_evaluation as EV
 import config.types as T
 import config.dicts as D
-# change directory structure to name(from lon)
-# change config input and then inset LonSys as parameter for input
-
+from scripts.data_formatting.parse_map_to_df import parse_map_to_df
 
 
 def get_lat_range(rng):
@@ -44,16 +42,10 @@ def run_all_eval_ROI(r):
         ------------
         void
         """
-    if(r["GMM"]):
-        return
-    if( r["Data Source"] == "20251016UTa" or r["Data Source"] == "20251016UTc" ):
-        return
-    print(r["Data Source"])
-    lat_range = get_lat_range(r["PG Lat Rng"])
-    lng_range = list(map(int, r['Sys 1 Long Rng'].split("-")))
-    lng_range = [360 - lng_range[1], 360 - lng_range[0]]
-    lat_range = [90 - lat_range[1], 90 - lat_range[0]]
+  
+  
     ROI = ast.literal_eval(r['ROI Dict'].split("=")[1])
+    lat_lims , lon_lims = r["lat_lims"], r["lon_lims"]
     source = r["Data Source"]
 
 
@@ -61,8 +53,8 @@ def run_all_eval_ROI(r):
         mapConfig =  T.mappingConfig(
         keywords = cl_info["dims"],
         ROI = ROI,
-        latRng = lat_range,
-        lngRng = lng_range,
+        latRng = lat_lims,
+        lngRng = lon_lims,
         name = r["Name"],
         source = source,
         cm_num = 1
@@ -73,8 +65,7 @@ def run_all_eval_ROI(r):
             EV.raw_evaluation_pipeline(mapConfig)
 
 if __name__ == "__main__":
-    regions_data = pd.read_csv("regions.csv")
-    print(regions_data.columns)
+    regions_data = parse_map_to_df()
 
     regions_data.apply(run_all_eval_ROI, axis = 1)
 

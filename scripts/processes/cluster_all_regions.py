@@ -4,31 +4,10 @@ import scripts.clustering.cluster_evaluation as EV
 import config.types as T
 import config.dicts as D
 import scripts.pipeline as PIPE
-
-def get_lat_range(rng):
-    """
-    Parameters
-    -----------
-    rng: string
-        - two numbers followed by S(south) or N(north) separated by -
-    Returns
-    ------------
-    two element list of min and max latitude between -90 and 90
-    """
-    lat1, lat2 = rng.split("-")
-    dir1, dir2 = lat1[-1], lat2[-1]
-    if(not dir1.isnumeric()):
-        lat1 = lat1[:-1]
-    if(not dir2.isnumeric()):
-        lat2 = lat2[:-1]
-    lat1, lat2 = int(lat1), int(lat2) 
-    lat1 = -1 * lat1 if dir1 == "S" else lat1
-    lat2 = -1 * lat2 if dir2 == "S" else lat2
-    return [lat1, lat2]
+from scripts.data_formatting.parse_map_to_df import parse_map_to_df
 
 
-
-def run_all_eval_ROI(r):
+def run_all_cluster_ROI(r):
     """
     Runs clustering pipeline on region of interest for each clustering run specified in config
 
@@ -41,15 +20,10 @@ def run_all_eval_ROI(r):
     ------------
     void
     """
-    if(r["GMM"]):
-        return
-  
-    lat_range = get_lat_range(r["PG Lat Rng"])
-    lng_range = list(map(int, r['Sys 1 Long Rng'].split("-")))
-    lng_range = [360 - lng_range[1], 360 - lng_range[0]]
-    lat_range = [90 - lat_range[1], 90 - lat_range[0]]
+
     ROI = ast.literal_eval(r['ROI Dict'].split("=")[1])
-    source = r["Data Source"]
+    source = r["Source"]
+    lat_lims , lon_lims = r["lat_lims"], r["lon_lims"]
 
     
 
@@ -57,8 +31,8 @@ def run_all_eval_ROI(r):
         mapConfig =  T.mappingConfig(
         keywords = cl_info["dims"],
         ROI = ROI,
-        latRng = lat_range,
-        lngRng = lng_range,
+        latRng = lat_lims,
+        lngRng = lon_lims,
         name = r["Name"],
         source = source,
         cm_num = 1
@@ -78,6 +52,8 @@ def run_all_eval_ROI(r):
         
 
 if __name__ == "__main__":
-    regions_data = pd.read_csv("regions.csv")
+    df = parse_map_to_df()
+    print(df)
+   
 
-    regions_data.apply(run_all_eval_ROI, axis = 1)
+    
