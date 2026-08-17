@@ -115,13 +115,13 @@ def create_file_prefix(c: T.clusterConfig, m: T.mappingConfig):
     """
     print(c)
     print(m)
+    lon1, lon2 = 360 - m.lngRng[1], 360 - m.lngRng[0]
     dir_name = get_dir_path(m)
     date = pre.get_date(m.keywords, dir_name)
-    lat_lon_str = f'{m.latRng[0]}-{m.latRng[1]}_{m.lngRng[0]}-{m.lngRng[1]}'
+    lat_lon_str = f'{m.latRng[0]}-{m.latRng[1]}_{lon1}-{lon2}'
     keyword_str = '_'.join(m.keywords)
     pca_dir = ("PCA/") if c.isPca else ""
     thresh_dir = (f"{c.threshold_type}_{c.threshold}/") if cf["soft_clustering"] else ""
-    lon_str = f"lon_{m.lngRng[0]}-{m.lngRng[1]}"
     save_path = Path(f'{cf["output"]}/{m.name}/{keyword_str}/{pca_dir}{c.n_comp}_cl/{thresh_dir}{date}_{keyword_str}_{lat_lon_str}_{c.n_comp}_sys_{m.cm_num}_')
     save_path.parent.mkdir(parents = True, exist_ok = True)
     return save_path
@@ -136,4 +136,4 @@ def create_plot_title(c: T.clusterConfig, m: T.mappingConfig, description = ""):
     print(m.lngRng)
     prob_str = f'Threshold {c.threshold}' if cf["soft_clustering"] else ""
     keyword_str = '_'.join(m.keywords)
-    return f'{m.name} Lat: {m.latRng[0]} - {m.latRng[1]}, Lon: {m.lngRng[0]} - {m.lngRng[1]}, {c.n_comp} components \n {prob_str} {keyword_str} {description}'
+    return f'{m.name} Lat: {m.latRng[0]} - {m.latRng[1]}, Lon: {360 - m.lngRng[1]} - {360 - m.lngRng[0]}, {c.n_comp} components \n {prob_str} {keyword_str} {description}'
