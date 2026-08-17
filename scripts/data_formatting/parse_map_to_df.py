@@ -13,21 +13,17 @@ def get_lon_lims(cmpref, lon_rng):
     -------------
     list of format [min_lon, max_lon] where longitude ranges between 0 - 360
 
-    """
-    return [cmpref - lon_rng / 2, cmpref + lon_rng / 2]
-def get_lat_lims(lat_lims):
-    """
-    Parameters
-    ---------------
-    lat_lims: float[]
-        - list of form [min_lat, max_lat], where latitude is between 0 and 180
-    Returns
-    ---------------
-        - float[] of form [min_lat, max_lat], where latitude is between -90 and 90
+"""
+   
 
-    
-    """
-    return [lat_lims[0] - 90, lat_lims[1] - 90]
+    # this returns correct area but why at 255 - 240?
+    # return [(360 - cmpref) + lon_rng, (360 - cmpref) + 2 * lon_rng]
+
+    return [360 - (cmpref + lon_rng ), 360 - (cmpref - lon_rng )]
+    # return [(cmpref - lon_rng ), (cmpref + lon_rng )]
+    return []
+   
+
 
 def parse_map_to_df():
     """
@@ -51,9 +47,10 @@ def parse_map_to_df():
                 name = obs + "-" + key
                 roi_dict = "ROI=" + str(val['ROI'])
                 lon_rng = val['LonRng']
-                lat_lims = get_lat_lims(val['CoLatLims'])
+                lat_lims = val['CoLatLims']
                 center = val['CMpref']
                 lon_lims = get_lon_lims(center, lon_rng)
+                
                 row = {
                     "Name": name,
                     "Data Source": obs,
@@ -68,7 +65,7 @@ def parse_map_to_df():
     return df
 
 if __name__ == "__main__":
-    parse_map_to_df()
+    print(parse_map_to_df())
     
 
 

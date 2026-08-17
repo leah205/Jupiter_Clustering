@@ -5,6 +5,7 @@ import numpy as np
 from astropy.wcs import WCS
 import time
 from config.config import cf
+from scripts.helpers import get_dir_path
 
 def get_radiance_arr(file):
     """
@@ -128,6 +129,7 @@ def get_parameter_2d_array(keyword_arr, dir_path):
     ----------
     List of radiance numpy arrays for each keyword
     '''
+   
     file_name_arr = []
     for keyword in keyword_arr:
         file = get_file_path(keyword, dir_path) 
@@ -315,7 +317,7 @@ def get_input_array(config, param_ranges,
     numpy array with axis 0 as pixels within lon/lat range and axis 1 as parameter pixel radiances and index,
     filtered with rangeArr
     '''
-    dir_path =  f"{cf["input"]}/{config.source}/{cf["sys"]}"
+    dir_path =  get_dir_path(config)
     radiances_arr = get_parameter_2d_array(config.keywords, dir_path)
   
 
@@ -336,7 +338,6 @@ def get_input_array(config, param_ranges,
     pix_arr = np.column_stack(subpatches)
     pix_arr = get_mapped_pix_arr(pix_arr)
     pix_arr = get_filtered_pix_arr(param_ranges, pix_arr)
-    
   
     return [pix_arr, subset_shape]
     

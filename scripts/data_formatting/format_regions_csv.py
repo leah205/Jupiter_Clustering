@@ -37,8 +37,8 @@ def format_to_df():
   
         lat_range = get_lat_range(r["PG Lat Rng"])
         lng_range = list(map(int, r['Sys 1 Long Rng'].split("-")))
-        lat_lims = [360 - lng_range[1], 360 - lng_range[0]]
-        lon_lims = [90 - lat_range[1], 90 - lat_range[0]]
+        lon_lims = [360 - lng_range[1], 360 - lng_range[0]]
+        lat_lims = [90 - lat_range[1], 90 - lat_range[0]]
         new_row = r.copy()
         new_row["lon_lims"] = lon_lims
         new_row["lat_lims"] = lat_lims

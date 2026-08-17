@@ -7,6 +7,7 @@ import scripts.plots.mapping as MP
 import pylab as pl
 from pathlib import Path
 from matplotlib.colors import ListedColormap 
+from scripts.helpers import get_dir_path
 import config.types as T
 # red, green, blue, yellow, orange, pink, purple, gray
 colors =[(1, 0.639, 0.639), (0.647, 1, 0.639), (0.639, 0.894, 1), (1, 0.996, 0.639), (1, 0.82, 0.639), (1, 0.639, 0.839), (0.937, 0.639, 1), (0.678, 0.678, 0.678)]
@@ -34,8 +35,7 @@ Parameters
 
 """
 
-def get_dir_path(config):
-    return f"{cf["input"]}/{config.source}/{cf["sys"]}"
+
 
 
 def create_map_comp_figure(config: T.mappingConfig, reshaped_pred, title):
@@ -113,13 +113,15 @@ def create_file_prefix(c: T.clusterConfig, m: T.mappingConfig):
     """
     Creates file path name and prefix for plotting output
     """
-    dir_name = f"{cf["input"]}/{m.source}/{cf["sys"]}"
+    print(c)
+    print(m)
+    dir_name = get_dir_path(m)
     date = pre.get_date(m.keywords, dir_name)
-    lat_lon_str = f'{90 - m.latRng[1]}-{90 - m.latRng[0]}_{360 - m.lngRng[1]}-{ 360 - m.lngRng[0]}'
+    lat_lon_str = f'{m.latRng[0]}-{m.latRng[1]}_{m.lngRng[0]}-{m.lngRng[1]}'
     keyword_str = '_'.join(m.keywords)
     pca_dir = ("PCA/") if c.isPca else ""
     thresh_dir = (f"{c.threshold_type}_{c.threshold}/") if cf["soft_clustering"] else ""
-    lon_str = f"lon_{360 - m.lngRng[1]}-{360 - m.lngRng[0]}"
+    lon_str = f"lon_{m.lngRng[0]}-{m.lngRng[1]}"
     save_path = Path(f'{cf["output"]}/{m.name}/{keyword_str}/{pca_dir}{c.n_comp}_cl/{thresh_dir}{date}_{keyword_str}_{lat_lon_str}_{c.n_comp}_sys_{m.cm_num}_')
     save_path.parent.mkdir(parents = True, exist_ok = True)
     return save_path
@@ -131,6 +133,7 @@ def create_plot_title(c: T.clusterConfig, m: T.mappingConfig, description = ""):
     Creates descriptive plot title for output plots
     """
     #date = pre.get_date(m.keywords)
+    print(m.lngRng)
     prob_str = f'Threshold {c.threshold}' if cf["soft_clustering"] else ""
     keyword_str = '_'.join(m.keywords)
-    return f'{m.name} Lat: {90 - m.latRng[1]} - {90 - m.latRng[0]}, Lon: {360 - m.lngRng[1]} - {360 - m.lngRng[0]}, {c.n_comp} components \n {prob_str} {keyword_str} {description}'
+    return f'{m.name} Lat: {m.latRng[0]} - {m.latRng[1]}, Lon: {m.lngRng[0]} - {m.lngRng[1]}, {c.n_comp} components \n {prob_str} {keyword_str} {description}'

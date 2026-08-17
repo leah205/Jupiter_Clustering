@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from config.config import cf
 from sklearn.linear_model import LinearRegression
+from scripts.helpers import get_dir_path
 import csv
 
 
@@ -136,7 +137,7 @@ def get_all_stats(pred, indices, n_comp, m):
 
     
     '''
-    dir_path = f"{cf["input"]}/{m.source}/{cf["sys"]}"
+    dir_path = get_dir_path(m)
 
     cluster_arr = np.array(pred)
     indices = indices.astype(np.int64)

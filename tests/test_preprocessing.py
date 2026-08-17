@@ -1,5 +1,20 @@
 import scripts.preprocessing.preprocessing as pre
+import scripts.plots.mapping as mp
 import numpy as np
+import matplotlib
+matplotlib.use("Agg")
+
+
+def test_plot_longitude_extent_uses_configured_range():
+    lon_lims = [75, 105]
+    assert mp.get_plot_lon_extent(lon_lims) == [75, 105]
+
+
+def test_roi_longitude_is_normalized_to_map_frame():
+    assert mp.normalize_roi_lon_to_map_frame(267, [75, 105]) == 93.0
+    assert mp.normalize_roi_lon_to_map_frame(14, [330, 360]) == 346.0
+
+
 def test_get_mapped_pix_arr():
     input_arr = [
         [1, 3],

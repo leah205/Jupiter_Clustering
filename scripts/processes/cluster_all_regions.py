@@ -22,11 +22,13 @@ def run_all_cluster_ROI(r):
     """
 
     ROI = ast.literal_eval(r['ROI Dict'].split("=")[1])
-    source = r["Source"]
+    source = r["Data Source"]
+
+    # if(not "20251016UTa" in source):
+    #     return
     lat_lims , lon_lims = r["lat_lims"], r["lon_lims"]
-
+    print(lat_lims, lon_lims)
     
-
     for cl_info in D.cluster_runs:
         mapConfig =  T.mappingConfig(
         keywords = cl_info["dims"],
@@ -38,22 +40,23 @@ def run_all_cluster_ROI(r):
         cm_num = 1
         )
      
-        for n_comp in cl_info["comps"]:
-            clusterConfig = T.clusterConfig(
-                n_comp=n_comp,
-                isPca = cl_info["PCA"]
-            )
-            config = T.pipelineConfig(
-                map = mapConfig,
-                cluster = clusterConfig
-            )
-            PIPE.run_full_pipeline(config)
+     
+        # for n_comp in cl_info["comps"]:
+        clusterConfig = T.clusterConfig(
+            n_comp=3,
+            isPca = cl_info["PCA"]
+        )
+        config = T.pipelineConfig(
+            map = mapConfig,
+            cluster = clusterConfig
+        )
+        PIPE.run_full_pipeline(config)
         
         
 
 if __name__ == "__main__":
     df = parse_map_to_df()
-    print(df)
+    df.apply(run_all_cluster_ROI, axis=1)
    
 
     

@@ -4,9 +4,6 @@ from matplotlib import colors
 from matplotlib.lines import Line2D
 import config.dicts as D
 
-
-
-
 def label_features(axis, LonLims, ROI, showbands, roi_legend = False):
     """
     adds various annotations depending on flags:
@@ -181,10 +178,3 @@ def reshape_clustered(indices, subset_shape, pred):
         oned_mapped_clusters[index] = cluster
     mapped_clusters = oned_mapped_clusters.reshape(subset_shape)
     return mapped_clusters
-
-
-
-
-
-
-
