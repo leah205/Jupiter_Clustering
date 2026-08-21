@@ -132,7 +132,10 @@ def plot_patch(config, patch, dim, axis, fig = None, cbarplot = True, cbar_title
     tx=np.linspace(vn,vx,5 ,endpoint=True)
     
     axis.set_title(title)
-    show=axis.imshow(patch,  origin='upper', cmap = cmap, vmin=vn,vmax=vx,  
+    print(f"extent: {360 - LonLims[0]},{360 - LonLims[1]}")
+    print(patch.shape)
+    show=axis.imshow(patch,  origin='upper', cmap = cmap, vmin=vn,vmax=vx,
+                     
                extent=[360 - LonLims[0],360 - LonLims[1],90-LatLims[1],
                        90-LatLims[0]],
                        aspect="equal")

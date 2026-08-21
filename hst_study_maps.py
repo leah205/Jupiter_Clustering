@@ -105,7 +105,7 @@ Study_Maps={'20251016UTa':{'collection':'20251016-20251016',
                                                   "Cloud Plume":[96,98,53.0,2.0],
                                                   "Reference":[102,103,55,8.0]},
                                            'CoLatLims':[85,105],
-                                           'LonRng':30,
+                                           'LonRng': 28, #30
                                            'CMpref':50
                                            }
                                 }

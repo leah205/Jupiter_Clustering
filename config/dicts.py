@@ -25,12 +25,22 @@ eval_runs = [
 ]
 
 cluster_runs = [
-    {
-        "dims": ["NH3", "PCld"],
-        "PCA": False,
-        "comps":  [3,4,5, 6]
-    },
-    
+    # {
+    #     "dims": ["NH3", "PCld"],
+    #     "PCA": False,
+    #     "comps":  [3,4,5, 6]
+    # },
+     {
+            "dims": ["AOI", "CI"],
+            "PCA": False,
+            "comps":  [3,4,5, 6]
+        },
+        {
+                    "dims": ["AOI", "CI", "NH3", "PCld"],
+                    "PCA": False,
+                    "comps":  [3,4,5, 6]
+                },
+        
     # {
     #     "dims": ["275", "395", "502", "619", "631", "645", "673", "727", "889"],
     #     "PCA": True,
@@ -60,8 +70,8 @@ color_dict = {
 ranges_dict = {
     "NH3": [0, 400],
     "PCld": [1000, 3100],
-    "AOI": [0.1, 0.4],
-    "CI": [0.3, 0.8],
+    "AOI": [0.05, 0.6],
+    "CI": [0.1, 1],
     "Prob": [0, 1]
 }
 
