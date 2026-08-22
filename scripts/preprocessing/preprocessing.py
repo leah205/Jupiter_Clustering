@@ -159,7 +159,7 @@ def get_patch(keyword, latLims, lngLims, cm_num, dir_path):
     file = get_file_path(keyword, dir_path)
     CM = 0 if cm_num == 0 else get_cm(file, cm_num)
     radiance_arr = get_radiance_arr(file)
-    return subset_map(radiance_arr, latLims, lngLims, CM)
+    return subset_map(radiance_arr, latLims, lngLims)
 
 
 def get_filtered_pix_arr(range_arr, pixel_arr):
@@ -206,7 +206,7 @@ def get_mapped_pix_arr(pix_arr):
     return mapped_pix_arr
  
     
-def subset_map(map, LatLims, LonLims,  CM):
+def subset_map(map, LatLims, LonLims):
     """
     map: np array
         - array to filter coordinates
@@ -214,27 +214,28 @@ def subset_map(map, LatLims, LonLims,  CM):
             - latitude range
     lngLims: [min, max]
             - longitude range
-    cm_num: int
-            - coordinate system
+
     Returns
     ------------
     np array
-
     """
     import numpy as np
     import copy
-
+    
+    
     LonRng = (LonLims[1] - LonLims[0]) / 2
+    CM = LonLims[0] + LonRng
     #print("map shape: " + str(map.shape))
     scale=int(map.shape[0]/180)
     #print("######## scale=",scale)
     lon_max=360*scale
     LatLims=np.array(LatLims)*scale
     LonRng=LonRng*scale
-    CM=CM*scale
+    # CM=CM*scale
+    CM = 50 * scale
     LonLims=np.array(LonLims)*scale
   
-    #print(lon_max,LatLims,LonRng,CM,LonLims)
+    print(lon_max,LatLims,LonRng,CM,LonLims)
     if(CM == 0):
         return np.copy(map[LatLims[0]:LatLims[1],LonLims[0]:LonLims[1]])
     if CM >= LonRng and CM <= lon_max - LonRng:
@@ -246,24 +247,23 @@ def subset_map(map, LatLims, LonLims,  CM):
         )
    
     elif CM<LonRng:
-      
         #crosses longitude boundary to the left of CM
         #print("******************  CM2deg<LonRng")
         #slices of higher longitudes, lower longitudes concatenated
         #patch=np.concatenate((np.copy(map[LatLims[0]:LatLims[1],LonLims[0]-1:lon_max]),
         #                      np.copy(map[LatLims[0]:LatLims[1],0:LonLims[1]-lon_max])),axis=1)
         
+        
         patch=np.concatenate((np.copy(map[LatLims[0]:LatLims[1],LonLims[0]:lon_max]),
                               np.copy(map[LatLims[0]:LatLims[1],0:LonLims[1]-lon_max])),axis=1)
     elif CM>lon_max-LonRng:
-   
         #crossses longitude boundary to the right of CM
         #print("******************  CM2deg>LonRng")
         #slices of higher longitudes, lower longitudes concatenated
         patch=np.concatenate((np.copy(map[LatLims[0]:LatLims[1],lon_max+LonLims[0]:lon_max]),
                               np.copy(map[LatLims[0]:LatLims[1],0:LonLims[1]])),axis=1)
         #print("lon_max+LonLims[0]:lon_max,0:LonLims[1]=",lon_max+LonLims[0],lon_max,0,LonLims[1])
-    #print("patch shape:" + str(patch.shape))
+    print("patch shape:" + str(patch.shape))
 
     return patch    
 
@@ -329,7 +329,7 @@ def get_input_array(config, param_ranges,
     subset_shape = (0,0)
     
     for radiance_arr in radiances_arr:
-        subset = subset_map(radiance_arr, config.latRng, config.lngRng, CM)
+        subset = subset_map(radiance_arr, config.latRng, config.lngRng)
         subset[subset == 0] = np.nan
         subset_shape = subset.shape
         subpatches.append(subset.flatten())
