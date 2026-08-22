@@ -23,13 +23,11 @@ def run_all_cluster_ROI(r):
 
     ROI = ast.literal_eval(r['ROI Dict'].split("=")[1])
     source = r["Data Source"]
-    if(not "202512" in r["Name"]):
+    if(not "20251016UTa" in r["Name"]):
         return
-    print(source, r["Name"])
 
    
     lat_lims , lon_lims = r["lat_lims"], r["lon_lims"]
-    print(lat_lims, lon_lims)
     
     for cl_info in D.cluster_runs:
         mapConfig =  T.mappingConfig(

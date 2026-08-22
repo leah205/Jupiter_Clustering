@@ -43,6 +43,7 @@ def run_full_pipeline(config: TY.pipelineConfig):
     void
 
     """
+    print(config.cluster.n_comp)
     keywords = config.map.keywords
     param_ranges = [D.ranges_dict.get(keyword, [0, 1]) for keyword in keywords]
     
@@ -67,14 +68,14 @@ def run_full_pipeline(config: TY.pipelineConfig):
     
     if(len(keywords) == 2):
         # two-d radiance scatter plot
-        plot_fig = PLP.create_plot_figure(config.map, pred, arr, reshaped_pred, title, cluster_obj)
+        plot_fig = PLP.create_plot_figure(config.map, pred, arr, reshaped_pred, title, cluster_obj, config.cluster.n_comp)
         plot_fig.savefig(f"{prefix}plot.png")
         # comparison of radiances in different filters mapped spatially
-        map_comp_fig = PLP.create_map_comp_figure(config.map, reshaped_pred, title)
+        map_comp_fig = PLP.create_map_comp_figure(config.map, reshaped_pred, title, config.cluster.n_comp)
         map_comp_fig.savefig(f"{prefix}map_comp.png")
     if(len(keywords) == 4):
         # two 2d radiance scatter plots
-        plot_fig = PLP.create_plots_figure(config.map, pred, arr, reshaped_pred, title)
+        plot_fig = PLP.create_plots_figure(config.map, pred, arr, reshaped_pred, title, config.cluster.n_comp)
         plot_fig.savefig(f"{prefix}plots.png")
 
     # heat map for mean value for each cluster for each parameter
@@ -82,7 +83,7 @@ def run_full_pipeline(config: TY.pipelineConfig):
     centroids_fig.savefig(f"{prefix}centroids.png")
 
     # spatial map of clusters
-    map_fig = PLP.create_cluster_map(config.map, reshaped_pred, title)
+    map_fig = PLP.create_cluster_map(config.map, reshaped_pred, title, config.cluster.n_comp)
     map_fig.savefig(f"{prefix}cluster_map.png")
     keyword_str = '_'.join(keywords)
     

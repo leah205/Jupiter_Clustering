@@ -82,10 +82,12 @@ def plot_cluster_patch(config, patch, cmap, axis, n_comp, fig = None, cbarplot =
     LatLims, LonLims = config.latRng, config.lngRng
 
     bounds = np.arange(v_min - 0.5, v_max + 0.5, 1)
+    print(bounds)
     norm = colors.BoundaryNorm(bounds, cmap.N)
    
     masked_patch = np.ma.masked_invalid(patch)
     cmap.set_bad("black")
+   
     tx=np.linspace(v_max,v_min,n ,endpoint=True)
     
     show=axis.imshow(masked_patch,  origin='upper', interpolation = 'nearest', cmap = cmap, norm = norm,  

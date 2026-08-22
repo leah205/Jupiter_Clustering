@@ -38,14 +38,15 @@ Parameters
 
 
 
-def create_map_comp_figure(config: T.mappingConfig, reshaped_pred, title):
+def create_map_comp_figure(config: T.mappingConfig, reshaped_pred, title, n_comp):
     """
     Creates spatial map comparing radiances in different filters with cluster outputs
     """
-    n_comp = np.unique(reshaped_pred).shape[0] - 1
     dim1, dim2 = config.keywords[0], config.keywords[1]
+  
     cmap = ListedColormap(colors[:n_comp])
     fig2, axis2 = pl.subplots(3, 1, constrained_layout = True)
+    
 
     dir_path = get_dir_path(config)
     map1 = pre.get_patch(dim1, config.latRng, config.lngRng, config.cm_num, dir_path)
@@ -60,12 +61,11 @@ def create_map_comp_figure(config: T.mappingConfig, reshaped_pred, title):
     return fig2
 
 
-def create_plot_figure(config: T.mappingConfig, pred, arr, reshaped_pred, title, cluster_obj):
+def create_plot_figure(config: T.mappingConfig, pred, arr, reshaped_pred, title, cluster_obj, n_comp):
     """
     Creates scatter plot of clusters in two parameters and spatial cluster map
     """
     # creates and saves cluster map and cluster scatter plot
-    n_comp = np.unique(pred).shape[0] - 1
     cmap = ListedColormap(colors[:n_comp])
     fig1, axis1 = pl.subplots(2, 1, figsize = (8,8))
     pl.tight_layout()
@@ -83,7 +83,7 @@ def create_plot_figure(config: T.mappingConfig, pred, arr, reshaped_pred, title,
     return fig1
 
 
-def create_plots_figure(config: T.mappingConfig, pred, input_arr, reshaped_pred, title):
+def create_plots_figure(config: T.mappingConfig, pred, input_arr, reshaped_pred, title, n_comp):
     """
     Creates two scatter plots each showing clusters with two parameters and a spatial cluster map
     """
@@ -98,7 +98,7 @@ def create_plots_figure(config: T.mappingConfig, pred, input_arr, reshaped_pred,
 
     return fig
 
-def create_cluster_map(config: T.mappingConfig, reshaped_pred, title):
+def create_cluster_map(config: T.mappingConfig, reshaped_pred, title, n_comp):
     """
     Plots clusters spatially on region
     """
