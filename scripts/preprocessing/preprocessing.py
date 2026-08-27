@@ -24,7 +24,8 @@ def get_radiance_arr(file):
 def get_wcs(file):
     hdul = fits.open(file)
     hdr = hdul[0].header
-    return WCS(hdr)
+    w = WCS(hdr)
+    return w
 
 def get_header_key(file, key):
     """
@@ -174,6 +175,8 @@ def get_filtered_pix_arr(range_arr, pixel_arr):
     ----------
     filtered pix_arr with only pixel rows with all parameters in specified range
     '''
+    print(pixel_arr)
+    print(pixel_arr.shape)
     if(len(range_arr) and len(range_arr) != pixel_arr.shape[1] - 1):
         raise TypeError("ranges array should match number of parameters")
     
@@ -184,7 +187,9 @@ def get_filtered_pix_arr(range_arr, pixel_arr):
     #don't want to filter on last column(index)
     pixel_param_cols = pixel_arr[:, 0:range_arr.shape[0]]
     mask = (pixel_param_cols >= mins) & (pixel_param_cols <= maxs) 
+
     filtered = pixel_arr[np.all(mask, axis = 1)]
+    print(filtered)
    
     return filtered
 
@@ -204,7 +209,7 @@ def get_mapped_pix_arr(pix_arr):
     indices = np.arange(pix_arr.shape[0])
     mapped_pix_arr =np.insert(pix_arr, pix_arr.shape[1], indices, axis = 1)
     return mapped_pix_arr
- 
+
     
 def subset_map(map, LatLims, LonLims):
     """
@@ -266,6 +271,7 @@ def subset_map(map, LatLims, LonLims):
     print("patch shape:" + str(patch.shape))
 
     return patch    
+    
 
 def get_date(keywords, dir_name):
     """
@@ -327,7 +333,7 @@ def get_input_array(config, param_ranges,
 
     CM = 0 if config.cm_num == 0 else get_cm(first_file, config.cm_num)
     subset_shape = (0,0)
-    
+
     for radiance_arr in radiances_arr:
         subset = subset_map(radiance_arr, config.latRng, config.lngRng)
         subset[subset == 0] = np.nan
@@ -341,6 +347,4 @@ def get_input_array(config, param_ranges,
   
     return [pix_arr, subset_shape]
     
-
-
 

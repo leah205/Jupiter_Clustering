@@ -23,7 +23,7 @@ def run_all_cluster_ROI(r):
 
     ROI = ast.literal_eval(r['ROI Dict'].split("=")[1])
     source = r["Data Source"]
-    if(not "20251120UTc" in r["Name"]):
+    if(not "20251120" in r["Name"]):
         return
 
    
