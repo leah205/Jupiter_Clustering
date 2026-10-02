@@ -23,7 +23,7 @@ def run_all_cluster_ROI(r):
 
     ROI = ast.literal_eval(r['ROI Dict'].split("=")[1])
     source = r["Data Source"]
-    if(not "20251120" in r["Name"]):
+    if((not "Oval" in r["Name"]) and (not "GRS" in r["Name"])):
         return
 
    
@@ -37,7 +37,7 @@ def run_all_cluster_ROI(r):
         lngRng = lon_lims,
         name = r["Name"],
         source = source,
-        cm_num = 1
+        cm_num = 3
         )
      
      
@@ -55,8 +55,9 @@ def run_all_cluster_ROI(r):
         
 
 if __name__ == "__main__":
-    df = parse_map_to_df()
-    df.apply(run_all_cluster_ROI, axis=1)
+    df = parse_map_to_df('3')
+    print(df.head())
+    #df.apply(run_all_cluster_ROI, axis=1)
    
 
     

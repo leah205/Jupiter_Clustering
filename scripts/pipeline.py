@@ -11,6 +11,9 @@ from config.config import cf
 import config.types as TY
 import scripts.plots.mapping as MP
 import config.dicts as D
+import scripts.helpers as HP
+from pathlib import Path
+
 import json
 # import regions
 
@@ -43,15 +46,26 @@ def run_full_pipeline(config: TY.pipelineConfig):
     void
 
     """
-    print(config.cluster.n_comp)
+
+    output_dir = HP.get_output_dir(config.cluster, config.map)
+
+    if(output_dir.exists()):
+        return
+
+    output_dir_path = Path(output_dir)
+    output_dir_path.parent.mkdir(parents = True, exist_ok = True)
+
+
     keywords = config.map.keywords
+    dir = HP.get_dir_path(config.map)
+    fits_files = HP.get_fits_files(dir, keywords)
     param_ranges = [D.ranges_dict.get(keyword, [0, 1]) for keyword in keywords]
     
     # function to cluster
     transform = CL.run_pca_pipeline if config.cluster.isPca else CL.run_raw_pipeline
 
     # get input numpy array and shape filtered by coordinates and radiance values
-    [arr, subset_shape] = pre.get_input_array(config.map, param_ranges)
+    [arr, subset_shape] = pre.get_input_array(config.map, param_ranges, fits_files)
 
     indices = arr[:, arr.shape[1] - 1]
     data = arr[:, 0:len(keywords)]
@@ -63,20 +77,25 @@ def run_full_pipeline(config: TY.pipelineConfig):
     # map cluster outputs to original map shape (within coordinate range)
     reshaped_pred = MP.reshape_clustered(indices, subset_shape, pred)
 
-    prefix = PLP.create_file_prefix(config.cluster, config.map)
+    # prefix = PLP.create_file_prefix(config.cluster, config.map)
+    output_dir = HP.get_output_dir(config.cluster, config.map)
+    prefix = output_dir / HP.create_file_prefix(config.cluster, config.map)
+
     title = PLP.create_plot_title(config.cluster, config.map)
     
     if(len(keywords) == 2):
         # two-d radiance scatter plot
         plot_fig = PLP.create_plot_figure(config.map, pred, arr, reshaped_pred, title, cluster_obj, config.cluster.n_comp)
-        plot_fig.savefig(f"{prefix}plot.png")
+        HP.saveFigure(Path(f"{prefix}plot.png"), plot_fig)
         # comparison of radiances in different filters mapped spatially
         map_comp_fig = PLP.create_map_comp_figure(config.map, reshaped_pred, title, config.cluster.n_comp)
-        map_comp_fig.savefig(f"{prefix}map_comp.png")
+        HP.saveFigure(Path(f"{prefix}plot.png"), plot_fig)
+
     if(len(keywords) == 4):
         # two 2d radiance scatter plots
         plot_fig = PLP.create_plots_figure(config.map, pred, arr, reshaped_pred, title, config.cluster.n_comp)
-        plot_fig.savefig(f"{prefix}plots.png")
+        HP.saveFigure(Path(f"{prefix}plot.png"), plot_fig)
+
 
     # heat map for mean value for each cluster for each parameter
     centroids_fig = STAT.get_centroids_figure(keywords, means, title)

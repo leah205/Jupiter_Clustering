@@ -99,44 +99,44 @@ def get_radiances(file_arr):
 
 
 
-def get_file_path(keyword, dir):
-    """
-    Parameters
-    -----------
-    keyword: string
-        - keyword to select file by
-    dir: string
-        - path to directory to search for file in
-    Returns
-    ----------
-    string of path to file
-    """
-    for f in listdir(dir):
-        if keyword in f and ".fits" in f:
-            return dir + "/" + f
+# def get_file_path(keyword, dir):
+#     """
+#     Parameters
+#     -----------
+#     keyword: string
+#         - keyword to select file by
+#     dir: string
+#         - path to directory to search for file in
+#     Returns
+#     ----------
+#     string of path to file
+#     """
+#     for f in listdir(dir):
+#         if keyword in f and ".fits" in f:
+#             return dir + "/" + f
            
-def get_parameter_2d_array(keyword_arr, dir_path):
-    '''
-    Builds parameter array within lon/lat range of pixel radiances for specified keywords
+# def get_parameter_2d_array(keyword_arr, dir_path):
+#     '''
+#     Builds parameter array within lon/lat range of pixel radiances for specified keywords
 
-    Parameters
-    -----------
-    keyword_arr, MANDATORY
-        Description: array of keywords to select files
-    dir_path: string
-        - path to directory to get radiances from
+#     Parameters
+#     -----------
+#     keyword_arr, MANDATORY
+#         Description: array of keywords to select files
+#     dir_path: string
+#         - path to directory to get radiances from
 
-    Returns
-    ----------
-    List of radiance numpy arrays for each keyword
-    '''
+#     Returns
+#     ----------
+#     List of radiance numpy arrays for each keyword
+#     '''
    
-    file_name_arr = []
-    for keyword in keyword_arr:
-        file = get_file_path(keyword, dir_path) 
-        file_name_arr.append(file)
-    radiances = get_radiances(file_name_arr)
-    return radiances
+#     file_name_arr = []
+#     for keyword in keyword_arr:
+#         file = get_file_path(keyword, dir_path) 
+#         file_name_arr.append(file)
+#     radiances = get_radiances(file_name_arr)
+#     return radiances
 
 
 
@@ -306,7 +306,7 @@ def get_date(keywords, dir_name):
 
 
 
-def get_input_array(config, param_ranges,
+def get_input_array(config, param_ranges, fits_files
                         ):
     '''
     Main preprocessing routine that returns array to be passed into clustering
@@ -317,6 +317,7 @@ def get_input_array(config, param_ranges,
         - list of lists specifying minimum and maximum values to be included in the analysis for each keyword
     config: 
         - object containing mapping information for the input array
+    fits_files
     
     Returns 
     --------
@@ -324,7 +325,8 @@ def get_input_array(config, param_ranges,
     filtered with rangeArr
     '''
     dir_path =  get_dir_path(config)
-    radiances_arr = get_parameter_2d_array(config.keywords, dir_path)
+    # radiances_arr = get_parameter_2d_array(config.keywords, dir_path)
+    radiances_arr = get_radiances(fits_files)
   
 
     subpatches = []

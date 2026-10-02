@@ -1,4 +1,5 @@
-from hst_study_maps import Study_Maps
+# from hst_study_maps import Study_Maps
+from HST_Study_MapsV2 import Study_Maps
 import pandas as pd
 
 def get_lon_lims(cmpref, lon_rng):
@@ -25,7 +26,7 @@ def get_lon_lims(cmpref, lon_rng):
    
 
 
-def parse_map_to_df():
+def parse_map_to_df(sys):
     """
     Parses study map into df that can be input into pipeline
 
@@ -39,8 +40,8 @@ def parse_map_to_df():
     """
     rows = []
     for obs, value in Study_Maps.items():
-        sys1 = value['1']
-        for key, val in sys1.items():
+        sys_obj = value[sys]
+        for key, val in sys_obj.items():
             if key in ['CoLatLims', 'LonRng', 'plotoptions', 'CMpref']:
                 continue
             else: 

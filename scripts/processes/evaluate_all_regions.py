@@ -6,6 +6,10 @@ import config.dicts as D
 from scripts.data_formatting.parse_map_to_df import parse_map_to_df
 
 
+
+
+
+
 def get_lat_range(rng):
     """
         Parameters
@@ -66,6 +70,9 @@ def run_all_eval_ROI(r):
 
 if __name__ == "__main__":
     regions_data = parse_map_to_df()
+   
+    
+    # regions_data = parse_map_to_df()
 
-    regions_data.apply(run_all_eval_ROI, axis = 1)
+    # regions_data.apply(run_all_eval_ROI, axis = 1)
 
