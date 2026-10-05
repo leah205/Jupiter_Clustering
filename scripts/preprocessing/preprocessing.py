@@ -141,7 +141,7 @@ def get_radiances(file_arr):
 
 
 
-def get_patch(keyword, latLims, lngLims, cm_num, dir_path):
+def get_patch(keyword, latLims, lngLims, cm_num, file):
     """
     keyword: string
     latLims: [min, max]
@@ -157,7 +157,8 @@ def get_patch(keyword, latLims, lngLims, cm_num, dir_path):
     -------------
     np array with pixels filtered by longitude/latitude range
     """
-    file = get_file_path(keyword, dir_path)
+    # file = [f for f in fits_files if keyword in f][0]
+    # # file = get_file_path(keyword, dir_path)
     CM = 0 if cm_num == 0 else get_cm(file, cm_num)
     radiance_arr = get_radiance_arr(file)
     return subset_map(radiance_arr, latLims, lngLims)
@@ -273,7 +274,7 @@ def subset_map(map, LatLims, LonLims):
     return patch    
     
 
-def get_date(keywords, dir_name):
+def get_date(keywords, file):
     """
     dates an observation by the date of the first image taken
 
@@ -290,7 +291,7 @@ def get_date(keywords, dir_name):
     
     """
     seconds_past = 0
-    first_file = file = get_file_path(keywords[0], dir_name)
+  
     hdr = fits.open(file)[0].header
     first_date_str = hdr["DATE-OBS"][11:19]
     return hdr["DATE-OBS"][0:19]
@@ -330,7 +331,7 @@ def get_input_array(config, param_ranges, fits_files
   
 
     subpatches = []
-    first_file = get_file_path(config.keywords[0], dir_path)
+    first_file =fits_files[0]
     
 
     CM = 0 if config.cm_num == 0 else get_cm(first_file, config.cm_num)
@@ -346,7 +347,12 @@ def get_input_array(config, param_ranges, fits_files
     pix_arr = np.column_stack(subpatches)
     pix_arr = get_mapped_pix_arr(pix_arr)
     pix_arr = get_filtered_pix_arr(param_ranges, pix_arr)
+
+    indices = pix_arr[:, pix_arr.shape[1] - 1]
+    data = pix_arr[:, 0:len(config.map.keywords)]
+
+
   
-    return [pix_arr, subset_shape]
+    return [data, subset_shape, indices]
     
 

@@ -6,7 +6,8 @@ from config.config import cf
 import scripts.plots.mapping as MP
 import pylab as pl
 from matplotlib.colors import ListedColormap 
-from scripts.helpers import get_dir_path
+from scripts.helpers import get_dir_path, get_fits_files
+
 import config.types as T
 # red, green, blue, yellow, orange, pink, purple, gray
 colors =[(1, 0.639, 0.639), (0.647, 1, 0.639), (0.639, 0.894, 1), (1, 0.996, 0.639), (1, 0.82, 0.639), (1, 0.639, 0.839), (0.937, 0.639, 1), (0.678, 0.678, 0.678)]
@@ -48,8 +49,11 @@ def create_map_comp_figure(config: T.mappingConfig, reshaped_pred, title, n_comp
     
 
     dir_path = get_dir_path(config)
-    map1 = pre.get_patch(dim1, config.latRng, config.lngRng, config.cm_num, dir_path)
-    map2 = pre.get_patch(dim2, config.latRng, config.lngRng, config.cm_num, dir_path)
+    file1 = get_fits_files(dir_path, [dim1])[0]
+    file2 = get_fits_files(dir_path, [dim2])[0]
+
+    map1 = pre.get_patch(dim1, config.latRng, config.lngRng, config.cm_num, file1)
+    map2 = pre.get_patch(dim2, config.latRng, config.lngRng, config.cm_num, file2)
 
     MP.plot_cluster_patch(config, reshaped_pred, cmap,  axis2[0], n_comp,fig2)
     

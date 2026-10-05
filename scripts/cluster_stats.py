@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from config.config import cf
 from sklearn.linear_model import LinearRegression
-from scripts.helpers import get_dir_path
+from scripts.helpers import get_dir_path, get_fits_files
 import csv
 
 
@@ -145,8 +145,10 @@ def get_all_stats(pred, indices, n_comp, m):
         raise TypeError("Index array length must match cluster array length")
     
     res = {}
+
     for key in m.keywords:
-        map =  pre.get_patch(key, m.latRng, m.lngRng, m.cm_num, dir_path)
+        file = get_fits_files(dir_path, key)[0]
+        map =  pre.get_patch(key, m.latRng, m.lngRng, m.cm_num, file)
         dim_arr = map.flatten()
         res[key] = get_stat(cluster_arr, dim_arr, indices, n_comp, key)
 

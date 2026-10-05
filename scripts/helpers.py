@@ -46,14 +46,14 @@ def get_output_dir(c: T.clusterConfig, m: T.mappingConfig):
     return f'{cf["output"]}/{m.name}/{keyword_str}/{pca_dir}{c.n_comp}_cl/{thresh_dir}'
     
 
-def create_file_prefix(c: T.clusterConfig, m: T.mappingConfig):
+def create_file_prefix(c: T.clusterConfig, m: T.mappingConfig, first_file):
     """
     Creates file path name and prefix for plotting output
     """
  
     lon1, lon2 = 360 - m.lngRng[1], 360 - m.lngRng[0]
-    dir_name = get_dir_path(m)
-    date = pre.get_date(m.keywords, dir_name)
+
+    date = pre.get_date(m.keywords, first_file)
     lat_lon_str = f'{m.latRng[0]}-{m.latRng[1]}_{lon1}-{lon2}'
     keyword_str = '_'.join(m.keywords)
    

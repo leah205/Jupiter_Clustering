@@ -48,27 +48,29 @@ def run_full_pipeline(config: TY.pipelineConfig):
     """
 
     output_dir = HP.get_output_dir(config.cluster, config.map)
+    output_dir_path = Path(output_dir)
 
-    if(output_dir.exists()):
+    #clustering has already been run
+    if(output_dir_path.exists()):
         return
 
-    output_dir_path = Path(output_dir)
-    output_dir_path.parent.mkdir(parents = True, exist_ok = True)
+    else:
+        print(output_dir)
+
+    output_dir_path.mkdir(parents = True, exist_ok = True)
 
 
     keywords = config.map.keywords
-    dir = HP.get_dir_path(config.map)
-    fits_files = HP.get_fits_files(dir, keywords)
+    input_dir = HP.get_dir_path(config.map)
+    fits_files = HP.get_fits_files(input_dir, keywords)
     param_ranges = [D.ranges_dict.get(keyword, [0, 1]) for keyword in keywords]
     
     # function to cluster
     transform = CL.run_pca_pipeline if config.cluster.isPca else CL.run_raw_pipeline
 
     # get input numpy array and shape filtered by coordinates and radiance values
-    [arr, subset_shape] = pre.get_input_array(config.map, param_ranges, fits_files)
+    [data, subset_shape, indices] = pre.get_input_array(config.map, param_ranges, fits_files)
 
-    indices = arr[:, arr.shape[1] - 1]
-    data = arr[:, 0:len(keywords)]
 
     # run clustering function on processed data
     cluster_obj = transform(data, config.cluster)
@@ -79,7 +81,7 @@ def run_full_pipeline(config: TY.pipelineConfig):
 
     # prefix = PLP.create_file_prefix(config.cluster, config.map)
     output_dir = HP.get_output_dir(config.cluster, config.map)
-    prefix = output_dir / HP.create_file_prefix(config.cluster, config.map)
+    prefix = output_dir_path / HP.create_file_prefix(config.cluster, config.map, fits_files[0])
 
     title = PLP.create_plot_title(config.cluster, config.map)
     
