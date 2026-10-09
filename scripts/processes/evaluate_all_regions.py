@@ -6,6 +6,9 @@ import config.dicts as D
 from scripts.data_formatting.parse_map_to_df import parse_map_to_df
 
 
+
+
+
 def get_lat_range(rng):
     """
         Parameters
@@ -47,7 +50,8 @@ def run_all_eval_ROI(r):
     ROI = ast.literal_eval(r['ROI Dict'].split("=")[1])
     lat_lims , lon_lims = r["lat_lims"], r["lon_lims"]
     source = r["Data Source"]
-
+    if((not "GRS" in r["Name"]) and (not "Oval" in r["Name"])):
+                return
 
     for cl_info in D.eval_runs:
         mapConfig =  T.mappingConfig(
@@ -57,15 +61,24 @@ def run_all_eval_ROI(r):
         lngRng = lon_lims,
         name = r["Name"],
         source = source,
-        cm_num = 1
+        cm_num = int(r["Sys"])
         )
-        if(cl_info["PCA"]):
-            EV.pca_evaluation_pipeline(mapConfig)
-        else:
-            EV.raw_evaluation_pipeline(mapConfig)
+        clusterConfig = T.clusterConfig(
+                        n_comp=-1,
+                        isPca = cl_info["PCA"]
+                    )
+        config = T.pipelineConfig(
+                        map = mapConfig,
+                        cluster = clusterConfig
+                    )
+        EV.run_evaluation_pipeline(config)
+      
 
 if __name__ == "__main__":
     regions_data = parse_map_to_df()
+   
+    
+    # regions_data = parse_map_to_df()
 
     regions_data.apply(run_all_eval_ROI, axis = 1)
 

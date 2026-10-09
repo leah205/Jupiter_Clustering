@@ -5,9 +5,9 @@ import scripts.plots.plots as PL
 from config.config import cf
 import scripts.plots.mapping as MP
 import pylab as pl
-from pathlib import Path
 from matplotlib.colors import ListedColormap 
-from scripts.helpers import get_dir_path
+from scripts.io import get_dir_path, get_fits_files
+
 import config.types as T
 # red, green, blue, yellow, orange, pink, purple, gray
 colors =[(1, 0.639, 0.639), (0.647, 1, 0.639), (0.639, 0.894, 1), (1, 0.996, 0.639), (1, 0.82, 0.639), (1, 0.639, 0.839), (0.937, 0.639, 1), (0.678, 0.678, 0.678)]
@@ -49,8 +49,11 @@ def create_map_comp_figure(config: T.mappingConfig, reshaped_pred, title, n_comp
     
 
     dir_path = get_dir_path(config)
-    map1 = pre.get_patch(dim1, config.latRng, config.lngRng, config.cm_num, dir_path)
-    map2 = pre.get_patch(dim2, config.latRng, config.lngRng, config.cm_num, dir_path)
+    file1 = get_fits_files(dir_path, [dim1])[0]
+    file2 = get_fits_files(dir_path, [dim2])[0]
+
+    map1 = pre.get_patch(dim1, config.latRng, config.lngRng, config.cm_num, file1)
+    map2 = pre.get_patch(dim2, config.latRng, config.lngRng, config.cm_num, file2)
 
     MP.plot_cluster_patch(config, reshaped_pred, cmap,  axis2[0], n_comp,fig2)
     
@@ -109,22 +112,6 @@ def create_cluster_map(config: T.mappingConfig, reshaped_pred, title, n_comp):
     fig.suptitle(f"{title} cluster map", fontsize = 10) 
     return fig
 
-def create_file_prefix(c: T.clusterConfig, m: T.mappingConfig):
-    """
-    Creates file path name and prefix for plotting output
-    """
-    print(c)
-    print(m)
-    lon1, lon2 = 360 - m.lngRng[1], 360 - m.lngRng[0]
-    dir_name = get_dir_path(m)
-    date = pre.get_date(m.keywords, dir_name)
-    lat_lon_str = f'{m.latRng[0]}-{m.latRng[1]}_{lon1}-{lon2}'
-    keyword_str = '_'.join(m.keywords)
-    pca_dir = ("PCA/") if c.isPca else ""
-    thresh_dir = (f"{c.threshold_type}_{c.threshold}/") if cf["soft_clustering"] else ""
-    save_path = Path(f'{cf["output"]}/{m.name}/{keyword_str}/{pca_dir}{c.n_comp}_cl/{thresh_dir}{date}_{keyword_str}_{lat_lon_str}_{c.n_comp}_sys_{m.cm_num}_')
-    save_path.parent.mkdir(parents = True, exist_ok = True)
-    return save_path
 
 
 

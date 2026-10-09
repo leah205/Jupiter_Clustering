@@ -105,7 +105,7 @@ Study_Maps={'20251016UTa':{'collection':'20251016-20251016',
                                                   "Cloud Plume":[96,98,53.0,2.0],
                                                   "Reference":[102,103,55,8.0]},
                                            'CoLatLims':[85,105],
-                                           'LonRng': 28, #30
+                                           'LonRng': 30, #30 should have 4x as much (1600)
                                            'CMpref':50
                                            }
                                 }
@@ -290,7 +290,7 @@ Study_Maps={'20251016UTa':{'collection':'20251016-20251016',
                                 'CoLatLims':[75,105],
                                 #'LonRng':30,
                                 #'CMpref':330
-                                'LonRng':30,
+                                'LonRng':30, 
                                 'CMpref':330,
                                  'NEZ':{'ROI':{"Hot Spot":[82,83,350,2.0],
                                                    "Gyre":[83,86,340,4.0],

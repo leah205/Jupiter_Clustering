@@ -22,9 +22,13 @@ def run_all_cluster_ROI(r):
     """
 
     ROI = ast.literal_eval(r['ROI Dict'].split("=")[1])
+    flag = 0
     source = r["Data Source"]
-    if(not "20251120" in r["Name"]):
-        return
+    print(r["Name"])
+    
+    if((not "GRS" in r["Name"]) and (not "Oval" in r["Name"])):
+            return
+    
 
    
     lat_lims , lon_lims = r["lat_lims"], r["lon_lims"]
@@ -37,7 +41,7 @@ def run_all_cluster_ROI(r):
         lngRng = lon_lims,
         name = r["Name"],
         source = source,
-        cm_num = 1
+        cm_num = int(r["Sys"])
         )
      
      
@@ -56,6 +60,7 @@ def run_all_cluster_ROI(r):
 
 if __name__ == "__main__":
     df = parse_map_to_df()
+    print(df.head())
     df.apply(run_all_cluster_ROI, axis=1)
    
 

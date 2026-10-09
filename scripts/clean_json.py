@@ -45,13 +45,13 @@ def remove_keys_from_json(input_file, output_file, keys_to_remove):
 
 if __name__ == "__main__":
     remove_keys_from_json(
-        "mahalanobis_clusters.json",
         "new_mahalanobis_clusters.json",
+        "temp",
         [
-            "20251016UTc-SED",
-            "20251016UTf-SED",
-            "NH3_PCld_AOI_CI",
-            "AOI_CI"
+            "20251016UTa-GRS",
+            "20251016UTb-GRS",
+
+           
 
         ]
     )

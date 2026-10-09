@@ -5,7 +5,6 @@ import numpy as np
 from astropy.wcs import WCS
 import time
 from config.config import cf
-from scripts.helpers import get_dir_path
 
 def get_radiance_arr(file):
     """
@@ -99,49 +98,49 @@ def get_radiances(file_arr):
 
 
 
-def get_file_path(keyword, dir):
-    """
-    Parameters
-    -----------
-    keyword: string
-        - keyword to select file by
-    dir: string
-        - path to directory to search for file in
-    Returns
-    ----------
-    string of path to file
-    """
-    for f in listdir(dir):
-        if keyword in f and ".fits" in f:
-            return dir + "/" + f
+# def get_file_path(keyword, dir):
+#     """
+#     Parameters
+#     -----------
+#     keyword: string
+#         - keyword to select file by
+#     dir: string
+#         - path to directory to search for file in
+#     Returns
+#     ----------
+#     string of path to file
+#     """
+#     for f in listdir(dir):
+#         if keyword in f and ".fits" in f:
+#             return dir + "/" + f
            
-def get_parameter_2d_array(keyword_arr, dir_path):
-    '''
-    Builds parameter array within lon/lat range of pixel radiances for specified keywords
+# def get_parameter_2d_array(keyword_arr, dir_path):
+#     '''
+#     Builds parameter array within lon/lat range of pixel radiances for specified keywords
 
-    Parameters
-    -----------
-    keyword_arr, MANDATORY
-        Description: array of keywords to select files
-    dir_path: string
-        - path to directory to get radiances from
+#     Parameters
+#     -----------
+#     keyword_arr, MANDATORY
+#         Description: array of keywords to select files
+#     dir_path: string
+#         - path to directory to get radiances from
 
-    Returns
-    ----------
-    List of radiance numpy arrays for each keyword
-    '''
+#     Returns
+#     ----------
+#     List of radiance numpy arrays for each keyword
+#     '''
    
-    file_name_arr = []
-    for keyword in keyword_arr:
-        file = get_file_path(keyword, dir_path) 
-        file_name_arr.append(file)
-    radiances = get_radiances(file_name_arr)
-    return radiances
+#     file_name_arr = []
+#     for keyword in keyword_arr:
+#         file = get_file_path(keyword, dir_path) 
+#         file_name_arr.append(file)
+#     radiances = get_radiances(file_name_arr)
+#     return radiances
 
 
 
 
-def get_patch(keyword, latLims, lngLims, cm_num, dir_path):
+def get_patch(keyword, latLims, lngLims, cm_num, file):
     """
     keyword: string
     latLims: [min, max]
@@ -157,7 +156,8 @@ def get_patch(keyword, latLims, lngLims, cm_num, dir_path):
     -------------
     np array with pixels filtered by longitude/latitude range
     """
-    file = get_file_path(keyword, dir_path)
+    # file = [f for f in fits_files if keyword in f][0]
+    # # file = get_file_path(keyword, dir_path)
     CM = 0 if cm_num == 0 else get_cm(file, cm_num)
     radiance_arr = get_radiance_arr(file)
     return subset_map(radiance_arr, latLims, lngLims)
@@ -273,7 +273,7 @@ def subset_map(map, LatLims, LonLims):
     return patch    
     
 
-def get_date(keywords, dir_name):
+def get_date(keywords, file):
     """
     dates an observation by the date of the first image taken
 
@@ -290,7 +290,7 @@ def get_date(keywords, dir_name):
     
     """
     seconds_past = 0
-    first_file = file = get_file_path(keywords[0], dir_name)
+  
     hdr = fits.open(file)[0].header
     first_date_str = hdr["DATE-OBS"][11:19]
     return hdr["DATE-OBS"][0:19]
@@ -306,7 +306,7 @@ def get_date(keywords, dir_name):
 
 
 
-def get_input_array(config, param_ranges,
+def get_input_array(config, param_ranges, fits_files
                         ):
     '''
     Main preprocessing routine that returns array to be passed into clustering
@@ -317,18 +317,19 @@ def get_input_array(config, param_ranges,
         - list of lists specifying minimum and maximum values to be included in the analysis for each keyword
     config: 
         - object containing mapping information for the input array
+    fits_files
     
     Returns 
     --------
     numpy array with axis 0 as pixels within lon/lat range and axis 1 as parameter pixel radiances and index,
     filtered with rangeArr
     '''
-    dir_path =  get_dir_path(config)
-    radiances_arr = get_parameter_2d_array(config.keywords, dir_path)
+    # radiances_arr = get_parameter_2d_array(config.keywords, dir_path)
+    radiances_arr = get_radiances(fits_files)
   
 
     subpatches = []
-    first_file = get_file_path(config.keywords[0], dir_path)
+    first_file =fits_files[0]
     
 
     CM = 0 if config.cm_num == 0 else get_cm(first_file, config.cm_num)
@@ -344,7 +345,12 @@ def get_input_array(config, param_ranges,
     pix_arr = np.column_stack(subpatches)
     pix_arr = get_mapped_pix_arr(pix_arr)
     pix_arr = get_filtered_pix_arr(param_ranges, pix_arr)
+
+    indices = pix_arr[:, pix_arr.shape[1] - 1]
+    data = pix_arr[:, 0:len(config.keywords)]
+
+
   
-    return [pix_arr, subset_shape]
+    return [data, subset_shape, indices]
     
 

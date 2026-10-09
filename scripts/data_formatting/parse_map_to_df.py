@@ -1,4 +1,5 @@
-from hst_study_maps import Study_Maps
+# from hst_study_maps import Study_Maps
+from HST_Study_MapsV2 import Study_Maps
 import pandas as pd
 
 def get_lon_lims(cmpref, lon_rng):
@@ -38,27 +39,32 @@ def parse_map_to_df():
     Pandas df with a row for each region and columns for source, lat_lims, lon_lims, and ROI coordinates
     """
     rows = []
-    for obs, value in Study_Maps.items():
-        sys1 = value['1']
-        for key, val in sys1.items():
-            if key in ['CoLatLims', 'LonRng', 'plotoptions', 'CMpref']:
+    for obs, sys_obj in Study_Maps.items():
+        for sys_key, obj in sys_obj.items():
+            print(sys_key)
+            if(not '1' == sys_key and not '3' == sys_key):
                 continue
-            else: 
-                name = obs + "-" + key
-                roi_dict = "ROI=" + str(val['ROI'])
-                lon_rng = val['LonRng']
-                lat_lims = val['CoLatLims']
-                center = val['CMpref']
-                lon_lims = get_lon_lims(center, lon_rng)
-                
-                row = {
-                    "Name": name,
-                    "Data Source": obs,
-                    "lat_lims": lat_lims,
-                    "lon_lims": lon_lims,
-                    "ROI Dict": roi_dict
-                }
-                rows.append(row)
+            print(obj)
+            for key, val in obj.items():
+                if key in ['CoLatLims', 'LonRng', 'plotoptions', 'CMpref']:
+                    continue
+                else: 
+                    name = obs + "-" + key
+                    roi_dict = "ROI=" + str(val['ROI'])
+                    lon_rng = val['LonRng']
+                    lat_lims = val['CoLatLims']
+                    center = val['CMpref']
+                    lon_lims = get_lon_lims(center, lon_rng)
+                    
+                    row = {
+                        "Name": name,
+                        "Data Source": obs,
+                        "lat_lims": lat_lims,
+                        "lon_lims": lon_lims,
+                        "ROI Dict": roi_dict,
+                        "Sys": sys_key,
+                    }
+                    rows.append(row)
 
 
     df = pd.DataFrame(rows)

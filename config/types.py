@@ -20,9 +20,12 @@ class mappingConfig:
     ROI: dict = field(default_factory=dict)
     cm_num: int = 1
     
-
-
 @dataclass
 class pipelineConfig:
     map: mappingConfig
     cluster: clusterConfig
+
+@dataclass
+class statisticsConfig:
+    means: float
+    covariances: float
