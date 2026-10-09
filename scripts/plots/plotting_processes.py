@@ -6,7 +6,7 @@ from config.config import cf
 import scripts.plots.mapping as MP
 import pylab as pl
 from matplotlib.colors import ListedColormap 
-from scripts.helpers import get_dir_path, get_fits_files
+from scripts.io import get_dir_path, get_fits_files
 
 import config.types as T
 # red, green, blue, yellow, orange, pink, purple, gray

@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from config.config import cf
 from sklearn.linear_model import LinearRegression
-from scripts.helpers import get_dir_path, get_fits_files
+from scripts.io import get_dir_path, get_fits_files
 import csv
 
 
@@ -153,13 +153,10 @@ def get_all_stats(pred, indices, n_comp, m, data, probs, covariances):
         res[key] = get_stat(cluster_arr, dim_arr, indices, n_comp, key)
      # first keyword is predictor, second is predictee
     if(len(m.keywords) == 2):
-            stats = stats | get_cluster_regressions(data, probs, n_comp)
+            res = res | get_cluster_regressions(data, probs, n_comp)
 
-    stats["covariances"] = f"{covariances.tolist()}"
+    res["covariances"] = f"{covariances.tolist()}"
 
-        
-
-    
     return res
     
 def reassign_clusters(pred, stats, param_ranges):
