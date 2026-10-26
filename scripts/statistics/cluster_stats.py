@@ -8,8 +8,6 @@ from matplotlib.figure import Figure
 from sklearn.linear_model import LinearRegression
 
 import config.types as T
-import scripts.preprocessing.preprocessing as pre
-from scripts.helpers.io import get_dir_path, get_fits_files
 
 keyword_dict = {
     "NH3": "Ammonia Mole Fraction (ppm)",
@@ -117,41 +115,30 @@ def get_all_stats(
 
     # stds = [np.sqrt(np.diag(cov_m)) for cov_m in covariances]
     stds = np.sqrt(np.diagonal(covariances, axis1=1, axis2=2))
-    print("stds:", stds)
-
-    dir_path = get_dir_path(map_config)
-
     cluster_arr = np.array(pred)
     indices = indices.astype(np.int64)
     if not (cluster_arr.shape == indices.shape) and cluster_arr.ndim == 1:
         raise TypeError("Index array length must match cluster array length")
 
     res = {}
-    new_res = {}
 
     for i, key in enumerate(map_config.keywords):
-        file = get_fits_files(dir_path, key)[0]
-        map = pre.get_patch(
-            key, map_config.latRng, map_config.lngRng, map_config.cm_num, file
-        )
-        dim_arr = map.flatten()
-        res[key] = get_stat(cluster_arr, dim_arr, indices, n_comp, key)
         cluster_means = means[:, i]
         cluster_stds = stds[:, 1]
-        new_res[key] = {}
-        for i in range(n_comp):
-            new_res[key][f"{i + 1}"] = {
+        res[key] = {}
+        for cluster in range(n_comp):
+            res[key][f"{cluster + 1}"] = {
                 "mean": str(cluster_means[i]),
                 "standard deviation": str(cluster_stds[i]),
             }
-        print(new_res)
-        print(res)
 
     # first keyword is predictor, second is predictee
     if len(map_config.keywords) == 2:
         res = res | get_cluster_regressions(data, probs, n_comp)
 
     res["covariances"] = f"{covariances.tolist()}"
+
+    print(res)
 
     return res
 
