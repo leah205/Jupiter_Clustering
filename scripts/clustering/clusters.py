@@ -26,9 +26,9 @@ def create_clusters(pix_arr, config: T.clusterConfig):
     probs: numpy array
         - 2d array with axis 1 being pixels and axis 2 being posterior probabilites for each cluster
     means: numpy array
-        - 1d array of means for each cluster
+        - 2d np array with clusters along first axis, dimension means along second
     covariances: numpy array
-        - 1d array of covariances for each cluster
+        - 3d np array of covariances with clusters along first axis
     """
 
     is_soft_clustering = cf["soft_clustering"]

@@ -1,4 +1,8 @@
 from pathlib import Path
+from typing import Any
+
+from matplotlib.figure import Figure
+from numpy._typing._array_like import NDArray
 
 import config.dicts as D
 import config.types as TY
@@ -64,12 +68,11 @@ def run_full_pipeline(config: TY.pipelineConfig) -> None:
     )
 
     # run clustering function on processed data
-    cluster_obj = transform(data, config.cluster)
-    pred, probs, means, covariances = (
+    cluster_obj: dict[str, NDArray[Any]] = transform(data, config.cluster)
+    pred, probs, means = (
         cluster_obj["pred"],
         cluster_obj["probs"],
         cluster_obj["means"],
-        cluster_obj["covariances"],
     )
 
     # map cluster outputs to original map shape (within coordinate range)
@@ -117,7 +120,7 @@ def run_full_pipeline(config: TY.pipelineConfig) -> None:
     centroids_fig.savefig(f"{prefix}centroids.png")
 
     # spatial map of clusters
-    map_fig = PLP.create_cluster_map(
+    map_fig: Figure = PLP.create_cluster_map(
         config=config.map,
         reshaped_pred=reshaped_pred,
         title=title,

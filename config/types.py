@@ -1,6 +1,9 @@
 from dataclasses import dataclass, field
 from typing import Literal
+
 ThresholdType = Literal["mahalanobis", "posterior"]
+
+
 @dataclass
 class clusterConfig:
     n_comp: int
@@ -9,21 +12,23 @@ class clusterConfig:
     threshold_type: ThresholdType = "mahalanobis"
     isPca: bool = False
 
-    
+
 @dataclass
 class mappingConfig:
     keywords: list[str]
-    latRng: list[int]
-    lngRng: list[int]
+    latRng: list[float]
+    lngRng: list[float]
     name: str
     source: str
     ROI: dict = field(default_factory=dict)
     cm_num: int = 1
-    
+
+
 @dataclass
 class pipelineConfig:
     map: mappingConfig
     cluster: clusterConfig
+
 
 @dataclass
 class statisticsConfig:

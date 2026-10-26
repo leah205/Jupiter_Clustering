@@ -2,9 +2,11 @@ from typing import cast
 
 import matplotlib.pyplot as plt
 import numpy as np
+import numpy.typing as npt
 import seaborn as sns
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
+from numpy._typing._array_like import NDArray
 from sklearn.linear_model import LinearRegression
 
 import config.types as T
@@ -80,8 +82,6 @@ def run_cluster_regression(data: np.ndarray, probs: np.ndarray, i: int) -> dict:
     # coeoff_strs = [f"{:.3f}".format(coeff) for coeff in coeff_list]
     return {f"coeff_{i + 1}": f"{m.coef_[0]:.3f}", f"b_{i + 1}": f"{m.intercept_:.3f}"}
 
-    return res
-
 
 def get_all_stats(
     cluster_obj,
@@ -114,7 +114,7 @@ def get_all_stats(
     )
 
     # stds = [np.sqrt(np.diag(cov_m)) for cov_m in covariances]
-    stds = np.sqrt(np.diagonal(covariances, axis1=1, axis2=2))
+    stds: NDArray[np.float64] = np.sqrt(np.diagonal(covariances, axis1=1, axis2=2))
     cluster_arr = np.array(pred)
     indices = indices.astype(np.int64)
     if not (cluster_arr.shape == indices.shape) and cluster_arr.ndim == 1:
@@ -123,8 +123,8 @@ def get_all_stats(
     res = {}
 
     for i, key in enumerate(map_config.keywords):
-        cluster_means = means[:, i]
-        cluster_stds = stds[:, 1]
+        cluster_means: npt.NDArray[np.float64] = means[:, i]
+        cluster_stds: npt.NDArray[np.float64] = stds[:, 1]
         res[key] = {}
         for cluster in range(n_comp):
             res[key][f"{cluster + 1}"] = {
@@ -214,7 +214,7 @@ def get_centroids_figure(
     else:
         ax.set_title("Mean Cluster Value per Parameter")
     c_num = cluster_centroids.shape[0]
-    cluster_labels = np.linspace(1, c_num, c_num).astype(np.int64)
+    cluster_labels = np.arange(1, c_num + 1).tolist()
     sns.heatmap(
         cluster_centroids,
         ax=ax,
