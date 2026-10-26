@@ -1,8 +1,12 @@
 # from hst_study_maps import Study_Maps
-from HST_Study_MapsV2 import Study_Maps
+from typing import cast
+
 import pandas as pd
 
-def get_lon_lims(cmpref, lon_rng):
+from HST_Study_MapsV2 import Study_Maps
+
+
+def get_lon_lims(cmpref: float, lon_rng: float):
     """
     Parameters
     ------------
@@ -14,16 +18,13 @@ def get_lon_lims(cmpref, lon_rng):
     -------------
     list of format [min_lon, max_lon] where longitude ranges between 0 - 360
 
-"""
-   
+    """
 
     # this returns correct area but why at 255 - 240?
     # return [(360 - cmpref) + lon_rng, (360 - cmpref) + 2 * lon_rng]
 
-    return [360 - (cmpref + lon_rng ), 360 - (cmpref - lon_rng )]
+    return [360 - (cmpref + lon_rng), 360 - (cmpref - lon_rng)]
     # return [(cmpref - lon_rng ), (cmpref + lon_rng )]
-    return []
-   
 
 
 def parse_map_to_df():
@@ -42,20 +43,23 @@ def parse_map_to_df():
     for obs, sys_obj in Study_Maps.items():
         for sys_key, obj in sys_obj.items():
             print(sys_key)
-            if(not '1' == sys_key and not '3' == sys_key):
+            if not "1" == sys_key and not "3" == sys_key:
                 continue
             print(obj)
             for key, val in obj.items():
-                if key in ['CoLatLims', 'LonRng', 'plotoptions', 'CMpref']:
+                if key in ["CoLatLims", "LonRng", "plotoptions", "CMpref"]:
                     continue
-                else: 
+                if not isinstance(val, dict):
+                    continue
+                else:
                     name = obs + "-" + key
-                    roi_dict = "ROI=" + str(val['ROI'])
-                    lon_rng = val['LonRng']
-                    lat_lims = val['CoLatLims']
-                    center = val['CMpref']
+                    roi_dict = "ROI=" + str(val["ROI"])
+                    lon_rng = cast(float, val["LonRng"])
+                    lat_lims = val["CoLatLims"]
+                    center: float = cast(float, val["CMpref"])
+
                     lon_lims = get_lon_lims(center, lon_rng)
-                    
+
                     row = {
                         "Name": name,
                         "Data Source": obs,
@@ -66,13 +70,9 @@ def parse_map_to_df():
                     }
                     rows.append(row)
 
-
     df = pd.DataFrame(rows)
     return df
 
+
 if __name__ == "__main__":
     print(parse_map_to_df())
-    
-
-
-

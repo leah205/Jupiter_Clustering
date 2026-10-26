@@ -1,13 +1,12 @@
-import pandas as pd
 import ast
-import scripts.clustering.cluster_evaluation as EV
-import config.types as T
+
 import config.dicts as D
-import scripts.pipeline as PIPE
+import config.types as T
+import scripts.processes.pipeline as PIPE
 from scripts.data_formatting.parse_map_to_df import parse_map_to_df
 
 
-def run_all_cluster_ROI(r):
+def run_all_cluster_ROI(r: dict):
     """
     Runs clustering pipeline on region of interest for each clustering run specified in config
 
@@ -21,47 +20,33 @@ def run_all_cluster_ROI(r):
     void
     """
 
-    ROI = ast.literal_eval(r['ROI Dict'].split("=")[1])
+    ROI = ast.literal_eval(r["ROI Dict"].split("=")[1])
     flag = 0
     source = r["Data Source"]
-    print(r["Name"])
-    
-    if((not "GRS" in r["Name"]) and (not "Oval" in r["Name"])):
-            return
-    
 
-   
-    lat_lims , lon_lims = r["lat_lims"], r["lon_lims"]
-    
+    if (not "GRS" in r["Name"]) and (not "Oval" in r["Name"]):
+        return
+
+    lat_lims, lon_lims = r["lat_lims"], r["lon_lims"]
+
     for cl_info in D.cluster_runs:
-        mapConfig =  T.mappingConfig(
-        keywords = cl_info["dims"],
-        ROI = ROI,
-        latRng = lat_lims,
-        lngRng = lon_lims,
-        name = r["Name"],
-        source = source,
-        cm_num = int(r["Sys"])
+        mapConfig = T.mappingConfig(
+            keywords=cl_info["dims"],
+            ROI=ROI,
+            latRng=lat_lims,
+            lngRng=lon_lims,
+            name=r["Name"],
+            source=source,
+            cm_num=int(r["Sys"]),
         )
-     
-     
+
         for n_comp in cl_info["comps"]:
-            clusterConfig = T.clusterConfig(
-                n_comp=n_comp,
-                isPca = cl_info["PCA"]
-            )
-            config = T.pipelineConfig(
-                map = mapConfig,
-                cluster = clusterConfig
-            )
+            clusterConfig = T.clusterConfig(n_comp=n_comp, isPca=cl_info["PCA"])
+            config = T.pipelineConfig(map=mapConfig, cluster=clusterConfig)
             PIPE.run_full_pipeline(config)
-        
-        
+
 
 if __name__ == "__main__":
     df = parse_map_to_df()
     print(df.head())
     df.apply(run_all_cluster_ROI, axis=1)
-   
-
-    

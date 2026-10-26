@@ -1,23 +1,22 @@
-from sklearn.mixture import GaussianMixture as GMM
 import matplotlib
-matplotlib.use('Agg')
-from config.config import cf
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import StandardScaler
+from sklearn.mixture import GaussianMixture as GMM
+
+matplotlib.use("Agg")
 import numpy as np
 from scipy.stats import chi2
-from scipy.spatial.distance import mahalanobis
-import config.types as T
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
 
+import config.types as T
 import scripts.pca as PCA
+from config.config import cf
 
 
 def create_clusters(pix_arr, config: T.clusterConfig):
-
     """
     Parameters
     --------
-    pix_arr, 
+    pix_arr,
     numpy array with axis 0 as pixels within lon/lat range and axis 1 as parameter pixel radiances
 
     Returns
@@ -34,53 +33,50 @@ def create_clusters(pix_arr, config: T.clusterConfig):
 
     is_soft_clustering = cf["soft_clustering"]
     gmm_model = GMM(n_components=config.n_comp, covariance_type=config.cov_type)
-    pipe = Pipeline([('scaler', StandardScaler()), ('gmm', gmm_model)])
-  
-  
+    pipe = Pipeline([("scaler", StandardScaler()), ("gmm", gmm_model)])
+
     pipe.fit(pix_arr)
     scaler = pipe.named_steps["scaler"]
     scaled = scaler.transform(pix_arr)
     gm = pipe.named_steps["gmm"]
-  
-    
+
     pixel_probs = np.array(pipe.predict_proba(pix_arr))
 
     predictions = pipe.predict(pix_arr)
-    
+
     means = gm.means_
     cov = gm.covariances_
-     
-    if(is_soft_clustering):
-        if(config.threshold_type == "posterior"):
+
+    if is_soft_clustering:
+        if config.threshold_type == "posterior":
             threshold_mask = get_posterior_threshold(pixel_probs, config.threshold)
         else:
-            threshold_mask = get_mahalanobis_threshold(predictions, scaled, means, cov, config.threshold)
-     
+            threshold_mask = get_mahalanobis_threshold(
+                predictions, scaled, means, cov, config.threshold
+            )
+
         print(threshold_mask)
         predictions = np.where(threshold_mask, -1, predictions)
         cl_means = []
-        for cl in range(0, config.n_comp):
+        for cl in range(config.n_comp):
             mask = ~threshold_mask & predictions == cl
-            cl_mean = np.mean(pix_arr[mask], axis = 0)
+            cl_mean = np.mean(pix_arr[mask], axis=0)
             cl_means.append(cl_mean)
         means = np.array(cl_means)
-      
+
     means = scaler.inverse_transform(gm.means_)
     scales = scaler.scale_
     D = np.diag(scales)
-    cov_orig = np.array([
-    D @ cov @ D for cov in gm.covariances_
-    ])
-   
-    
-   
+    # covariances for each cluster
+    cov_orig = np.array([D @ cov @ D for cov in gm.covariances_])
+
     return {
         "pred": predictions,
         "probs": pixel_probs,
         "means": means,
-        "covariances": cov_orig
-       
+        "covariances": cov_orig,
     }
+
 
 def get_posterior_threshold(probs, threshold):
     """
@@ -92,9 +88,10 @@ def get_posterior_threshold(probs, threshold):
     Returns
     -----------------
     Numpy mask of all indices where the maximum probability is less than threshold (uncertain pixel)
-    
+
     """
-    return np.all(probs < threshold, axis = 1)
+    return np.all(probs < threshold, axis=1)
+
 
 def get_mahalanobis_threshold(predictions, pix_arr, means, covariances, prob):
     """
@@ -115,42 +112,36 @@ def get_mahalanobis_threshold(predictions, pix_arr, means, covariances, prob):
     """
     threshold_mask = np.zeros(predictions.shape[0])
     inv_cov = np.linalg.inv(covariances)
-     # number of variables is degrees of freedom
+    # number of variables is degrees of freedom
     d_freedom = means.shape[1]
     cutoff = chi2.ppf(prob, d_freedom)
 
-    for cl in range(0, means.shape[0]):
+    for cl in range(means.shape[0]):
         mask = predictions == cl
-       
+
         cl_indices = np.where(mask)[0]
         cl_mean = means[cl, :]
         # adjust if not only full
         cl_invcov = inv_cov[cl, :, :]
-        
+
         cl_points = pix_arr[cl_indices, :]
-        
+
         def mahalanobis(d):
-            return (d-cl_mean).T.dot(cl_invcov).dot(d-cl_mean)
-       
-        
+            return (d - cl_mean).T.dot(cl_invcov).dot(d - cl_mean)
+
         m_dists = np.apply_along_axis(mahalanobis, 1, cl_points)
 
         m_mask = m_dists > cutoff
         cl_indices = cl_indices[m_mask]
-       
+
         threshold_mask[cl_indices] = 1
-   
+
     return threshold_mask.astype(bool)
 
 
-
-
-
-
 def run_raw_pipeline(data, config: T.clusterConfig):
-    return create_clusters(data,  config)
-   
-    
+    return create_clusters(data, config)
+
 
 def run_pca_pipeline(data, config):
     """
@@ -167,7 +158,7 @@ def run_pca_pipeline(data, config):
     pca_obj: PCA object
     covariances: numpy array
         - 1d array of covariances for each cluster
-    
+
     """
     [pca_reduced, pca_obj, scaler] = PCA.get_pca_comp(data)
     res = create_clusters(pca_reduced, config)
@@ -179,17 +170,5 @@ def run_pca_pipeline(data, config):
         "probs": res["probs"],
         "means": means,
         "pca_obj": pca_obj,
-        "covariances": res["covariances"]
+        "covariances": res["covariances"],
     }
-   
-
-
-  
-    
-  
-  
-
-
-
-
-

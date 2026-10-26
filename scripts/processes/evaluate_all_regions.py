@@ -9,7 +9,7 @@ from scripts.data_formatting.parse_map_to_df import parse_map_to_df
 
 
 
-def get_lat_range(rng):
+def get_lat_range(rng : str):
     """
         Parameters
         -----------
@@ -32,7 +32,7 @@ def get_lat_range(rng):
 
 
 
-def run_all_eval_ROI(r):
+def run_all_eval_ROI(r : dict):
     """
         Runs evaluation pipeline on region of interest for each clustering run specified in config
     

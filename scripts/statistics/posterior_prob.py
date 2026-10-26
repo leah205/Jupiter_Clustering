@@ -3,6 +3,7 @@ import numpy as np
 import scripts.plots.mapping as MP
 import math
 import pylab as pl
+from matplotlib.figure import Figure
 import config.types as T
 
 
@@ -11,7 +12,7 @@ colors =[(1, 0.639, 0.639), (0.647, 1, 0.639), (0.639, 0.894, 1), (1, 0.996, 0.6
 
 # uncertainty maps
 
-def create_uncertainty_fig(config: T.mappingConfig, probs, indices, subset_shape, title):
+def create_uncertainty_fig(config: T.mappingConfig, probs:np.ndarray, indices:np.ndarray, subset_shape:np.ndarray, title:str) -> Figure:
      """
      Purpose
      --------------
@@ -42,7 +43,7 @@ def create_uncertainty_fig(config: T.mappingConfig, probs, indices, subset_shape
      fig.suptitle(f"{title} posterior probability of clusters", fontsize = 10)
      return fig
 
-def create_max_prob_map(config, probs, indices, subset_shape, title):
+def create_max_prob_map(config: T.mappingConfig, probs:np.ndarray, indices:np.ndarray, subset_shape: np.ndarray, title:str) -> Figure:
     """
      Purpose
      --------------
