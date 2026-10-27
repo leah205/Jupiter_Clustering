@@ -55,7 +55,6 @@ def create_clusters(pix_arr, config: T.clusterConfig):
                 predictions, scaled, means, cov, config.threshold
             )
 
-        print(threshold_mask)
         predictions = np.where(threshold_mask, -1, predictions)
         cl_means = []
         for cl in range(config.n_comp):

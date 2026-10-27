@@ -42,10 +42,8 @@ def parse_map_to_df():
     rows = []
     for obs, sys_obj in Study_Maps.items():
         for sys_key, obj in sys_obj.items():
-            print(sys_key)
             if not "1" == sys_key and not "3" == sys_key:
                 continue
-            print(obj)
             for key, val in obj.items():
                 if key in ["CoLatLims", "LonRng", "plotoptions", "CMpref"]:
                     continue
@@ -74,5 +72,5 @@ def parse_map_to_df():
     return df
 
 
-if __name__ == "__main__":
-    print(parse_map_to_df())
+# if __name__ == "__main__":
+#     print(parse_map_to_df())

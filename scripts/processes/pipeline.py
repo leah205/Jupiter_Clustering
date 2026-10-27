@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Any
 
+import numpy as np
 from matplotlib.figure import Figure
 from numpy._typing._array_like import NDArray
 
@@ -48,11 +49,13 @@ def run_full_pipeline(config: TY.pipelineConfig) -> None:
 
     output_dir = IO.get_output_dir(config.cluster, config.map)
     output_dir_path = Path(output_dir)
+    vis_dir_path = Path(output_dir + "/visualizations")
     # clustering has already been run
     if output_dir_path.exists():
         return
+    print(output_dir)
 
-    output_dir_path.mkdir(parents=True, exist_ok=True)
+    vis_dir_path.mkdir(parents=True, exist_ok=True)
 
     keywords = config.map.keywords
     input_dir = IO.get_dir_path(config.map)
@@ -78,23 +81,23 @@ def run_full_pipeline(config: TY.pipelineConfig) -> None:
     # map cluster outputs to original map shape (within coordinate range)
     reshaped_pred = MP.reshape_clustered(pred, indices, subset_shape)
 
-    # # clusters along first axis
-    # probs_swapped = np.swapaxes(probs, 0, 1)
-    # print(probs_swapped.shape)
-    # reshaped_probs = np.apply_along_axis(
-    #     MP.reshape_clustered, 0, probs_swapped, indices, subset_shape
-    # )
-
+    # clusters along first axis
+    probs_swapped = np.swapaxes(probs, 0, 1)
+    prob_map = np.apply_along_axis(
+        MP.reshape_clustered, 1, probs_swapped, indices, subset_shape
+    )
     prefix = output_dir_path / IO.create_file_prefix(
         config.cluster, config.map, fits_files[0]
     )
 
+    v_prefix = vis_dir_path / IO.create_file_prefix(
+        config.cluster, config.map, fits_files[0]
+    )
+
     hdul = F.create_cluster_fits(
-        reshaped_pred,
-        probs=probs,
+        reshaped_pred=reshaped_pred,
+        prob_map=prob_map,
         n_comp=config.cluster.n_comp,
-        subset_shape=subset_shape,
-        indices=indices,
     )
     hdul.writeto(f"{prefix}.fits")
 
@@ -110,7 +113,7 @@ def run_full_pipeline(config: TY.pipelineConfig) -> None:
             cluster_obj=cluster_obj,
             n_comp=config.cluster.n_comp,
         )
-        IO.saveFigure(Path(f"{prefix}plot.png"), plot_fig)
+        IO.saveFigure(Path(f"{v_prefix}plot.png"), plot_fig)
         # comparison of radiances in different filters mapped spatially
         map_comp_fig = PLP.create_map_comp_figure(
             config=config.map,
@@ -118,7 +121,7 @@ def run_full_pipeline(config: TY.pipelineConfig) -> None:
             title=title,
             n_comp=config.cluster.n_comp,
         )
-        IO.saveFigure(Path(f"{prefix}map_comp.png"), map_comp_fig)
+        IO.saveFigure(Path(f"{v_prefix}map_comp.png"), map_comp_fig)
 
     if len(keywords) == 4:
         # two 2d radiance scatter plots
@@ -130,11 +133,11 @@ def run_full_pipeline(config: TY.pipelineConfig) -> None:
             pred=pred,
             n_comp=config.cluster.n_comp,
         )
-        IO.saveFigure(Path(f"{prefix}plot.png"), plot_fig)
+        IO.saveFigure(Path(f"{v_prefix}plot.png"), plot_fig)
 
     # heat map for mean value for each cluster for each parameter
     centroids_fig = STAT.get_centroids_figure(keywords, means, title)
-    centroids_fig.savefig(f"{prefix}centroids.png")
+    centroids_fig.savefig(f"{v_prefix}centroids.png")
 
     # spatial map of clusters
     map_fig: Figure = PLP.create_cluster_map(
@@ -143,7 +146,7 @@ def run_full_pipeline(config: TY.pipelineConfig) -> None:
         title=title,
         n_comp=config.cluster.n_comp,
     )
-    map_fig.savefig(f"{prefix}cluster_map.png")
+    map_fig.savefig(f"{v_prefix}cluster_map.png")
 
     stats = STAT.get_all_stats(
         cluster_obj=cluster_obj,
@@ -158,24 +161,21 @@ def run_full_pipeline(config: TY.pipelineConfig) -> None:
     # spatial maps for each cluster indicating probability the pixel belongs to that cluster
     uncertainty_fig = PP.create_uncertainty_fig(
         config=config.map,
-        probs=probs,
-        indices=indices,
-        subset_shape=subset_shape,
+        prob_map=prob_map,
+        n_comp=config.cluster.n_comp,
         title=title,
     )
-    uncertainty_fig.savefig(f"{prefix}uncertainty_map.png")
+    uncertainty_fig.savefig(f"{v_prefix}uncertainty_map.png")
 
     # spatial map indicating maximum posterior probability for each pixel
     max_prob_fig = PP.create_max_prob_map(
         config=config.map,
-        probs=probs,
-        indices=indices,
-        subset_shape=subset_shape,
+        prob_map=prob_map,
         title=title,
     )
-    max_prob_fig.savefig(f"{prefix}max_prob_fig.png")
+    max_prob_fig.savefig(f"{v_prefix}max_prob_fig.png")
 
     if config.cluster.isPca:
         # gets the loadings of each cluster on each pca
         heat_map_fig = PCA.get_loadings_heatmap(cluster_obj["pca_obj"], keywords, title)
-        heat_map_fig.savefig(f"{prefix}loadings.png")
+        heat_map_fig.savefig(f"{v_prefix}loadings.png")

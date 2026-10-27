@@ -45,8 +45,7 @@ def get_output_dir(c: T.clusterConfig, m: T.mappingConfig) -> str:
 
     keyword_str = "_".join(m.keywords)
     pca_dir = ("PCA/") if c.isPca else ""
-    thresh_dir = (f"{c.threshold_type}_{c.threshold}/") if cf["soft_clustering"] else ""
-    return f"{cf['output']}/{m.name}/{keyword_str}/{pca_dir}{c.n_comp}_cl/{thresh_dir}"
+    return f"{cf['output']}/{m.name}/{keyword_str}/{pca_dir}{c.n_comp}_cl"
 
 
 def create_file_prefix(c: T.clusterConfig, m: T.mappingConfig, first_file) -> str:

@@ -138,8 +138,8 @@ def get_filtered_pix_arr(
     ----------
     filtered pix_arr with only pixel rows with all parameters in specified range
     """
-    print(pixel_arr)
-    print(pixel_arr.shape)
+    # print(pixel_arr)
+    # print(pixel_arr.shape)
     if len(range_arr) and len(range_arr) != pixel_arr.shape[1] - 1:
         raise TypeError("ranges array should match number of parameters")
 
@@ -151,7 +151,6 @@ def get_filtered_pix_arr(
     mask = (pixel_param_cols >= mins) & (pixel_param_cols <= maxs)
 
     filtered = pixel_arr[np.all(mask, axis=1)]
-    print(filtered)
 
     return filtered
 

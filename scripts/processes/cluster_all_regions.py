@@ -48,5 +48,5 @@ def run_all_cluster_ROI(r: dict):
 
 if __name__ == "__main__":
     df = parse_map_to_df()
-    print(df.head())
+    # print(df.head())
     df.apply(run_all_cluster_ROI, axis=1)

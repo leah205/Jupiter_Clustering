@@ -193,8 +193,8 @@ def plot_patch(
     tx = np.linspace(vn, vx, 5, endpoint=True)
 
     axis.set_title(title)
-    print(f"extent: {360 - LonLims[0]},{360 - LonLims[1]}")
-    print(patch.shape)
+    # print(f"extent: {360 - LonLims[0]},{360 - LonLims[1]}")
+    # print(patch.shape)
     show = axis.imshow(
         patch,
         origin="upper",

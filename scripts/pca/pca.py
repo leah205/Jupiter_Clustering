@@ -36,8 +36,8 @@ def get_pca_comp(X: np.ndarray, var_threshold=0.98) -> list:
     pca = PCA(n_components=var_threshold)
     X_transformed = pca.fit_transform(X_scaled)
     # gets array of percentage of variance explained by each component
-    print("variances")
-    print(pca.explained_variance_ratio_)
+    # print("variances")
+    # print(pca.explained_variance_ratio_)
     return [X_transformed, pca, scaler]
 
 
