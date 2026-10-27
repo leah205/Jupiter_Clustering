@@ -7,6 +7,7 @@ from numpy._typing._array_like import NDArray
 import config.dicts as D
 import config.types as TY
 import scripts.clustering.clusters as CL
+import scripts.fits as F
 import scripts.helpers.io as IO
 import scripts.pca.pca as PCA
 import scripts.plots.mapping as MP
@@ -51,7 +52,6 @@ def run_full_pipeline(config: TY.pipelineConfig) -> None:
     if output_dir_path.exists():
         return
 
-    print("yoohoo")
     output_dir_path.mkdir(parents=True, exist_ok=True)
 
     keywords = config.map.keywords
@@ -76,11 +76,28 @@ def run_full_pipeline(config: TY.pipelineConfig) -> None:
     )
 
     # map cluster outputs to original map shape (within coordinate range)
-    reshaped_pred = MP.reshape_clustered(indices, subset_shape, pred)
+    reshaped_pred = MP.reshape_clustered(pred, indices, subset_shape)
+
+    # # clusters along first axis
+    # probs_swapped = np.swapaxes(probs, 0, 1)
+    # print(probs_swapped.shape)
+    # reshaped_probs = np.apply_along_axis(
+    #     MP.reshape_clustered, 0, probs_swapped, indices, subset_shape
+    # )
 
     prefix = output_dir_path / IO.create_file_prefix(
         config.cluster, config.map, fits_files[0]
     )
+
+    hdul = F.create_cluster_fits(
+        reshaped_pred,
+        probs=probs,
+        n_comp=config.cluster.n_comp,
+        subset_shape=subset_shape,
+        indices=indices,
+    )
+    hdul.writeto(f"{prefix}.fits")
+
     title = PLP.create_plot_title(config.cluster, config.map)
 
     if len(keywords) == 2:

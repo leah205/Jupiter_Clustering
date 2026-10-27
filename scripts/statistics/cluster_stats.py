@@ -95,10 +95,14 @@ def get_all_stats(
 
     Parameters
     ----------------
-    cluster_arr, TYPE python list of clusters
-    dim_arr, TYPE 1D numpy array
+    cluster_obj:
+        - dict wih cluster predictions, their probabilities, covariances, and means
     indices, TYPE 1D numpy array of floats
-    n_clusters, TYPE Integer
+    n_comp, TYPE Integer
+    map_config
+        - map configuration object
+    data:
+        - radiance array
 
     Returns
     --------------
@@ -106,8 +110,7 @@ def get_all_stats(
 
     """
 
-    pred, probs, covariances, means = (
-        cluster_obj["pred"],
+    probs, covariances, means = (
         cluster_obj["probs"],
         cluster_obj["covariances"],
         cluster_obj["means"],
@@ -115,10 +118,7 @@ def get_all_stats(
 
     # stds = [np.sqrt(np.diag(cov_m)) for cov_m in covariances]
     stds: NDArray[np.float64] = np.sqrt(np.diagonal(covariances, axis1=1, axis2=2))
-    cluster_arr = np.array(pred)
     indices = indices.astype(np.int64)
-    if not (cluster_arr.shape == indices.shape) and cluster_arr.ndim == 1:
-        raise TypeError("Index array length must match cluster array length")
 
     res = {}
 
@@ -153,6 +153,8 @@ def reassign_clusters(
         np array of cluster assignments
     stats
         np array of means with axis 0 as clusters and axis 1 as dimension
+    param_ranges
+        - ranges for filtering in each dimension
 
 
     """

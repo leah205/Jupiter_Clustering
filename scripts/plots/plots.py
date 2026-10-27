@@ -84,7 +84,7 @@ def create_cluster_plot(
 
     if index_x == 0:
         l = ax.legend(markerscale=10, loc="upper left", bbox_to_anchor=(0.88, 1))
-        for h in l.legendHandles:
+        for h in l.legend_handles:
             h.set_alpha(1)
             h.set_sizes([50])
 

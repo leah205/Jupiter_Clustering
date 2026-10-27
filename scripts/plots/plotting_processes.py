@@ -36,15 +36,14 @@ Parameters
    
     config, REQUIRED
         - instance of pipelineConfig
-    pred
-        - one dimensional array of cluster assignments
-    arr
-        - original processed data np array for clustering with indices as last column
-    subset_shape
-        - dimensions of original spatial subset pixel data 
-    param_ranges
-        - list of length two lists with desired values ranges for each dimension in clustering, same order as keywords
-    
+    reshaped_pred
+        - cluster assignments in original array spatial dimensions
+    title,
+    n_comp
+
+Returns
+-----------------------------------
+Figure with spatial maps of clusters and two dimensions
 
 """
 
