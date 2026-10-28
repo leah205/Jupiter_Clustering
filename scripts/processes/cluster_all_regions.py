@@ -2,7 +2,7 @@ import ast
 
 import config.dicts as D
 import config.types as T
-import scripts.processes.pipeline as PIPE
+import scripts.pipeline.pipeline as PIPE
 from scripts.data_formatting.parse_map_to_df import parse_map_to_df
 
 

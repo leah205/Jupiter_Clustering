@@ -232,7 +232,7 @@ def plot_patch(
             cbar.ax.invert_yaxis()
 
 
-def reshape_clustered(pred: np.ndarray, indices: np.ndarray, subset_shape: list[int]):
+def reshape_clustered(pred: np.ndarray, indices: np.ndarray, subset_shape: np.ndarray):
     # takes index array and prediction array and reshapes into original shape with pixels at original indices
 
     subset_length = subset_shape[0] * subset_shape[1]

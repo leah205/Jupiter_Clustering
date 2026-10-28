@@ -5,6 +5,7 @@ from scipy import linalg
 from scipy.stats import chi2
 
 import config.dicts as D
+import config.types as T
 from config.config import cf
 
 
@@ -84,12 +85,12 @@ def create_cluster_plot(
 
     if index_x == 0:
         l = ax.legend(markerscale=10, loc="upper left", bbox_to_anchor=(0.88, 1))
-        for h in l.legend_handles:
+        for h in l.legendHandles:
             h.set_alpha(1)
             h.set_sizes([50])
 
 
-def plot_gmm_ellipsoids(ax: Axes, cluster_obj, cmap) -> None:
+def plot_gmm_ellipsoids(ax: Axes, results: T.results, cmap) -> None:
     """
     overlays ellipsoids capturing 95% total probability for each cluster over scatter plot
 
@@ -102,14 +103,14 @@ def plot_gmm_ellipsoids(ax: Axes, cluster_obj, cmap) -> None:
 
 
     """
-    n_comp = cluster_obj["means"].shape[0]
+    n_comp = results.means.shape[0]
 
     darker_colors = list(
         map(lambda c: (c[0] - 0.2, c[1] - 0.2, c[2] - 0.2), cmap.colors)
     )
 
     for i, (mean, covar, color) in enumerate(
-        zip(cluster_obj["means"], cluster_obj["covariances"], darker_colors[:n_comp])
+        zip(results.means, results.covariances, darker_colors[:n_comp])
     ):
         v, w = linalg.eigh(covar)
         # captures 95% total probability

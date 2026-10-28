@@ -84,7 +84,7 @@ def run_cluster_regression(data: np.ndarray, probs: np.ndarray, i: int) -> dict:
 
 
 def get_all_stats(
-    cluster_obj,
+    results: T.results,
     indices: np.ndarray,
     n_comp: int,
     map_config: T.mappingConfig,
@@ -111,9 +111,9 @@ def get_all_stats(
     """
 
     probs, covariances, means = (
-        cluster_obj["probs"],
-        cluster_obj["covariances"],
-        cluster_obj["means"],
+        results.probs,
+        results.covariances,
+        results.means,
     )
 
     # stds = [np.sqrt(np.diag(cov_m)) for cov_m in covariances]

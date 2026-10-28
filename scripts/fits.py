@@ -6,12 +6,12 @@ from astropy.io.fits.hdu.image import PrimaryHDU
 
 
 def create_cluster_fits(
-    reshaped_pred: npt.NDArray[np.float64],
+    cluster_map: npt.NDArray[np.float64],
     prob_map: npt.NDArray[np.float64],
     n_comp: int,
 ) -> HDUList:
-    clus_assignments_hdu = fits.PrimaryHDU(data=reshaped_pred)
-    print("reshaped pred:", reshaped_pred.shape)
+    clus_assignments_hdu = fits.PrimaryHDU(data=cluster_map)
+    print("reshaped pred:", cluster_map.shape)
     hdulist: list[PrimaryHDU | fits.ImageHDU] = [clus_assignments_hdu]
     for i in range(n_comp):
         cluster_probs_hdu = fits.ImageHDU(data=prob_map[i, :])
