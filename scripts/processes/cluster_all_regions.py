@@ -27,6 +27,9 @@ def run_all_cluster_ROI(r: dict):
     if (not "GRS" in r["Name"]) and (not "Oval" in r["Name"]):
         return
 
+    if "test" in r["Name"]:
+        return
+
     lat_lims, lon_lims = r["lat_lims"], r["lon_lims"]
 
     for cl_info in D.cluster_runs:
@@ -48,5 +51,7 @@ def run_all_cluster_ROI(r: dict):
 
 if __name__ == "__main__":
     df = parse_map_to_df()
+    run_all_cluster_ROI(df.iloc[0])
+
     # print(df.head())
-    df.apply(run_all_cluster_ROI, axis=1)
+    # df.apply(run_all_cluster_ROI, axis=1)

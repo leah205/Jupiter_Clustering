@@ -118,7 +118,6 @@ def create_plots_figure(
     Creates two scatter plots each showing clusters with two parameters and a spatial cluster map
     """
     # creates and saves cluster map and cluster scatter plot
-    n_comp = np.unique(pred).shape[0] - 1
     cmap = ListedColormap(colors[:n_comp])
     fig, axis = pl.subplots(3, 1)
     fig = cast(Figure, fig)
@@ -141,7 +140,6 @@ def create_cluster_map(
     """
     Plots clusters spatially on region
     """
-    n_comp = np.unique(cluster_map).shape[0] - 1
     cmap = ListedColormap(colors[:n_comp])
     fig, axis = pl.subplots(1, 1)
     fig = cast(Figure, fig)
@@ -159,7 +157,6 @@ def create_plot_title(
     Creates descriptive plot title for output plots
     """
     # date = pre.get_date(m.keywords)
-    print(m.lngRng)
     prob_str = f"Threshold {c.threshold}" if cf["soft_clustering"] else ""
     keyword_str = "_".join(m.keywords)
     return f"{m.name} Lat: {m.latRng[0]} - {m.latRng[1]}, Lon: {360 - m.lngRng[1]} - {360 - m.lngRng[0]}, {c.n_comp} components \n {prob_str} {keyword_str} {description}"
