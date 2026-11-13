@@ -32,7 +32,13 @@ def create_clusters(pix_arr, config: T.clusterConfig):
     """
 
     is_soft_clustering = cf["soft_clustering"]
-    gmm_model = GMM(n_components=config.n_comp, covariance_type=config.cov_type)
+    gmm_model = GMM(
+        n_components=config.n_comp,
+        covariance_type=config.cov_type,
+        random_state=67,
+        n_init=10,
+    )
+
     pipe = Pipeline([("scaler", StandardScaler()), ("gmm", gmm_model)])
 
     pipe.fit(pix_arr)
@@ -45,6 +51,7 @@ def create_clusters(pix_arr, config: T.clusterConfig):
     predictions = pipe.predict(pix_arr)
 
     means = gm.means_
+
     cov = gm.covariances_
 
     if is_soft_clustering:

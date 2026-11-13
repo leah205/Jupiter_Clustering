@@ -2,13 +2,11 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
-from matplotlib.figure import Figure
 from numpy._typing._array_like import NDArray
 
 import config.dicts as D
 import config.types as TY
 import scripts.clustering.clusters as CL
-import scripts.fits as F
 import scripts.helpers.io as IO
 import scripts.pca.pca as PCA
 import scripts.plots.mapping as MP
@@ -50,8 +48,8 @@ def run_full_pipeline(config: TY.pipelineConfig) -> None:
     output_dir = IO.get_output_dir(config.cluster, config.map)
     output_dir_path = Path(output_dir)
     # clustering has already been run
-    if output_dir_path.exists():
-        return
+    # if output_dir_path.exists():
+    #     return
     output_dir_path.mkdir(parents=True, exist_ok=True)
 
     print(output_dir)
@@ -66,8 +64,8 @@ def run_full_pipeline(config: TY.pipelineConfig) -> None:
 
     results = prepare_cluster_results(cluster_obj, input_obj)
 
-    prefix = output_dir_path / IO.create_file_prefix(
-        config.cluster, config.map, input_obj.files[0]
+    prefix = output_dir_path / (
+        IO.create_file_prefix(config.cluster, config.map, input_obj.files[0])
     )
 
     hdul = F.create_cluster_fits(
@@ -75,7 +73,7 @@ def run_full_pipeline(config: TY.pipelineConfig) -> None:
         prob_map=results.prob_map,
         n_comp=config.cluster.n_comp,
     )
-    hdul.writeto(f"{prefix}.fits")
+    hdul.writeto(f"{str(prefix)[:-1]}.fits", overwrite=True)
 
     generate_visualizations(input_obj, results, config, output_dir)
 
@@ -101,7 +99,7 @@ def prepare_cluster_results(cluster_obj: dict, input_obj: TY.input_obj) -> TY.re
 
     # clusters along first axis
     probs_swapped = np.swapaxes(probs, 0, 1)
-    prob_map = np.apply_along_axis(
+    prob_swapped_map = np.apply_along_axis(
         MP.reshape_clustered,
         1,
         probs_swapped,
@@ -109,7 +107,7 @@ def prepare_cluster_results(cluster_obj: dict, input_obj: TY.input_obj) -> TY.re
         input_obj.map_shape,
     )
 
-    return TY.results(**cluster_obj, prob_map=prob_map, cluster_map=pred_map)
+    return TY.results(**cluster_obj, prob_map=prob_swapped_map, cluster_map=pred_map)
 
 
 def load_pipeline_inputs(config: TY.pipelineConfig) -> TY.input_obj:
@@ -133,12 +131,23 @@ def generate_visualizations(
     output_dir: str,
 ):
     title = PLP.create_plot_title(config.cluster, config.map)
-    vis_dir_path = Path(output_dir + "/visualizations")
+    # vis_dir_path = Path(output_dir + "/visualizations")
+    vis_dir_path = Path(output_dir)
     vis_dir_path.mkdir(parents=True, exist_ok=True)
 
     v_prefix = vis_dir_path / IO.create_file_prefix(
         config.cluster, config.map, input_obj.files[0]
     )
+    print(v_prefix)
+
+    # spatial map of clusters
+    map_fig = PLP.create_cluster_map(
+        config=config.map,
+        cluster_map=results.cluster_map,
+        title=title,
+        n_comp=config.cluster.n_comp,
+    )
+    map_fig.savefig(f"{v_prefix}cluster_map.png")
 
     if len(config.map.keywords) == 2:
         # two-d radiance scatter plot
@@ -174,15 +183,6 @@ def generate_visualizations(
     # heat map for mean value for each cluster for each parameter
     centroids_fig = STAT.get_centroids_figure(config.map.keywords, results.means, title)
     centroids_fig.savefig(f"{v_prefix}centroids.png")
-
-    # spatial map of clusters
-    map_fig: Figure = PLP.create_cluster_map(
-        config=config.map,
-        cluster_map=results.cluster_map,
-        title=title,
-        n_comp=config.cluster.n_comp,
-    )
-    map_fig.savefig(f"{v_prefix}cluster_map.png")
 
     # spatial maps for each cluster indicating probability the pixel belongs to that cluster
     uncertainty_fig = PP.create_uncertainty_fig(
