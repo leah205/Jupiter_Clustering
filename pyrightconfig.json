@@ -1,0 +1,12 @@
+{
+    "reportMissingTypeStubs": "none",
+    "reportUnknownVariableType": "none",
+        "reportUnknownMemberType": "none",
+        "reportMissingTypeArgument": "none",
+        "reportUnusedCallResult": "none",
+        "reportUnknownParameterType": "none",
+        "reportUnknownArgumentType": "none",
+        "reportAttributeAccessIssue": "none",
+        "reportCallIssue": "none"
+
+}

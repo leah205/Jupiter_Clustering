@@ -1,14 +1,14 @@
 import numpy as np
-from sklearn.mixture import GaussianMixture as GMM
-import scripts.preprocessing.preprocessing as pre
 import pylab as plt
-from sklearn.preprocessing import StandardScaler
+from sklearn.mixture import GaussianMixture as GMM
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
+import scripts.preprocessing.preprocessing as pre
 
 
+def get_js(m1, m2, n_sample=10**3):
 
-def get_js(m1, m2, n_sample = 10**3):
-   
     x = m1.sample(n_sample)[0]
     log_1_x = m1.score_samples(x)
     log_2_x = m2.score_samples(x)
@@ -19,31 +19,36 @@ def get_js(m1, m2, n_sample = 10**3):
     log_2_y = m2.score_samples(y)
     log_mix_Y = np.logaddexp(log_1_y, log_2_y)
 
-    squared_dist = (log_1_x.mean() - (log_mix_X.mean() - np.log(2))
-            + log_2_y.mean() - (log_mix_Y.mean() - np.log(2))) / 2
+    squared_dist = (
+        log_1_x.mean()
+        - (log_mix_X.mean() - np.log(2))
+        + log_2_y.mean()
+        - (log_mix_Y.mean() - np.log(2))
+    ) / 2
     return np.sqrt(np.maximum(0, squared_dist))
 
-def create_js_plot(X, n_range, sample_size = 10000):
+
+def create_js_plot(X, n_range, sample_size=10000):
     n_clusters = np.arange(n_range[0], n_range[1])
-  
+
     iterations = 10
     results = []
     res_errs = []
-    
+
     for n in n_clusters:
         dist = []
         for _ in range(iterations):
             X_sub = X[np.random.choice(len(X), sample_size)]
-            
+
             # create 50/50 data split
-            x1, x2 = train_test_split(X_sub, test_size = 0.5)
+            x1, x2 = train_test_split(X_sub, test_size=0.5)
 
             scaler1 = StandardScaler().fit(x1)
             scaler2 = StandardScaler().fit(x2)
 
-            #fit models
-            gmm_model_1 = GMM(n_components=n, covariance_type="full", n_init = 2)
-            gmm_model_2 = GMM(n_components=n, covariance_type="full", n_init = 2)
+            # fit models
+            gmm_model_1 = GMM(n_components=n, covariance_type="full", n_init=2)
+            gmm_model_2 = GMM(n_components=n, covariance_type="full", n_init=2)
 
             scaled1 = scaler1.transform(x1)
             scaled2 = scaler2.transform(x2)
@@ -56,22 +61,31 @@ def create_js_plot(X, n_range, sample_size = 10000):
         res_errs.append(res_err)
 
     fig, ax = plt.subplots(1, 1)
-    plt.errorbar(n_clusters, results, yerr = res_errs)
+    plt.errorbar(n_clusters, results, yerr=res_errs)
     plt.title("Jensen-Shannon Distance between GMMs")
     plt.xticks(n_clusters)
-    plt.xlabel("Number of Clusters", fontsize = 14)
-    plt.ylabel("Distance", fontsize = 14)
+    plt.xlabel("Number of Clusters", fontsize=14)
+    plt.ylabel("Distance", fontsize=14)
     return fig
 
 
-def run_js_dist(subdir, keywords, param_ranges, 
-                           latRng = [85, 95], lngRng = [230, 330], cluster_rng = [2, 12],
-                            cm_num = 1):
-    [input_arr, subset_shape] = pre.get_input_array(keywords, param_ranges, latRng, lngRng, cm_num)
-    pix_arr = input_arr[:, 0: len(keywords)]
+def run_js_dist(
+    subdir,
+    keywords,
+    param_ranges,
+    latRng=[85, 95],
+    lngRng=[230, 330],
+    cluster_rng=[2, 12],
+    cm_num=1,
+):
+    [input_arr, subset_shape] = pre.get_input_array(
+        keywords, param_ranges, latRng, lngRng, cm_num
+    )
+    pix_arr = input_arr[:, 0 : len(keywords)]
     fig = create_js_plot(pix_arr, cluster_rng)
     keyword_str = "_".join(keywords)
     fig.savefig(f"cluster_evaluations/{subdir}/js_plot_{keyword_str}")
+
 
 lon_range = [0, 30]
 lat_range = [0, 15]
@@ -81,9 +95,17 @@ lat_range = [90 - lat_range[1], 90 - lat_range[0]]
 cluster_rng = [2, 12]
 
 if __name__ == "__main__":
-    run_js_dist("20251016UTc/lon_0-30", ["AOI", "CI"], [[0.1, 0.4], [0.3, 0.8]],  lat_range, lon_range, cluster_rng, 1)
+    run_js_dist(
+        "20251016UTc/lon_0-30",
+        ["AOI", "CI"],
+        [[0.1, 0.4], [0.3, 0.8]],
+        lat_range,
+        lon_range,
+        cluster_rng,
+        1,
+    )
     # run_js_dist("20251016UTc/lon_0-30", ["NH3", "PCld"], [[0, 300], [1000, 3000]],  lat_range, lon_range, cluster_rng, 1)
-    # run_js_dist("20251016UTc/lon_0-30", ["275", "395", "502", "619", "631", "645", "673", "727", "889"], 
+    # run_js_dist("20251016UTc/lon_0-30", ["275", "395", "502", "619", "631", "645", "673", "727", "889"],
     #                   [[0, 1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1], [0,  1]], lat_range, lon_range, cluster_rng, 1)
 
-    #run_js_dist("20251016UTc/lon_0-30", ["NH3", "PCld", "AOI", "CI"], [[0, 300], [1000,  3000], [0.1, 0.4], [0.3, 0.8]], lat_range, lon_range, cluster_rng, 1)
+    # run_js_dist("20251016UTc/lon_0-30", ["NH3", "PCld", "AOI", "CI"], [[0, 300], [1000,  3000], [0.1, 0.4], [0.3, 0.8]], lat_range, lon_range, cluster_rng, 1)

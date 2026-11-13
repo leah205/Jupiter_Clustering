@@ -1,8 +1,10 @@
 from config.config import cf
 import json
+import config.types as T
 
 
-def save_stats_json(config, stats):
+
+def save_stats_json(config:T.pipelineConfig, stats:object):
     keywords = config.map.keywords
     keyword_str = '_'.join(keywords)
 

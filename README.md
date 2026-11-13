@@ -19,7 +19,7 @@ data/
 
 scripts/
 ├── processes/                  # Functions for the clustering and visualization pipeline
-    ├── cluster_all_regions                
+    ├── cluster_all_regions
     └── evaluate_all_regions
 ├── cluster_stats/
 ├── preprocessing/
@@ -54,7 +54,7 @@ MGenerated BIC, silhouette, and JS distance plots for various numbers of cluster
 
 ## Full Clustering pipeline
 
-The scripts in the processes/ directory were designed to process a csv with the following format: 
+The scripts in the processes/ directory were designed to process a csv with the following format:
 
 ### Input Fields
 
@@ -119,7 +119,6 @@ Alternatively, to run the pipeline on a specific region for a specific set of cl
 
 ## Full Evaluation Pipeline
 
-
 ### Output
 
 For each region within the input csv, the evaluation pipleine was run for between 2 and 10 clusterings. Within the `config` directory, `dicts.py` specifies an eval_runs list which details a collection of cluster evaluation configurations that the pipeline will run. An example configuration is:
@@ -138,7 +137,7 @@ This specifies running cluster evaluation for ammonia abundance and cloud pressu
 The output files are of the form
 {plot type}_plot_{parameters}.png
 
-The output directory structure is shown below: 
+The output directory structure is shown below:
 
 ```text
 cluster_evaluations/
@@ -151,7 +150,7 @@ cluster_evaluations/
 
 ```
 
-#### Running the clustering pipeline
+#### Running the evaluation pipeline
 
 The full evaluation pipeline can be executed using the command:
 
