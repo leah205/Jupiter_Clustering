@@ -115,21 +115,22 @@ def get_all_stats(
         results.covariances,
         results.means,
     )
+    # probs_swapped: NDArray[float64] = np.swapaxes(probs, 0, 1)
 
     # stds = [np.sqrt(np.diag(cov_m)) for cov_m in covariances]
     stds: NDArray[np.float64] = np.sqrt(np.diagonal(covariances, axis1=1, axis2=2))
     indices = indices.astype(np.int64)
 
     res = {}
-
+    print(means)
     for i, key in enumerate(map_config.keywords):
         cluster_means: npt.NDArray[np.float64] = means[:, i]
-        cluster_stds: npt.NDArray[np.float64] = stds[:, 1]
+        cluster_stds: npt.NDArray[np.float64] = stds[:, i]
         res[key] = {}
         for cluster in range(n_comp):
             res[key][f"{cluster + 1}"] = {
-                "mean": str(cluster_means[i]),
-                "standard deviation": str(cluster_stds[i]),
+                "mean": str(cluster_means[cluster]),
+                "standard deviation": str(cluster_stds[cluster]),
             }
 
     # first keyword is predictor, second is predictee
