@@ -1,8 +1,7 @@
 cf = {
-    'input': "data/HST_new",
+    "input": "data/HST_new",
     "sys": "Sys1",
-    "output": "visualizations/HST_v3",
+    "output": "HST_V2",
     "soft_clustering": True,
-    "json": "new_mahalanobis_clusters.json"
-    
+    "json": "clusters.json",
 }

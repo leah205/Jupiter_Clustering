@@ -21,40 +21,22 @@ def run_all_cluster_ROI(r: dict):
     """
 
     ROI = ast.literal_eval(r["ROI Dict"].split("=")[1])
-    flag = 0
     source = r["Data Source"]
-
-    # if (not "GRS" in r["Name"]) and (not "Oval" in r["Name"]):
-    #     return
-
-    if "20251016" in r["Name"]:
-        return
-
-    if "test" in r["Name"]:
-        return
-    # if r["Name"] != "20251016UTc-SEZ-SED-Ext":
-    #     return
 
     lat_lims, lon_lims = r["lat_lims"], r["lon_lims"]
 
-    # mapConfig = T.mappingConfig(
-    #     keywords=["NH3", "PCld"],
-    #     ROI=ROI,
-    #     latRng=lat_lims,
-    #     lngRng=lon_lims,
-    #     name=r["Name"],
-    #     source=source,
-    #     cm_num=int(r["Sys"]),
-    # )
-
-    # clusterConfig = T.clusterConfig(n_comp=4, isPca=False)
-    # config = T.pipelineConfig(map=mapConfig, cluster=clusterConfig)
-
-    # for i in range(8):
-    #     PIPE.run_full_pipeline(config, i)
     for cl_info in D.cluster_runs:
+        dims = cl_info["dims"]
+        comps = cl_info["comps"]
+        if not (isinstance(dims, list) and all(isinstance(x, str) for x in dims)):
+            raise TypeError("dimensions configuration must be list of strings")
+        if not (isinstance(comps, list) and all(isinstance(x, int) for x in comps)):
+            raise TypeError("n_comp configuration must be list of integers")
+        if not isinstance(cl_info["PCA"], bool):
+            raise TypeError("PCA mus t be boolean")
+
         mapConfig = T.mappingConfig(
-            keywords=cl_info["dims"],
+            keywords=dims,
             ROI=ROI,
             latRng=lat_lims,
             lngRng=lon_lims,
@@ -63,7 +45,7 @@ def run_all_cluster_ROI(r: dict):
             cm_num=int(r["Sys"]),
         )
 
-        for n_comp in cl_info["comps"]:
+        for n_comp in comps:
             clusterConfig = T.clusterConfig(n_comp=n_comp, isPca=cl_info["PCA"])
             config = T.pipelineConfig(map=mapConfig, cluster=clusterConfig)
             PIPE.run_full_pipeline(config)

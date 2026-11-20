@@ -1,5 +1,8 @@
 from dataclasses import dataclass, field
-from typing import Literal
+from typing import Any, Literal
+
+import numpy as np
+from numpy._typing._array_like import NDArray
 
 ThresholdType = Literal["mahalanobis", "posterior"]
 
@@ -34,3 +37,32 @@ class pipelineConfig:
 class statisticsConfig:
     means: float
     covariances: float
+
+
+# class results:
+#     def __init__(self, **kwargs):
+#         self.__dict__.update(kwargs)
+
+
+@dataclass
+class results:
+    prob_map: NDArray[np.float64]
+    cluster_map: NDArray[np.float64]
+    pred: NDArray[np.float64]
+    probs: NDArray[np.float64]
+    means: NDArray[np.float64]
+    covariances: NDArray[np.float64]
+    pca_obj: Any = None
+
+
+@dataclass
+class input_obj:
+    data: NDArray[np.float64]
+    map_shape: NDArray[np.float64]
+    indices: NDArray[np.float64]
+    files: list[str]
+
+
+# class input_obj:
+#     def __init__(self, **kwargs):
+#         self.__dict__.update(kwargs)

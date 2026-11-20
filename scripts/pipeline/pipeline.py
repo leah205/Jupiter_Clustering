@@ -7,6 +7,7 @@ from numpy._typing._array_like import NDArray
 import config.dicts as D
 import config.types as TY
 import scripts.clustering.clusters as CL
+import scripts.fits as F
 import scripts.helpers.io as IO
 import scripts.pca.pca as PCA
 import scripts.plots.mapping as MP

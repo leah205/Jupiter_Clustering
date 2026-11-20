@@ -1,4 +1,7 @@
+from typing import Any
+
 import matplotlib
+from numpy._typing._array_like import NDArray
 from sklearn.mixture import GaussianMixture as GMM
 
 matplotlib.use("Agg")
@@ -72,7 +75,7 @@ def create_clusters(pix_arr, config: T.clusterConfig):
 
     means = scaler.inverse_transform(gm.means_)
     scales = scaler.scale_
-    D = np.diag(scales)
+    D: NDArray[Any] = np.diag(scales)
     # covariances for each cluster
     cov_orig = np.array([D @ cov @ D for cov in gm.covariances_])
 
